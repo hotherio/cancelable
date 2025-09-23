@@ -1,9 +1,64 @@
-# CHANGE-ME | Python Library Template
+# Cancelable
 
+A comprehensive, production-ready async cancellation system for Python 3.12+ using anyio.
+
+## Features
+
+- **Multiple Cancellation Sources**: Timeout, manual tokens, OS signals, and custom conditions
+- **Composable Design**: Combine multiple cancellation sources easily
+- **Stream Processing**: Built-in support for cancellable async iterators
+- **Operation Tracking**: Full lifecycle tracking with status and progress reporting
+- **Library Integrations**: Ready-to-use integrations for httpx, FastAPI, and SQLAlchemy
+- **Type Safe**: Full type hints and runtime validation with Pydantic
+- **Production Ready**: Comprehensive error handling, logging with structlog, and performance optimized
 
 ## Installation
 
+```bash
+uv add cancelable
+```
 
+## Quick Start
+
+### Basic Usage
+
+```python
+from cancelable import Cancellable
+
+# Timeout-based cancellation
+async with Cancellable.with_timeout(30.0) as cancel:
+    result = await long_running_operation()
+
+# Manual cancellation with token
+from cancelable import CancellationToken
+
+token = CancellationToken()
+
+async with Cancellable.with_token(token) as cancel:
+    # In another task/thread: await token.cancel()
+    result = await interruptible_operation()
+```
+
+### Stream Processing
+
+```python
+# Cancellable stream processing
+async with Cancellable.with_timeout(60.0) as cancel:
+    async for item in cancel.stream(data_source(), report_interval=100):
+        await process_item(item)
+```
+
+### Function Decorators
+
+```python
+from cancelable import cancellable
+
+@cancellable(timeout=30.0, register_globally=True)
+async def process_data(data: list, cancellable: Cancellable = None):
+    for i, item in enumerate(data):
+        await cancellable.report_progress(f"Processing item {i+1}/{len(data)}")
+        await process_item(item)
+```
 
 ## Documentation
 
@@ -42,16 +97,7 @@ To run hooks manually:
 ```
 # Run all pre-commit hooks
 lefthook run pre-commit
-
-# Run specific hook
-lefthook run pre-commit --commands ruff-check
-
-# Skip hooks for a single commit
-git commit --no-verify -m "emergency fix"
 ```
-
-For local customization, copy `.lefthook-local.yml.example` to `.lefthook-local.yml` and modify as needed.
-
 
 ### Tests
 
@@ -59,7 +105,7 @@ uv run -m pytest
 
 ### Coverage
 
-uv run python -m pytest src --cov=hother
+uv run python -m pytest src --cov=cancelable
 
 ### Building the package
 
@@ -147,13 +193,13 @@ uvx pip-licenses --from=mixed --order count -f csv --output-file licenses.csv
 
 Build the new documentation:
 ```
-uv run mike deploy --push --update-aliases <version> latest
-mike set-default latest
-mike list
+uvx mike deploy --push --update-aliases <version> latest
+uvx mike set-default latest
+uvx mike list
 ```
 Checking the documentation locally
 ```
-mike serve
+uvx mike serve
 ```
 
 

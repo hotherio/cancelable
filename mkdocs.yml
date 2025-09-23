@@ -1,11 +1,20 @@
-site_name: CHANGE-ME
-repo_url: https://github.com/hotherio/CHANGE-ME
-repo_name: hotherio/CHANGE-ME
+site_name: Cancelable
+repo_url: https://github.com/hotherio/cancelable
+repo_name: hotherio/cancelable
 edit_uri: ""
 dev_addr: 0.0.0.0:1234
 site_dir: "static/docs"
 nav:
-  - 'index.md'
+  - Getting Started: 'getting_started.md'
+  - API Reference: 'api_reference.md'
+  - Patterns: 'patterns.md'
+  - Integrations:
+    - FastAPI: 'integrations/fastapi.md'
+    - HTTPX: 'integrations/httpx.md'
+    - SQLAlchemy: 'integrations/sqlalchemy.md'
+  - Examples:
+    - Basic Usage: 'examples/basic_usage.md'
+    - Stream Processing: 'examples/stream_processing.md'
   - About: 'about.md'
 theme:
   name: material
@@ -98,7 +107,7 @@ extra:
     provider: mike
   generator: false
 watch:
-  - src
+  - src/cancelable
 plugins:
   - search:
         lang: en

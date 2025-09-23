@@ -1,0 +1,270 @@
+"""
+Tests for cancellation token.
+"""
+
+from datetime import datetime
+
+import anyio
+import pytest
+
+from cancelable import CancellationReason, CancellationToken, ManualCancellation
+from cancelable.core.token import LinkedCancellationToken
+
+
+class TestCancellationToken:
+    """Test CancellationToken functionality."""
+
+    @pytest.mark.anyio
+    async def test_initial_state(self):
+        """Test token initial state."""
+        token = CancellationToken()
+
+        assert token.id is not None
+        assert not token.is_cancelled
+        assert token.reason is None
+        assert token.message is None
+        assert token.cancelled_at is None
+
+    @pytest.mark.anyio
+    async def test_cancel(self):
+        """Test token cancellation."""
+        token = CancellationToken()
+
+        # Cancel token
+        result = await token.cancel(reason=CancellationReason.MANUAL, message="Test cancellation")
+
+        assert result is True
+        assert token.is_cancelled
+        assert token.reason == CancellationReason.MANUAL
+        assert token.message == "Test cancellation"
+        assert token.cancelled_at is not None
+        assert isinstance(token.cancelled_at, datetime)
+
+    @pytest.mark.anyio
+    async def test_cancel_idempotent(self):
+        """Test that cancel is idempotent."""
+        token = CancellationToken()
+
+        # First cancel
+        result1 = await token.cancel(CancellationReason.MANUAL, "First")
+        assert result1 is True
+
+        # Second cancel should return False
+        result2 = await token.cancel(CancellationReason.TIMEOUT, "Second")
+        assert result2 is False
+
+        # Original cancellation info preserved
+        assert token.reason == CancellationReason.MANUAL
+        assert token.message == "First"
+
+    @pytest.mark.anyio
+    async def test_wait_for_cancel(self):
+        """Test waiting for cancellation."""
+        token = CancellationToken()
+
+        async def cancel_after_delay():
+            await anyio.sleep(0.1)
+            await token.cancel()
+
+        async with anyio.create_task_group() as tg:
+            tg.start_soon(cancel_after_delay)
+
+            start = anyio.current_time()
+            await token.wait_for_cancel()
+            duration = anyio.current_time() - start
+
+            assert 0.08 <= duration <= 0.12  # Allow some variance
+            assert token.is_cancelled
+
+    @pytest.mark.anyio
+    async def test_check_sync(self):
+        """Test synchronous cancellation check."""
+        token = CancellationToken()
+
+        # Should not raise when not cancelled
+        token.check()
+
+        # Cancel token
+        await token.cancel()
+
+        # Should raise when cancelled
+        with pytest.raises(ManualCancellation) as exc_info:
+            token.check()
+
+        assert "Operation cancelled via token" in str(exc_info.value)
+
+    @pytest.mark.anyio
+    async def test_check_async(self):
+        """Test asynchronous cancellation check."""
+        token = CancellationToken()
+
+        # Should not raise when not cancelled
+        await token.check_async()
+
+        # Cancel token
+        await token.cancel(message="Custom message")
+
+        # Should raise when cancelled
+        with pytest.raises(anyio.get_cancelled_exc_class()) as exc_info:
+            await token.check_async()
+
+        assert "Custom message" in str(exc_info.value)
+
+    @pytest.mark.anyio
+    async def test_is_cancellation_requested(self):
+        """Test non-throwing cancellation check."""
+        token = CancellationToken()
+
+        assert not token.is_cancellation_requested()
+
+        await token.cancel()
+
+        assert token.is_cancellation_requested()
+
+    @pytest.mark.anyio
+    async def test_callbacks(self):
+        """Test cancellation callbacks."""
+        token = CancellationToken()
+        callback_called = False
+        callback_token = None
+
+        async def callback(t):
+            nonlocal callback_called, callback_token
+            callback_called = True
+            callback_token = t
+
+        # Register callback
+        await token.register_callback(callback)
+
+        # Cancel token
+        await token.cancel()
+
+        # Callback should be called
+        assert callback_called
+        assert callback_token is token
+
+    @pytest.mark.anyio
+    async def test_callback_already_cancelled(self):
+        """Test callback registration on already cancelled token."""
+        token = CancellationToken()
+        await token.cancel()
+
+        callback_called = False
+
+        async def callback(t):
+            nonlocal callback_called
+            callback_called = True
+
+        # Register callback on cancelled token
+        await token.register_callback(callback)
+
+        # Should be called immediately
+        assert callback_called
+
+    @pytest.mark.anyio
+    async def test_callback_error_handling(self):
+        """Test that callback errors don't break cancellation."""
+        token = CancellationToken()
+
+        async def bad_callback(t):
+            raise ValueError("Callback error")
+
+        async def good_callback(t):
+            nonlocal good_called
+            good_called = True
+
+        good_called = False
+
+        # Register both callbacks
+        await token.register_callback(bad_callback)
+        await token.register_callback(good_callback)
+
+        # Cancel should work despite bad callback
+        await token.cancel()
+
+        assert token.is_cancelled
+        assert good_called
+
+    @pytest.mark.anyio
+    async def test_string_representation(self):
+        """Test token string representations."""
+        token = CancellationToken()
+
+        # Active token
+        str_repr = str(token)
+        assert "active" in str_repr
+        assert token.id[:8] in str_repr
+
+        # Cancelled token
+        await token.cancel(CancellationReason.TIMEOUT, "Timed out")
+
+        str_repr = str(token)
+        assert "cancelled" in str_repr
+        assert "timeout" in str_repr
+
+        # Repr
+        repr_str = repr(token)
+        assert token.id in repr_str
+        assert "is_cancelled=True" in repr_str
+        assert "reason=CancellationReason.TIMEOUT" in repr_str
+
+
+class TestLinkedCancellationToken:
+    """Test LinkedCancellationToken functionality."""
+
+    @pytest.mark.anyio
+    async def test_linked_cancellation(self):
+        """Test that linked tokens cancel together."""
+        token1 = LinkedCancellationToken()
+        token2 = LinkedCancellationToken()
+
+        # Link token2 to token1
+        await token2.link(token1)
+
+        # Cancel token1
+        await token1.cancel(CancellationReason.MANUAL, "Primary cancelled")
+
+        # Wait a bit for propagation
+        await anyio.sleep(0.01)
+
+        # Token2 should also be cancelled
+        assert token2.is_cancelled
+        assert token2.reason == CancellationReason.PARENT
+        assert "Linked token" in token2.message
+
+    @pytest.mark.anyio
+    async def test_multiple_links(self):
+        """Test token linked to multiple sources."""
+        source1 = CancellationToken()
+        source2 = CancellationToken()
+        linked = LinkedCancellationToken()
+
+        # Link to both sources
+        await linked.link(source1)
+        await linked.link(source2)
+
+        # Cancel source2
+        await source2.cancel()
+        await anyio.sleep(0.01)
+
+        # Linked should be cancelled
+        assert linked.is_cancelled
+        assert linked.reason == CancellationReason.PARENT
+
+    @pytest.mark.anyio
+    async def test_circular_linking_prevention(self):
+        """Test that circular linking doesn't cause issues."""
+        token1 = LinkedCancellationToken()
+        token2 = LinkedCancellationToken()
+
+        # Create circular link
+        await token1.link(token2)
+        await token2.link(token1)
+
+        # Cancel one token
+        await token1.cancel()
+        await anyio.sleep(0.01)
+
+        # Both should be cancelled without infinite loop
+        assert token1.is_cancelled
+        assert token2.is_cancelled

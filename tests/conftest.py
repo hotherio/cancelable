@@ -43,7 +43,7 @@ async def assert_cancelled_within(timeout: float, tolerance: float = 0.5):
 @pytest.fixture
 async def clean_registry():
     """Fixture that provides a clean OperationRegistry and cleans up after test."""
-    from cancelable.core.registry import OperationRegistry
+    from hother.cancelable.core.registry import OperationRegistry
     
     # Clear the singleton instance before test
     OperationRegistry._instance = None

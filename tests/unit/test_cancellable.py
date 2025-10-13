@@ -7,7 +7,7 @@ from datetime import timedelta
 import anyio
 import pytest
 
-from cancelable import Cancellable, CancellationReason, CancellationToken, OperationStatus, current_operation
+from hother.cancelable import Cancellable, CancellationReason, CancellationToken, OperationStatus, current_operation
 from tests.conftest import assert_cancelled_within
 
 

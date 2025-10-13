@@ -5,7 +5,7 @@ Tests for shielding functionality.
 import anyio
 import pytest
 
-from cancelable import Cancellable, OperationStatus
+from hother.cancelable import Cancellable, OperationStatus
 
 
 class TestShielding:

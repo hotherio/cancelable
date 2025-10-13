@@ -9,7 +9,7 @@ from statistics import mean
 import anyio
 import pytest
 
-from cancelable import Cancellable, CancellationToken, OperationRegistry
+from hother.cancelable import Cancellable, CancellationToken, OperationRegistry
 
 
 class TestCancellablePerformance:

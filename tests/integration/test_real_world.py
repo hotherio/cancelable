@@ -5,7 +5,7 @@ Integration tests for the async cancellation system.
 import anyio
 import pytest
 
-from cancelable import Cancellable, CancellationReason, CancellationToken, OperationRegistry, cancellable
+from hother.cancelable import Cancellable, CancellationReason, CancellationToken, OperationRegistry, cancellable
 
 
 class TestIntegration:

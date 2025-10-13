@@ -1,6 +1,6 @@
 """Tests for block parsers."""
 
-from cancelable.streaming.blocks.parsers import ActionParser, FileOperationsParser, FilePatchParser, HierarchyParser
+from hother.cancelable.streaming.blocks.parsers import ActionParser, FileOperationsParser, FilePatchParser, HierarchyParser
 
 
 class TestActionParser:

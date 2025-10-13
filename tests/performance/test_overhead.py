@@ -6,7 +6,7 @@ from statistics import mean
 import anyio
 import pytest
 
-from cancelable import Cancellable, CancellationToken
+from hother.cancelable import Cancellable, CancellationToken
 
 
 class TestPerformanceOverhead:

@@ -4,7 +4,7 @@ Tests for async cancellation models.
 
 from datetime import timedelta
 
-from cancelable import CancellationReason, OperationContext, OperationStatus
+from hother.cancelable import CancellationReason, OperationContext, OperationStatus
 
 
 class TestOperationStatus:

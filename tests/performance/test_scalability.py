@@ -6,7 +6,7 @@ import time
 import anyio
 import pytest
 
-from cancelable import Cancellable, OperationRegistry
+from hother.cancelable import Cancellable, OperationRegistry
 
 
 class TestScalability:

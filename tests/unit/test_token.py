@@ -7,8 +7,8 @@ from datetime import datetime
 import anyio
 import pytest
 
-from cancelable import CancellationReason, CancellationToken, ManualCancellation
-from cancelable.core.token import LinkedCancellationToken
+from hother.cancelable import CancellationReason, CancellationToken, ManualCancellation
+from hother.cancelable.core.token import LinkedCancellationToken
 
 
 class TestCancellationToken:

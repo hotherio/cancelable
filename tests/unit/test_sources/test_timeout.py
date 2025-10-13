@@ -3,7 +3,7 @@
 import anyio
 import pytest
 
-from cancelable.sources.timeout import TimeoutSource
+from hother.cancelable.sources.timeout import TimeoutSource
 
 
 class TestTimeoutSource:

@@ -7,7 +7,7 @@ from datetime import UTC, datetime, timedelta
 import anyio
 import pytest
 
-from cancelable import Cancellable, CancellationReason, OperationRegistry, OperationStatus
+from hother.cancelable import Cancellable, CancellationReason, OperationRegistry, OperationStatus
 
 
 class TestOperationRegistry:

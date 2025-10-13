@@ -3,7 +3,7 @@
 import pytest
 from pydantic import ValidationError
 
-from cancelable.streaming.blocks.models import BlockExtractionState, BlockExtractionStatus, ExtractedBlock
+from hother.cancelable.streaming.blocks.models import BlockExtractionState, BlockExtractionStatus, ExtractedBlock
 
 
 class TestExtractedBlock:

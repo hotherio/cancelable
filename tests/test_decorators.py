@@ -7,8 +7,8 @@ from datetime import timedelta
 import anyio
 import pytest
 
-from cancelable import Cancellable, current_operation
-from cancelable.utils.decorators import cancellable, cancellable_method, with_current_operation, with_timeout
+from hother.cancelable import Cancellable, current_operation
+from hother.cancelable.utils.decorators import cancellable, cancellable_method, with_current_operation, with_timeout
 
 
 class TestCancellableDecorator:
@@ -67,14 +67,14 @@ class TestCancellableDecorator:
         async def custom_function(cancellable: Cancellable = None):
             nonlocal operation_found
             # Check registry while operation is running
-            from cancelable import OperationRegistry
+            from hother.cancelable import OperationRegistry
 
             registry = OperationRegistry.get_instance()
             ops = await registry.list_operations()
             operation_found = any(op.id == "custom-op-123" for op in ops)
             return cancellable.context.id
 
-        from cancelable import OperationRegistry
+        from hother.cancelable import OperationRegistry
 
         registry = OperationRegistry.get_instance()
 

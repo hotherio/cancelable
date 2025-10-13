@@ -7,7 +7,7 @@ from typing import AsyncGenerator
 import anyio
 import pytest
 
-from cancelable.streaming.blocks import BlockRegistry, process_stream_with_blocks
+from hother.cancelable.streaming.blocks import BlockRegistry, process_stream_with_blocks
 
 
 async def create_test_stream(content: str) -> AsyncGenerator[dict, None]:
@@ -132,7 +132,7 @@ But it's just content, not a real block
 @pytest.mark.anyio  # Changed from pytest.mark.asyncio
 async def test_cancellation():
     """Test cancellation support."""
-    from cancelable import Cancellable, CancellationToken
+    from hother.cancelable import Cancellable, CancellationToken
 
     content = """
 !!test01:simple

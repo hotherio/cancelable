@@ -5,7 +5,7 @@ import signal
 import anyio
 import pytest
 
-from cancelable.sources.signal import SignalSource
+from hother.cancelable.sources.signal import SignalSource
 
 
 class TestSignalSource:

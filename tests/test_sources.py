@@ -8,11 +8,11 @@ from datetime import timedelta
 import anyio
 import pytest
 
-from cancelable.core.models import CancellationReason
-from cancelable.sources.composite import AnyOfSource, CompositeSource
-from cancelable.sources.condition import ConditionSource
-from cancelable.sources.signal import SignalSource
-from cancelable.sources.timeout import TimeoutSource
+from hother.cancelable.core.models import CancellationReason
+from hother.cancelable.sources.composite import AnyOfSource, CompositeSource
+from hother.cancelable.sources.condition import ConditionSource
+from hother.cancelable.sources.signal import SignalSource
+from hother.cancelable.sources.timeout import TimeoutSource
 
 
 class TestTimeoutSource:
@@ -27,7 +27,7 @@ class TestTimeoutSource:
         assert not source.triggered
 
         # Test with actual cancellable
-        from cancelable import Cancellable
+        from hother.cancelable import Cancellable
 
         start = anyio.current_time()
         with pytest.raises(anyio.get_cancelled_exc_class()):
@@ -58,7 +58,7 @@ class TestTimeoutSource:
         source = TimeoutSource(0.1)
 
         # Create a cancellable that uses this source
-        from cancelable import Cancellable
+        from hother.cancelable import Cancellable
 
         cancellable = Cancellable()
         cancellable._sources.append(source)
@@ -132,7 +132,7 @@ class TestConditionSource:
             return check_count >= 3
 
         # Test with actual cancellable
-        from cancelable import Cancellable
+        from hother.cancelable import Cancellable
 
         start = anyio.current_time()
         with pytest.raises(anyio.get_cancelled_exc_class()):
@@ -155,7 +155,7 @@ class TestConditionSource:
             return check_count >= 2
 
         # Test with actual cancellable
-        from cancelable import Cancellable
+        from hother.cancelable import Cancellable
 
         with pytest.raises(anyio.get_cancelled_exc_class()):
             async with Cancellable.with_condition(async_condition, check_interval=0.1):
@@ -176,7 +176,7 @@ class TestConditionSource:
             return call_count >= 4
 
         # Test with actual cancellable
-        from cancelable import Cancellable
+        from hother.cancelable import Cancellable
 
         with pytest.raises(anyio.get_cancelled_exc_class()):
             async with Cancellable.with_condition(faulty_condition, check_interval=0.05):
@@ -216,7 +216,7 @@ class TestCompositeSource:
     @pytest.mark.anyio
     async def test_composite_any_of(self):
         """Test composite source with ANY logic."""
-        from cancelable import Cancellable
+        from hother.cancelable import Cancellable
 
         # Create two cancellables with different timeouts
         cancel1 = Cancellable.with_timeout(0.2)
@@ -248,7 +248,7 @@ class TestCompositeSource:
     @pytest.mark.anyio
     async def test_composite_multiple_types(self):
         """Test combining different source types."""
-        from cancelable import Cancellable
+        from hother.cancelable import Cancellable
 
         check_count = 0
 
@@ -285,7 +285,7 @@ class TestAllOfSource:
         # since our current combine() implements ANY logic
         # Let's test the concept with manual coordination
 
-        from cancelable import Cancellable, CancellationToken
+        from hother.cancelable import Cancellable, CancellationToken
 
         token1 = CancellationToken()
         token2 = CancellationToken()
@@ -332,7 +332,7 @@ class TestAllOfSource:
         # This is more of a conceptual test since we don't have AllOfSource implemented
         # in the main codebase yet
 
-        from cancelable import Cancellable, CancellationToken
+        from hother.cancelable import Cancellable, CancellationToken
 
         token1 = CancellationToken()
         token2 = CancellationToken()

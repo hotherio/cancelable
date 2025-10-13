@@ -5,8 +5,8 @@ Tests for stream utilities.
 import anyio
 import pytest
 
-from cancelable import Cancellable, CancellationToken
-from cancelable.utils.streams import CancellableAsyncIterator, cancellable_stream, chunked_cancellable_stream
+from hother.cancelable import Cancellable, CancellationToken
+from hother.cancelable.utils.streams import CancellableAsyncIterator, cancellable_stream, chunked_cancellable_stream
 
 
 class TestCancellableStream:

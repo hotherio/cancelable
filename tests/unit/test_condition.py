@@ -3,8 +3,8 @@
 import anyio
 import pytest
 
-from cancelable.core.models import CancellationReason
-from cancelable.sources.condition import ConditionSource, ResourceConditionSource
+from hother.cancelable.core.models import CancellationReason
+from hother.cancelable.sources.condition import ConditionSource, ResourceConditionSource
 
 
 class TestConditionSource:
@@ -21,7 +21,7 @@ class TestConditionSource:
             return check_count >= 3
 
         # Use the proper Cancellable API
-        from cancelable import Cancellable
+        from hother.cancelable import Cancellable
 
         cancellable = Cancellable.with_condition(condition, check_interval=0.05, condition_name="test_condition")
 
@@ -49,7 +49,7 @@ class TestConditionSource:
             await anyio.sleep(0.01)  # Simulate async work
             return check_count >= 2
 
-        from cancelable import Cancellable
+        from hother.cancelable import Cancellable
 
         cancellable = Cancellable.with_condition(async_condition, check_interval=0.1)
 
@@ -72,7 +72,7 @@ class TestConditionSource:
                 raise ValueError("Condition error")
             return call_count >= 4
 
-        from cancelable import Cancellable
+        from hother.cancelable import Cancellable
 
         cancellable = Cancellable.with_condition(faulty_condition, check_interval=0.05)
 

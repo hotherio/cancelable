@@ -3,7 +3,7 @@
 import anyio
 import pytest
 
-from cancelable import Cancellable, CancellationReason, CancellationToken
+from hother.cancelable import Cancellable, CancellationReason, CancellationToken
 
 
 class TestCancellableComposition:

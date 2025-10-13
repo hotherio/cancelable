@@ -1,33 +1,37 @@
-# Lefthook configuration for Python project
-# Fast and powerful Git hooks manager
+skip_output:
+  - meta
+  - success
+  - failure
 
 pre-commit:
   parallel: true
   commands:
-    # Python linting and formatting with Ruff
-    ruff-check:
-      run: ruff check --fix --unsafe-fixes {staged_files}
+    ruff:
+      run: uv run ruff check --fix --unsafe-fixes {staged_files}
       glob: "*.py"
+      stage_fixed: true
 
     ruff-format:
-      run: ruff format {staged_files}
+      run: uv run ruff format {staged_files}
+      glob: "*.py"
+      stage_fixed: true
+
+    type-check:
+      run: 'uv run basedpyright src'
+      skip:
+        - merge
+        - rebase
+
+    # Security checks
+    security:
+      run: uv run ruff check --select=S {staged_files}
       glob: "*.py"
 
-    # Type checking
-    mypy:
-      run: mypy {staged_files}
+    # Import organization
+    imports:
+      run: uv run ruff check --select=I {staged_files}
       glob: "*.py"
-
-    # Non-Python file checks
-    trailing-whitespace:
-      run: |
-        for file in {staged_files}; do
-          if [[ "$file" != *.py ]]; then
-            sed -i.bak 's/[[:space:]]*$//' "$file" && rm -f "$file.bak"
-          fi
-        done
-      glob: "*"
-      exclude: "*.py|*.egg-info/*"
+      stage_fixed: true
 
     end-of-file:
       run: |
@@ -43,20 +47,21 @@ pre-commit:
 
     # File format validation
     check-json:
-      run: python -m json.tool {staged_files} > /dev/null
+      run: python3 -m json.tool {staged_files} > /dev/null
       glob: "*.json"
 
     check-yaml:
       run: |
         for file in {staged_files}; do
-          python -c "import yaml; yaml.safe_load(open('$file'))"
+          uv run python -c "import yaml; yaml.safe_load(open('$file'))"
         done
       glob: "*.{yml,yaml}"
+      exclude: "mkdocs.yml"
 
     check-toml:
       run: |
         for file in {staged_files}; do
-          python -c "import tomllib; tomllib.load(open('$file', 'rb'))"
+          python3 -c "import tomllib; tomllib.load(open('$file', 'rb'))"
         done
       glob: "*.toml"
 
@@ -65,31 +70,38 @@ pre-commit:
       run: |
         if [ ! -f .secrets.baseline ]; then
           echo "Creating initial secrets baseline..."
-          detect-secrets scan > .secrets.baseline
+          uv run detect-secrets scan > .secrets.baseline
         fi
-        # Check staged files for secrets
-        git diff --staged --name-only -z | xargs -0 detect-secrets-hook --baseline .secrets.baseline
+        git diff --staged --name-only -z | xargs -0 uv run detect-secrets-hook --baseline .secrets.baseline
       glob: "*"
       exclude: "*.lock|*.egg-info/*|.secrets.baseline"
 
 pre-push:
   parallel: true
   commands:
+    # Full test suite
+    test:
+      run: uv run pytest --cov=hother.streamblocks --cov-report=term-missing --cov-report=xml
+      glob: "*.py"
+
+    # Comprehensive type checking
+    type-check-full:
+      run: uv run basedpyright src
+      glob: "*.py"
+
     # Verify dependency lock
     uv-lock:
       run: uv lock --check
 
-    # Check last commit message follows conventional commits
-    conventional-commits:
-      run: |
-        commit_regex='^(feat|fix|docs|style|refactor|test|chore|build|ci|perf|revert)(\(.+\))?: .+'
-        if ! git log -1 --pretty=%B | grep -qE "$commit_regex"; then
-          echo "❌ Last commit doesn't follow conventional commits format"
-          echo "Expected format: <type>(<scope>): <subject>"
-          echo "Example: feat(auth): add login functionality"
-          exit 1
-        fi
+    # Build and validate package
+    build-validate:
+      run: uv build --wheel --sdist
+      glob: "*.py"
 
+    # Documentation check
+    doc-check:
+      run: uv run mkdocs build --strict
+      glob: "*.md"
 
 commit-msg:
   commands:
@@ -120,8 +132,3 @@ commit-msg:
           echo "  fix(auth): resolve login timeout issue"
           exit 1
         fi
-
-# Skip hooks during rebase/merge
-skip_output:
-  - meta
-  - execution

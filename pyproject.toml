@@ -1,5 +1,5 @@
 [project]
-name = "cancelable"
+name = "hother-cancelable"
 dynamic = ["version"]
 description = "A comprehensive async cancellation system for Python streams"
 readme = "README.md"
@@ -48,7 +48,7 @@ build-backend = "hatchling.build"
 source = "vcs"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/cancelable"]
+packages = ["src/hother"]
 
 [tool.hatch.build.targets.sdist]
 include = [
@@ -123,7 +123,7 @@ ignore = [
 
 # Configure import sorting (replaces isort)
 [tool.ruff.isort]
-known-first-party = ["cancelable"]
+known-first-party = ["hother"]
 
 # Format settings
 [tool.ruff.format]
@@ -142,10 +142,10 @@ testpaths = ["tests"]
 python_files = "test_*.py"
 python_classes = "Test*"
 python_functions = "test_*"
-addopts = "--cov=cancelable --cov-report=term-missing --cov-report=html"
+addopts = "--cov=hother.cancelable --cov-report=term-missing --cov-report=html"
 
 [tool.coverage.run]
-source = ["src/cancelable"]
+source = ["src/hother/cancelable"]
 omit = ["*/tests/*", "*/__init__.py", "*/_version.py"]
 
 [tool.coverage.report]

@@ -9,9 +9,9 @@ from typing import AsyncIterator, List, Optional
 
 import anyio
 
-from cancelable import Cancellable, CancellationToken
-from cancelable.utils.streams import chunked_cancellable_stream
-from cancelable.utils.logging import configure_logging, get_logger
+from hother.cancelable import Cancellable, CancellationToken
+from hother.cancelable.utils.streams import chunked_cancellable_stream
+from hother.cancelable.utils.logging import configure_logging, get_logger
 
 # Configure logging
 configure_logging(log_level="INFO")

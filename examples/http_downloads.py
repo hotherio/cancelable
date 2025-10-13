@@ -9,9 +9,9 @@ from pathlib import Path
 import anyio
 import httpx
 
-from cancelable import Cancellable, CancellationToken, OperationRegistry
-from cancelable.integrations.httpx import CancellableHTTPClient, download_file
-from cancelable.utils.logging import configure_logging, get_logger
+from hother.cancelable import Cancellable, CancellationToken, OperationRegistry
+from hother.cancelable.integrations.httpx import CancellableHTTPClient, download_file
+from hother.cancelable.utils.logging import configure_logging, get_logger
 
 # Configure logging
 configure_logging(log_level="INFO")

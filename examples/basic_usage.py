@@ -7,8 +7,8 @@ import signal
 
 import anyio
 
-from cancelable import Cancellable, CancellationToken, OperationRegistry, cancellable, with_timeout
-from cancelable.utils.logging import configure_logging, get_logger
+from hother.cancelable import Cancellable, CancellationToken, OperationRegistry, cancellable, with_timeout
+from hother.cancelable.utils.logging import configure_logging, get_logger
 
 # Configure logging
 configure_logging(log_level="INFO")

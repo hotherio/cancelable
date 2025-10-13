@@ -17,9 +17,9 @@ from sqlalchemy import Boolean, Column, DateTime, Float, Integer, String, func, 
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import declarative_base
 
-from cancelable import Cancellable, cancellable
-from cancelable.integrations.sqlalchemy import cancellable_session
-from cancelable.utils.logging import configure_logging, get_logger
+from hother.cancelable import Cancellable, cancellable
+from hother.cancelable.integrations.sqlalchemy import cancellable_session
+from hother.cancelable.utils.logging import configure_logging, get_logger
 
 # Configure logging
 configure_logging(log_level="INFO")

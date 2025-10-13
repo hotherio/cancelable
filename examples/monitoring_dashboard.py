@@ -10,8 +10,8 @@ from typing import Any, Dict, List
 
 import anyio
 
-from cancelable import Cancellable, OperationRegistry, OperationStatus, cancellable
-from cancelable.utils.logging import configure_logging, get_logger
+from hother.cancelable import Cancellable, OperationRegistry, OperationStatus, cancellable
+from hother.cancelable.utils.logging import configure_logging, get_logger
 
 # Configure logging
 configure_logging(log_level="INFO")

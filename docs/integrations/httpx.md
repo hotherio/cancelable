@@ -7,7 +7,7 @@ The cancelable library provides a cancellable HTTP client built on top of HTTPX,
 The HTTPX integration is included when you install cancelable:
 
 ```bash
-uv add cancelable
+uv add hother-cancelable
 ```
 
 ## Basic Usage
@@ -15,8 +15,8 @@ uv add cancelable
 ### Cancellable HTTP Client
 
 ```python
-from cancelable import Cancellable
-from cancelable.integrations.httpx import CancellableHTTPClient
+from hother.cancelable import Cancellable
+from hother.cancelable.integrations.httpx import CancellableHTTPClient
 
 async with Cancellable.with_timeout(30.0) as cancel:
     async with CancellableHTTPClient(cancel) as client:
@@ -27,7 +27,7 @@ async with Cancellable.with_timeout(30.0) as cancel:
 ### File Downloads with Progress
 
 ```python
-from cancelable.integrations.httpx import download_file
+from hother.cancelable.integrations.httpx import download_file
 
 async with Cancellable.with_timeout(300.0) as cancel:
     cancel.on_progress(
@@ -47,7 +47,7 @@ async with Cancellable.with_timeout(300.0) as cancel:
 ### Request Cancellation
 
 ```python
-from cancelable import CancellationToken
+from hother.cancelable import CancellationToken
 
 # Manual cancellation
 token = CancellationToken()
@@ -137,7 +137,7 @@ async def download_with_detailed_progress(url: str, path: str):
 ### Handling Different Cancellation Scenarios
 
 ```python
-from cancelable import TimeoutCancellation, ManualCancellation
+from hother.cancelable import TimeoutCancellation, ManualCancellation
 from httpx import HTTPError
 
 async def resilient_request(url: str):
@@ -170,7 +170,7 @@ async def resilient_request(url: str):
 ## Example: Parallel Downloads with Cancellation
 
 ```python
-from cancelable import Cancellable, CancellationToken
+from hother.cancelable import Cancellable, CancellationToken
 
 async def download_multiple_files(urls: list[str], cancel_token: CancellationToken):
     """Download multiple files with shared cancellation."""

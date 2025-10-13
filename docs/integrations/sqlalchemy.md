@@ -7,7 +7,7 @@ The cancelable library provides integration with SQLAlchemy for cancellable data
 The SQLAlchemy integration is included when you install cancelable:
 
 ```bash
-uv add cancelable
+uv add hother-cancelable
 ```
 
 ## Basic Usage
@@ -16,8 +16,8 @@ uv add cancelable
 
 ```python
 from sqlalchemy.ext.asyncio import create_async_engine
-from cancelable import Cancellable
-from cancelable.integrations.sqlalchemy import cancellable_session
+from hother.cancelable import Cancellable
+from hother.cancelable.integrations.sqlalchemy import cancellable_session
 
 # Create async engine
 engine = create_async_engine("sqlite+aiosqlite:///example.db")
@@ -187,7 +187,7 @@ async def get_connection_with_cancel():
 
 ```python
 from sqlalchemy.exc import DBAPIError, IntegrityError
-from cancelable import TimeoutCancellation
+from hother.cancelable import TimeoutCancellation
 
 async def safe_database_operation():
     try:

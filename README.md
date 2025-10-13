@@ -15,7 +15,7 @@ A comprehensive, production-ready async cancellation system for Python 3.12+ usi
 ## Installation
 
 ```bash
-uv add cancelable
+uv add hother-cancelable
 ```
 
 ## Quick Start
@@ -23,14 +23,14 @@ uv add cancelable
 ### Basic Usage
 
 ```python
-from cancelable import Cancellable
+from hother.cancelable import Cancellable
 
 # Timeout-based cancellation
 async with Cancellable.with_timeout(30.0) as cancel:
     result = await long_running_operation()
 
 # Manual cancellation with token
-from cancelable import CancellationToken
+from hother.cancelable import CancellationToken
 
 token = CancellationToken()
 
@@ -51,7 +51,7 @@ async with Cancellable.with_timeout(60.0) as cancel:
 ### Function Decorators
 
 ```python
-from cancelable import cancellable
+from hother.cancelable import cancellable
 
 @cancellable(timeout=30.0, register_globally=True)
 async def process_data(data: list, cancellable: Cancellable = None):
@@ -187,19 +187,19 @@ The changelog is automatically updated and included in GitHub releases when you 
 
 Generate the licenses:
 ```
-uvx pip-licenses --from=mixed --order count -f md --output-file licenses.md
-uvx pip-licenses --from=mixed --order count -f csv --output-file licenses.csv
+uv run pip-licenses --from=mixed --order count -f md --output-file licenses.md
+uv run pip-licenses --from=mixed --order count -f csv --output-file licenses.csv
 ```
 
 Build the new documentation:
 ```
-uvx mike deploy --push --update-aliases <version> latest
-uvx mike set-default latest
-uvx mike list
+uv run mike deploy --push --update-aliases <version> latest
+uv run mike set-default latest
+uv run mike list
 ```
 Checking the documentation locally
 ```
-uvx mike serve
+uv run mike serve
 ```
 
 

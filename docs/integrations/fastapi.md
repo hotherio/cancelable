@@ -7,7 +7,7 @@ The cancelable library provides seamless integration with FastAPI for building c
 The FastAPI integration is included when you install cancelable:
 
 ```bash
-uv add cancelable
+uv add hother-cancelable
 ```
 
 ## Basic Usage
@@ -16,8 +16,8 @@ uv add cancelable
 
 ```python
 from fastapi import FastAPI, Depends
-from cancelable.integrations.fastapi import cancellable_dependency
-from cancelable import Cancellable
+from hother.cancelable.integrations.fastapi import cancellable_dependency
+from hother.cancelable import Cancellable
 
 app = FastAPI()
 
@@ -32,7 +32,7 @@ async def long_operation(cancel: Cancellable = Depends(cancellable_dependency)):
 ### Timeout Configuration
 
 ```python
-from cancelable.integrations.fastapi import cancellable_dependency
+from hother.cancelable.integrations.fastapi import cancellable_dependency
 
 # Create a custom dependency with timeout
 def get_cancellable_30s():
@@ -51,7 +51,7 @@ async def timeout_operation(cancel: Cancellable = Depends(get_cancellable_30s)):
 
 ```python
 from fastapi import BackgroundTasks
-from cancelable import CancellationToken
+from hother.cancelable import CancellationToken
 
 # Store tokens for background tasks
 background_tokens = {}
@@ -125,7 +125,7 @@ async def streaming_response(
 ## Example: File Upload with Progress
 
 ```python
-from cancelable import Cancellable
+from hother.cancelable import Cancellable
 from fastapi import UploadFile, File
 
 @app.post("/upload")
@@ -161,7 +161,7 @@ async def upload_file(
 ## Error Handling
 
 ```python
-from cancelable import TimeoutCancellation
+from hother.cancelable import TimeoutCancellation
 
 @app.get("/with-error-handling")
 async def with_error_handling(cancel: Cancellable = Depends(cancellable_dependency)):

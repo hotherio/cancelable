@@ -2,10 +2,12 @@
 
 ## Installation
 
-The async cancellation system is part of the Forge framework. Ensure you have the required dependencies:
+Install the package via pip or uv:
 
 ```bash
-uv pip install anyio asyncer structlog pydantic httpx
+pip install hother-cancelable
+# or
+uv add hother-cancelable
 ```
 
 ## Basic Concepts
@@ -15,7 +17,7 @@ uv pip install anyio asyncer structlog pydantic httpx
 A `Cancellable` provides a context for managing async operations that can be cancelled from various sources:
 
 ```python
-from forge.async_cancellation import Cancellable
+from hother.cancelable import Cancellable
 
 async with Cancellable() as cancel:
     # Your async operation here
@@ -36,7 +38,7 @@ Operations can be cancelled from multiple sources:
 ### Timeout Cancellation
 
 ```python
-from forge.async_cancellation import Cancellable
+from hother.cancelable import Cancellable
 from datetime import timedelta
 
 # Using seconds
@@ -51,7 +53,7 @@ async with Cancellable.with_timeout(timedelta(minutes=5)) as cancel:
 ### Manual Cancellation
 
 ```python
-from forge.async_cancellation import Cancellable, CancellationToken
+from hother.cancelable import Cancellable, CancellationToken
 
 # Create a token
 token = CancellationToken()

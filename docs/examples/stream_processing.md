@@ -11,7 +11,7 @@ Stream processing with cancellation support is crucial for handling large datase
 ### Simple Stream Cancellation
 
 ```python
-from cancelable import Cancellable
+from hother.cancelable import Cancellable
 import asyncio
 
 async def data_generator():

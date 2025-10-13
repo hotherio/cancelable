@@ -7,13 +7,13 @@ This guide covers the fundamental usage patterns of the cancelable library.
 ### Installation
 
 ```bash
-uv add cancelable
+uv add hother-cancelable
 ```
 
 ### Basic Imports
 
 ```python
-from cancelable import (
+from hother.cancelable import (
     Cancellable,
     CancellationToken,
     cancellable,
@@ -29,7 +29,7 @@ from cancelable import (
 
 ```python
 import asyncio
-from cancelable import Cancellable
+from hother.cancelable import Cancellable
 
 async def long_operation():
     """Simulate a long-running operation."""
@@ -132,7 +132,7 @@ async def parent_operation():
 ### Basic Decorator Usage
 
 ```python
-from cancelable import cancellable
+from hother.cancelable import cancellable
 
 @cancellable(timeout=5.0)
 async def process_data(items: list, cancellable: Cancellable = None):
@@ -272,7 +272,7 @@ async def buffered_stream_processing():
 ### Handling Different Cancellation Types
 
 ```python
-from cancelable import (
+from hother.cancelable import (
     TimeoutCancellation,
     ManualCancellation,
     SignalCancellation,
@@ -336,7 +336,7 @@ async def operation_with_cleanup():
 ### Monitoring Active Operations
 
 ```python
-from cancelable import OperationRegistry
+from hother.cancelable import OperationRegistry
 
 async def monitored_operation():
     # Register globally

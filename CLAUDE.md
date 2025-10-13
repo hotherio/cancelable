@@ -1,14 +1,16 @@
-# Cancelable - Async Cancellation System for Python
+# hother.cancelable - Async Cancellation System for Python
 
 ## Overview
 
-Cancelable is a comprehensive async cancellation system for Python streams, providing unified cancellation handling from multiple sources including timeouts, tokens, signals, and conditions.
+hother.cancelable is a comprehensive async cancellation system for Python streams, providing unified cancellation handling from multiple sources including timeouts, tokens, signals, and conditions.
+
+This is a namespace package under the `hother` namespace. Install with `pip install hother-cancelable` and import as `from hother.cancelable import ...`.
 
 ## Project Structure
 
 ```
 cancelable/
-├── src/cancelable/          # Main package source
+├── src/hother/cancelable/   # Main package source (namespace package)
 │   ├── core/               # Core cancellation functionality
 │   ├── sources/            # Cancellation sources (timeout, signal, condition)
 │   ├── integrations/       # Third-party integrations (httpx, FastAPI, SQLAlchemy)
@@ -44,7 +46,7 @@ uv run pytest
 uv run pytest tests/unit/test_cancellable.py -v
 
 # Run with coverage
-uv run pytest --cov=cancelable
+uv run pytest --cov=hother.cancelable
 ```
 
 ### Linting & Formatting
@@ -70,13 +72,15 @@ uv run mike deploy --update-aliases 0.1 latest
 
 ## Important Notes
 
-1. **Import Structure**: The package was transformed from `forge.utils.async_utils` to `cancelable`. All imports should use the new structure.
+1. **Namespace Package**: This is a namespace package under `hother`. Install with `pip install hother-cancelable` and import as `from hother.cancelable import ...`.
 
-2. **Test Fixtures**: Tests use pytest with anyio backend. The `clean_registry` fixture ensures a clean OperationRegistry for each test.
+2. **Import Structure**: The package was transformed from `forge.utils.async_utils` to `hother.cancelable`. All imports should use the new structure.
 
-3. **Async Context Manager**: The Cancellable class is an async context manager that properly handles CancelledError propagation.
+3. **Test Fixtures**: Tests use pytest with anyio backend. The `clean_registry` fixture ensures a clean OperationRegistry for each test.
 
-4. **Dependencies**: 
+4. **Async Context Manager**: The Cancellable class is an async context manager that properly handles CancelledError propagation.
+
+5. **Dependencies**:
    - anyio for async operations
    - pydantic for models
    - structlog for logging

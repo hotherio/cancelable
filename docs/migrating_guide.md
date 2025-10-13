@@ -14,7 +14,7 @@ async with asyncio.timeout(30):
 
 ### After:
 ```python
-from cancelable import Cancellable
+from hother.cancelable import Cancellable
 
 async with Cancellable.with_timeout(30) as cancel:
     result = await long_operation()
@@ -41,7 +41,7 @@ with anyio.CancelScope() as scope:
 
 ### After:
 ```python
-from cancelable import Cancellable
+from hother.cancelable import Cancellable
 
 async with Cancellable.with_timeout(30) as cancel:
     await operation()
@@ -113,7 +113,7 @@ async def process_stream(stream):
 
 ### After:
 ```python
-from cancelable import Cancellable
+from hother.cancelable import Cancellable
 
 async def process_stream(stream):
     async with Cancellable() as cancel:

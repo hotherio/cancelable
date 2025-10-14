@@ -2,6 +2,9 @@
 Thread-safe cancellation token implementation.
 """
 
+from __future__ import annotations
+
+import threading
 import uuid
 from datetime import UTC, datetime
 from typing import Any
@@ -11,6 +14,7 @@ from pydantic import BaseModel, ConfigDict, Field, PrivateAttr
 
 from hother.cancelable.core.exceptions import ManualCancellation
 from hother.cancelable.core.models import CancellationReason
+from hother.cancelable.utils.anyio_bridge import call_soon_threadsafe
 from hother.cancelable.utils.logging import get_logger
 
 logger = get_logger(__name__)
@@ -39,12 +43,14 @@ class CancellationToken(BaseModel):
     # Private fields using PrivateAttr
     _event: Any = PrivateAttr(default=None)
     _lock: Any = PrivateAttr(default=None)
+    _state_lock: Any = PrivateAttr(default=None)  # Thread-safe lock for state updates
     _callbacks: Any = PrivateAttr(default=None)
 
     def __init__(self, **data):
         super().__init__(**data)
         self._event = anyio.Event()
         self._lock = anyio.Lock()
+        self._state_lock = threading.Lock()  # Thread-safe lock for state updates
         self._callbacks = []
 
         logger.debug("Created cancellation token", token_id=self.id)
@@ -109,6 +115,113 @@ class CancellationToken(BaseModel):
 
             logger.info(f"=== CANCEL COMPLETED for token {self.id} ===")
             return True
+
+    def cancel_sync(
+        self,
+        reason: CancellationReason = CancellationReason.MANUAL,
+        message: str | None = None,
+    ) -> bool:
+        """
+        Thread-safe synchronous cancellation from any thread.
+
+        This method can be called from regular Python threads (pynput, signal handlers, etc.)
+        and will safely cancel the token and notify async waiters via the anyio bridge.
+
+        Args:
+            reason: Reason for cancellation
+            message: Optional cancellation message
+
+        Returns:
+            True if token was cancelled, False if already cancelled
+
+        Example:
+            ```python
+            def on_signal(signum):
+                # Called from signal handler thread
+                token.cancel_sync(CancellationReason.SIGNAL)
+            ```
+        """
+        logger.info(f"=== CANCEL_SYNC CALLED on token {self.id} from thread ===")
+
+        # Update state with thread-safe lock
+        with self._state_lock:
+            if self.is_cancelled:
+                logger.debug(
+                    "Token already cancelled",
+                    token_id=self.id,
+                    original_reason=self.reason.value if self.reason else None,
+                )
+                return False
+
+            self.is_cancelled = True
+            self.reason = reason
+            self.message = message
+            self.cancelled_at = datetime.now(UTC)
+
+        logger.info(
+            f"Token {self.id} cancelled (sync) - notifying async waiters",
+            token_id=self.id,
+            reason=reason.value,
+            message=message,
+        )
+
+        # Notify async waiters (thread-safe)
+        self._notify_async_waiters()
+
+        # Schedule callbacks (thread-safe)
+        self._schedule_callbacks()
+
+        logger.info(f"=== CANCEL_SYNC COMPLETED for token {self.id} ===")
+        return True
+
+    def _notify_async_waiters(self) -> None:
+        """
+        Set the anyio event from a thread.
+
+        Uses the anyio bridge to safely set the event in the anyio context.
+        """
+
+        def set_event() -> None:
+            self._event.set()
+
+        call_soon_threadsafe(set_event)
+
+    def _schedule_callbacks(self) -> None:
+        """
+        Schedule callbacks to run in the anyio context.
+
+        Uses the anyio bridge to safely execute callbacks from a thread.
+        """
+        # Take snapshot of callbacks with thread-safe lock
+        with self._state_lock:
+            callbacks_to_call = list(self._callbacks)
+
+        logger.info(
+            f"Scheduling {len(callbacks_to_call)} callbacks for token {self.id}",
+            token_id=self.id,
+            callback_count=len(callbacks_to_call),
+        )
+
+        # Schedule each callback via bridge
+        for i, callback in enumerate(callbacks_to_call):
+
+            async def run_callback(
+                idx: int = i, cb: Any = callback
+            ) -> None:  # Capture loop variables
+                try:
+                    logger.info(f"Calling callback {idx} for token {self.id}")
+                    await cb(self)
+                    logger.info(f"Callback {idx} completed successfully")
+                except Exception as e:
+                    logger.error(
+                        "Error in cancellation callback",
+                        token_id=self.id,
+                        callback_index=idx,
+                        error=str(e),
+                        exc_info=True,
+                    )
+
+            call_soon_threadsafe(run_callback)
 
     async def wait_for_cancel(self) -> None:
         """Wait until token is cancelled."""

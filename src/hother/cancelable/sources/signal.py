@@ -2,6 +2,8 @@
 Signal-based cancellation source implementation.
 """
 
+from __future__ import annotations
+
 import signal
 import weakref
 from collections.abc import Callable
@@ -10,6 +12,7 @@ import anyio
 
 from hother.cancelable.core.models import CancellationReason
 from hother.cancelable.sources.base import CancellationSource
+from hother.cancelable.utils.anyio_bridge import call_soon_threadsafe
 from hother.cancelable.utils.logging import get_logger
 
 logger = get_logger(__name__)
@@ -154,6 +157,9 @@ class SignalSource(CancellationSource):
         """
         Handle signal reception.
 
+        This method is called from the signal handler thread and uses the anyio bridge
+        to safely schedule the cancellation in the anyio context.
+
         Args:
             signum: Signal number received
         """
@@ -166,30 +172,24 @@ class SignalSource(CancellationSource):
             if signum in signal.Signals._value2member_map_:
                 signal_name = signal.Signals(signum).name
 
-            # Schedule cancellation in the event loop
+            # Schedule cancellation via anyio bridge (thread-safe)
             if self.scope:
-                try:
-                    # Use sniffio to detect the async library
-                    import sniffio
+                message = f"Received signal {signal_name} ({signum})"
 
-                    library = sniffio.current_async_library()
+                async def schedule_cancellation() -> None:
+                    """Async wrapper to call trigger_cancellation."""
+                    try:
+                        await self.trigger_cancellation(message)
+                    except Exception as e:
+                        logger.error(
+                            "Failed to trigger cancellation from signal",
+                            signal=signum,
+                            error=str(e),
+                            exc_info=True,
+                        )
 
-                    if library == "trio":
-                        import trio
-
-                        trio.from_thread.run_sync(self.trigger_cancellation, f"Received signal {signal_name} ({signum})")
-                    else:  # asyncio
-                        import asyncio
-
-                        loop = asyncio.get_event_loop()
-                        asyncio.run_coroutine_threadsafe(self.trigger_cancellation(f"Received signal {signal_name} ({signum})"), loop)
-                except Exception as e:
-                    logger.error(
-                        "Failed to trigger cancellation from signal",
-                        signal=signum,
-                        error=str(e),
-                        exc_info=True,
-                    )
+                # Use bridge to schedule in anyio context
+                call_soon_threadsafe(schedule_cancellation)
 
     @staticmethod
     def _cleanup_ref(ref: weakref.ref) -> None:

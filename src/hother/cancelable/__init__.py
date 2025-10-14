@@ -17,6 +17,7 @@ from .core.exceptions import (
 from .core.models import CancellationReason, OperationContext, OperationStatus
 from .core.registry import OperationRegistry
 from .core.token import CancellationToken
+from .utils.anyio_bridge import AnyioBridge, call_soon_threadsafe
 from .utils.decorators import cancellable, with_timeout
 from .utils.streams import cancellable_stream
 
@@ -43,4 +44,6 @@ __all__ = [
     "cancellable",
     "with_timeout",
     "cancellable_stream",
+    "AnyioBridge",
+    "call_soon_threadsafe",
 ]

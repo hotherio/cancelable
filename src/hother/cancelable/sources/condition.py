@@ -2,7 +2,6 @@
 Condition-based cancellation source implementation.
 """
 
-import asyncio
 import inspect
 from collections.abc import Awaitable, Callable
 
@@ -44,7 +43,7 @@ class ConditionSource(CancellationSource):
         self.check_interval = check_interval
         self.condition_name = condition_name or getattr(condition, "__name__", "condition")
         self.triggered = False
-        self._monitor_task = None
+        self._task_group: anyio.abc.TaskGroup | None = None
 
         # Validate check interval
         if check_interval <= 0:
@@ -62,8 +61,12 @@ class ConditionSource(CancellationSource):
         """
         self.scope = scope
 
+        # Create task group for background monitoring
+        self._task_group = anyio.create_task_group()
+        await self._task_group.__aenter__()
+
         # Start monitoring task
-        self._monitor_task = asyncio.create_task(self._monitor_condition())
+        self._task_group.start_soon(self._monitor_condition)
 
         logger.debug(
             "Condition source activated",
@@ -74,13 +77,21 @@ class ConditionSource(CancellationSource):
 
     async def stop_monitoring(self) -> None:
         """Stop monitoring the condition."""
-        if self._monitor_task:
-            self._monitor_task.cancel()
+        if self._task_group:
+            # Cancel all tasks in the group
+            self._task_group.cancel_scope.cancel()
+
+            # Try to properly exit the task group, but shield from cancellation
+            # and handle errors if we're in a different context
             try:
-                await self._monitor_task
-            except asyncio.CancelledError:
-                pass
-            self._monitor_task = None
+                with anyio.CancelScope(shield=True):
+                    await self._task_group.__aexit__(None, None, None)
+            except (anyio.get_cancelled_exc_class(), RuntimeError, Exception) as e:
+                # Task group exit failed, likely due to context mismatch
+                # This is acceptable as the cancel scope was already cancelled
+                logger.debug(f"Task group cleanup skipped: {type(e).__name__}")
+            finally:
+                self._task_group = None
 
         logger.debug(
             "Condition source stopped",
@@ -129,7 +140,7 @@ class ConditionSource(CancellationSource):
                 # Wait before next check
                 await anyio.sleep(self.check_interval)
 
-        except asyncio.CancelledError:
+        except anyio.get_cancelled_exc_class():
             # Task was cancelled
             logger.debug("Condition monitoring task cancelled")
             raise

@@ -48,14 +48,14 @@ class CompositeSource(CancellationSource):
             scope: Cancel scope to trigger when any source triggers
         """
         self.scope = scope
-        self._monitoring_tasks = []
+
+        # Create task group for background monitoring
+        self._task_group = anyio.create_task_group()
+        await self._task_group.__aenter__()
 
         # Start each source with a wrapper
-        import asyncio
-
         for source in self.sources:
-            task = asyncio.create_task(self._monitor_source(source))
-            self._monitoring_tasks.append(task)
+            self._task_group.start_soon(self._monitor_source, source)
 
         logger.debug(
             "Composite source activated",
@@ -66,17 +66,21 @@ class CompositeSource(CancellationSource):
 
     async def stop_monitoring(self) -> None:
         """Stop monitoring all component sources."""
-        # Cancel monitoring tasks
-        if hasattr(self, "_monitoring_tasks"):
-            for task in self._monitoring_tasks:
-                task.cancel()
+        # Cancel monitoring task group
+        if hasattr(self, "_task_group") and self._task_group:
+            self._task_group.cancel_scope.cancel()
 
-            # Wait for all tasks to complete
-            for task in self._monitoring_tasks:
-                try:
-                    await task
-                except asyncio.CancelledError:
-                    pass
+            # Try to properly exit the task group, but shield from cancellation
+            # and handle errors if we're in a different context
+            try:
+                with anyio.CancelScope(shield=True):
+                    await self._task_group.__aexit__(None, None, None)
+            except (anyio.get_cancelled_exc_class(), RuntimeError, Exception) as e:
+                # Task group exit failed, likely due to context mismatch
+                # This is acceptable as the cancel scope was already cancelled
+                logger.debug(f"Task group cleanup skipped: {type(e).__name__}")
+            finally:
+                self._task_group = None
 
         # Stop each source
         for source in self.sources:

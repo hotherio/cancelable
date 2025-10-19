@@ -30,6 +30,8 @@ dependencies = [
     "aiofiles>=24.1.0",
     "pynput>=1.8.1",
     "google-genai>=1.43.0",
+    "psutil",
+    "psutils>=3.3.14",
 ]
 
 

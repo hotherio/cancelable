@@ -4,6 +4,7 @@ Main Cancellable class implementation.
 
 import contextvars
 import inspect
+import weakref
 from collections.abc import AsyncIterator, Awaitable, Callable
 from contextlib import asynccontextmanager
 from datetime import timedelta
@@ -17,6 +18,7 @@ from hother.cancelable.core.exceptions import CancellationError
 from hother.cancelable.core.models import CancellationReason, OperationContext, OperationStatus
 from hother.cancelable.core.token import CancellationToken, LinkedCancellationToken
 from hother.cancelable.sources.base import CancellationSource
+from hother.cancelable.utils.context_bridge import ContextBridge
 from hother.cancelable.utils.logging import get_logger
 
 if TYPE_CHECKING:
@@ -81,8 +83,14 @@ class Cancellable:
 
         self._scope: anyio.CancelScope | None = None
         self._token = LinkedCancellationToken()
-        self._parent = parent
-        self._children: set[Cancellable] = set()
+
+        # Use weak references to break circular reference cycles
+        self._parent_ref = weakref.ref(parent) if parent else None
+        self._children: weakref.WeakSet["Cancellable"] = weakref.WeakSet()
+
+        # Register with parent if provided (parent holds strong refs to children)
+        if parent:
+            parent._children.add(self)
         self._sources: list[CancellationSource] = []
         self._shields: list[anyio.CancelScope] = []
         self._cancellables_to_link: list["Cancellable"] | None = None
@@ -334,6 +342,59 @@ class Cancellable:
         logger.info(f"=== COMPLETED ENTER for {self.context.id} ===")
         return self
 
+    @property
+    def parent(self) -> Optional["Cancellable"]:
+        """Get parent cancellable, returning None if garbage collected."""
+        return self._parent_ref() if self._parent_ref else None
+
+    async def run_in_thread(self, func: Callable[..., T], *args, **kwargs) -> T:
+        """
+        Run function in thread with proper context propagation.
+
+        This method solves the context variable thread safety issue by ensuring
+        that context variables (including _current_operation) are properly
+        propagated to OS threads.
+
+        Args:
+            func: Function to run in thread
+            *args: Positional arguments for func
+            **kwargs: Keyword arguments for func
+
+        Returns:
+            Result of func execution
+
+        Example:
+            ```python
+            async with Cancellable(name="main") as cancel:
+                # Context is propagated to thread
+                result = await cancel.run_in_thread(expensive_computation, data)
+            ```
+        """
+        # Store current context for thread propagation
+        ctx = ContextBridge.copy_context()
+
+        def thread_func():
+            # Restore context in thread
+            ContextBridge.restore_context(ctx)
+            # Set current operation in thread
+            _current_operation.set(self)
+            return func(*args, **kwargs)
+
+        # Run in thread with context
+        return await ContextBridge.run_in_thread_with_context(thread_func)
+
+    def __del__(self):
+        """Cleanup when cancellable is garbage collected."""
+        # Remove from parent's children set (if parent still exists)
+        if self._parent_ref:
+            parent = self._parent_ref()
+            if parent and self in parent._children:
+                parent._children.remove(self)
+
+        # Clear references to help GC
+        self._parent_ref = None
+        self._children.clear()
+
     async def __aexit__(self, exc_type, exc_val, exc_tb) -> bool:
         """Exit cancellation context."""
         logger.debug(f"=== ENTERING __aexit__ for {self.context.id} ===")
@@ -498,9 +559,10 @@ class Cancellable:
 
             try:
                 # Link to parent token if we have a parent
-                if self._parent:
-                    logger.info(f"Linking to parent token: {self._parent._token.id}")
-                    await self._token.link(self._parent._token)
+                parent = self.parent
+                if parent:
+                    logger.info(f"Linking to parent token: {parent._token.id}")
+                    await self._token.link(parent._token)
 
                 # Recursively link to ALL underlying tokens from combined cancellables
                 if self._cancellables_to_link is not None:
@@ -685,12 +747,18 @@ class Cancellable:
 
         # Cancel children if requested
         if propagate_to_children:
-            for child in self._children:
-                await child.cancel(
-                    CancellationReason.PARENT,
-                    f"Parent operation {self.context.id[:8]} cancelled",
-                    propagate_to_children=True,
-                )
+            children_to_cancel = list(self._children)  # Snapshot to avoid modification during iteration
+            for child in children_to_cancel:
+                if child and not child.is_cancelled:
+                    await child.cancel(
+                        CancellationReason.PARENT,
+                        f"Parent operation {self.context.id[:8]} cancelled",
+                        propagate_to_children=True,
+                    )
+
+        # Clear references to help GC after cancellation
+        self._children.clear()
+        self._parent_ref = None
 
         # Log without duplicating cancel_reason
         log_ctx = self.context.log_context()

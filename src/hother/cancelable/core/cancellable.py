@@ -638,14 +638,24 @@ class Cancellable:
         """
         Shield a section from cancellation.
 
+        Creates a child operation that is protected from cancellation but still
+        participates in the operation hierarchy for monitoring and tracking.
+
         Yields:
             A new Cancellable for the shielded section
         """
-        # Create child cancellable for the shielded section
-        # Set parent_id but don't use parent parameter to avoid token linking
-        shielded = Cancellable(name=f"{self.context.name}_shielded", metadata={"shielded": True})
-        # Manually set parent_id to avoid token linking
+        # Create properly integrated child cancellable
+        shielded = Cancellable(
+            name=f"{self.context.name}_shielded",
+            metadata={"shielded": True}
+        )
+        # Manually set parent relationship for hierarchy tracking but don't add to _children
+        # to prevent automatic cancellation propagation
         shielded.context.parent_id = self.context.id
+
+        # Override token linking to prevent cancellation propagation
+        # The shielded operation should not be cancelled by parent token
+        shielded._token = LinkedCancellationToken()  # Fresh token, no parent linking
 
         # Use anyio's CancelScope with shield=True
         with anyio.CancelScope(shield=True) as shield_scope:

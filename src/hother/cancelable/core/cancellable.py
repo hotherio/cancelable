@@ -60,12 +60,15 @@ class Cancellable:
         context_kwargs = {
             "name": name,
             "metadata": metadata or {},
-            "parent_id": parent.context.id if parent else None,
         }
         if operation_id is not None:
             context_kwargs["id"] = operation_id
 
         self.context = OperationContext(**context_kwargs)
+
+        # Set parent relationship after context creation
+        if parent:
+            self.context.parent_id = parent.context.id
 
         self._scope: anyio.CancelScope | None = None
         self._token = LinkedCancellationToken()

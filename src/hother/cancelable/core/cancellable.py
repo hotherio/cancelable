@@ -340,8 +340,6 @@ class Cancellable:
         logger.debug(f"Current status: {self.context.status}")
         logger.debug(f"Current cancel_reason: {self.context.cancel_reason}")
 
-        suppress_exception = False
-
         try:
             # Exit the scope first - sync operation
             scope_handled = False
@@ -448,8 +446,9 @@ class Cancellable:
                 **self.context.log_context(),
             )
 
-        # Return False to propagate exceptions
-        return suppress_exception
+        # Always propagate exceptions - cancellation context should not suppress them
+        # The anyio.CancelScope handles cancellation propagation appropriately
+        return False
 
     async def _collect_all_tokens(self, cancellables: list["Cancellable"], result: list[CancellationToken]) -> None:
         """Recursively collect all tokens from cancellables and their children."""

@@ -4,19 +4,18 @@ Logging utilities for the cancelable library.
 
 import logging
 import sys
+from typing import Optional
 
-import structlog
 
-
-def get_logger(name: str | None = None) -> structlog.BoundLogger:
+def get_logger(name: Optional[str] = None) -> logging.Logger:
     """
-    Get a structured logger instance.
-    
+    Get a standard library logger instance.
+
     Args:
         name: Logger name. If None, uses the calling module's name
-        
+
     Returns:
-        A configured structlog bound logger
+        A configured standard library logger
     """
     if name is None:
         import inspect
@@ -26,7 +25,7 @@ def get_logger(name: str | None = None) -> structlog.BoundLogger:
         else:
             name = 'cancelable'
 
-    return structlog.get_logger(name)
+    return logging.getLogger(name)
 
 
 def configure_logging(
@@ -35,39 +34,38 @@ def configure_logging(
     dev_mode: bool = True
 ) -> None:
     """
-    Configure structured logging for the library.
-    
+    Configure standard library logging for the library.
+
     Args:
         log_level: Logging level (DEBUG, INFO, WARNING, ERROR)
         json_output: Whether to output JSON format
         dev_mode: Whether to use dev-friendly console output
     """
     # Configure standard logging
-    logging.basicConfig(
-        level=getattr(logging, log_level.upper()),
-        stream=sys.stdout,
-        format="%(message)s",
-    )
-
-    # Configure structlog
-    processors = [
-        structlog.stdlib.add_log_level,
-        structlog.stdlib.add_logger_name,
-        structlog.processors.TimeStamper(fmt="iso"),
-        structlog.processors.StackInfoRenderer(),
-        structlog.processors.format_exc_info,
-    ]
-
     if json_output:
-        processors.append(structlog.processors.JSONRenderer())
+        # JSON format for production
+        formatter = logging.Formatter(
+            '{"timestamp": "%(asctime)s", "level": "%(levelname)s", "name": "%(name)s", "message": "%(message)s"}'
+        )
     elif dev_mode:
-        processors.append(structlog.dev.ConsoleRenderer())
+        # Human-readable format for development
+        formatter = logging.Formatter(
+            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+        )
     else:
-        processors.append(structlog.processors.KeyValueRenderer())
+        # Simple format
+        formatter = logging.Formatter(
+            "%(levelname)s - %(name)s - %(message)s"
+        )
 
-    structlog.configure(
-        processors=processors,
-        context_class=dict,
-        logger_factory=structlog.stdlib.LoggerFactory(),
-        cache_logger_on_first_use=True,
-    )
+    # Setup handler
+    handler = logging.StreamHandler(sys.stdout)
+    handler.setFormatter(formatter)
+
+    # Configure root logger
+    root_logger = logging.getLogger()
+    root_logger.setLevel(getattr(logging, log_level.upper()))
+    root_logger.addHandler(handler)
+
+    # Prevent duplicate handlers if called multiple times
+    root_logger.propagate = False

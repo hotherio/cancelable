@@ -7,6 +7,7 @@ import inspect
 from collections.abc import AsyncIterator, Awaitable, Callable
 from contextlib import asynccontextmanager
 from datetime import timedelta
+from enum import Enum
 from functools import wraps
 from typing import TYPE_CHECKING, Any, Optional, TypeVar
 
@@ -28,6 +29,14 @@ R = TypeVar("R")
 
 # Context variable for current operation
 _current_operation: contextvars.ContextVar[Optional["Cancellable"]] = contextvars.ContextVar("current_operation", default=None)
+
+
+class LinkState(str, Enum):
+    """State of token linking process."""
+    NOT_LINKED = "not_linked"
+    LINKING = "linking"
+    LINKED = "linked"
+    CANCELLED = "cancelled"
 
 
 class Cancellable:
@@ -77,6 +86,10 @@ class Cancellable:
         self._sources: list[CancellationSource] = []
         self._shields: list[anyio.CancelScope] = []
         self._register_globally = register_globally
+
+        # Token linking state management
+        self._link_state = LinkState.NOT_LINKED
+        self._link_lock = anyio.Lock()
 
         # Callbacks
         self._progress_callbacks: list[Callable] = []
@@ -278,24 +291,8 @@ class Cancellable:
         # Set as current operation
         self._context_token = _current_operation.set(self)
 
-        # Link to parent token if we have a parent
-        if self._parent:
-            logger.info(f"Linking to parent token: {self._parent._token.id}")
-            await self._token.link(self._parent._token)
-
-        # Recursively link to ALL underlying tokens from combined cancellables
-        if hasattr(self, "_cancellables_to_link"):
-            logger.info(f"Linking to {len(self._cancellables_to_link)} combined cancellables")
-            all_tokens = []
-            await self._collect_all_tokens(self._cancellables_to_link, all_tokens)
-
-            # Check if we should preserve cancellation reasons
-            preserve_reason = self.context.metadata.get("preserve_reason", False)
-
-            logger.info(f"Found {len(all_tokens)} total tokens to link:")
-            for i, token in enumerate(all_tokens):
-                logger.info(f"  Token {i}: {token.id}")
-                await self._token.link(token, preserve_reason=preserve_reason)
+        # Safely link all required tokens with race condition protection
+        await self._safe_link_tokens()
 
         # Update status
         self.context.update_status(OperationStatus.RUNNING)
@@ -490,6 +487,52 @@ class Cancellable:
                     error=str(e),
                     exc_info=True,
                 )
+
+    async def _safe_link_tokens(self) -> None:
+        """Safely link all required tokens with race condition protection."""
+        async with self._link_lock:
+            if self._link_state != LinkState.NOT_LINKED:
+                return  # Already processed
+
+            self._link_state = LinkState.LINKING
+
+            try:
+                # Link to parent token if we have a parent
+                if self._parent:
+                    logger.info(f"Linking to parent token: {self._parent._token.id}")
+                    await self._token.link(self._parent._token)
+
+                # Recursively link to ALL underlying tokens from combined cancellables
+                if hasattr(self, "_cancellables_to_link"):
+                    logger.info(f"Linking to {len(self._cancellables_to_link)} combined cancellables")
+                    all_tokens = []
+                    await self._collect_all_tokens(self._cancellables_to_link, all_tokens)
+
+                    # Check if we should preserve cancellation reasons
+                    preserve_reason = self.context.metadata.get("preserve_reason", False)
+
+                    logger.info(f"Found {len(all_tokens)} total tokens to link:")
+                    for i, token in enumerate(all_tokens):
+                        logger.info(f"  Token {i}: {token.id}")
+                        await self._token.link(token, preserve_reason=preserve_reason)
+
+                self._link_state = LinkState.LINKED
+
+            except Exception as e:
+                self._link_state = LinkState.CANCELLED
+                logger.error(f"Token linking failed: {e}")
+                raise
+
+    async def _collect_all_tokens(self, cancellables: list["Cancellable"], result: list[CancellationToken]) -> None:
+        """Recursively collect all tokens from cancellables and their children."""
+        for cancellable in cancellables:
+            # Add this cancellable's token
+            if cancellable._token not in result:
+                result.append(cancellable._token)
+
+            # Recursively add tokens from nested cancellables
+            if hasattr(cancellable, "_cancellables_to_link"):
+                await self._collect_all_tokens(cancellable._cancellables_to_link, result)
 
     async def _on_source_cancelled(self, reason: CancellationReason, message: str) -> None:
         """Handle cancellation from a source."""

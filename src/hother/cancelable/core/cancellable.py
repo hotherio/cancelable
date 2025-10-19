@@ -523,17 +523,6 @@ class Cancellable:
                 logger.error(f"Token linking failed: {e}")
                 raise
 
-    async def _collect_all_tokens(self, cancellables: list["Cancellable"], result: list[CancellationToken]) -> None:
-        """Recursively collect all tokens from cancellables and their children."""
-        for cancellable in cancellables:
-            # Add this cancellable's token
-            if cancellable._token not in result:
-                result.append(cancellable._token)
-
-            # Recursively add tokens from nested cancellables
-            if cancellable._cancellables_to_link is not None:
-                await self._collect_all_tokens(cancellable._cancellables_to_link, result)  # type: ignore
-
     async def _on_source_cancelled(self, reason: CancellationReason, message: str) -> None:
         """Handle cancellation from a source."""
         self.context.cancel_reason = reason

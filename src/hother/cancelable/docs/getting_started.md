@@ -5,7 +5,7 @@
 The async cancellation system is part of the Forge framework. Ensure you have the required dependencies:
 
 ```bash
-uv pip install anyio asyncer structlog pydantic httpx
+uv pip install anyio asyncer pydantic httpx
 ```
 
 ## Basic Concepts

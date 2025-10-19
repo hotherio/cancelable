@@ -7,6 +7,9 @@ from collections.abc import AsyncIterator, Callable, Sequence
 from contextlib import asynccontextmanager
 from typing import Any, TypeVar
 
+import anyio
+
+from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 from sqlalchemy.sql import Select
 
@@ -322,7 +325,7 @@ async def cancellable_session(engine: AsyncEngine, cancellable: Cancellable, **s
         yield wrapped
         # Only commit if we complete successfully
         await session.commit()
-    except asyncio.CancelledError:
+    except anyio.get_cancelled_exc_class():
         # Handle cancellation gracefully
         logger.info("Session cancelled, rolling back")
         try:
@@ -330,8 +333,8 @@ async def cancellable_session(engine: AsyncEngine, cancellable: Cancellable, **s
         except Exception as e:
             logger.warning(f"Error during rollback: {e}")
         raise
-    except Exception:
-        # Handle other exceptions
+    except (SQLAlchemyError, anyio.get_cancelled_exc_class()):
+        # Handle database and cancellation exceptions
         try:
             await session.rollback()
         except Exception as e:

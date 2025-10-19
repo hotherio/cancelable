@@ -4,6 +4,7 @@ import time
 from collections.abc import AsyncGenerator, Callable
 from typing import Any, Generic, TypeVar
 
+import anyio
 from pydantic import BaseModel, ConfigDict, Field
 
 from hother.cancelable import Cancellable
@@ -91,7 +92,7 @@ async def process_stream(
                     if extracted_text:
                         content_length = len(extracted_text)
                         total_content_length += content_length
-                except Exception:
+                except (ValueError, TypeError, AttributeError, anyio.get_cancelled_exc_class()):
                     pass  # Ignore extraction errors
 
             # Determine event type

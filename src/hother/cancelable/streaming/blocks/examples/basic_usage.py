@@ -90,7 +90,7 @@ async def main():
                 if parser:
                     parser.format_block(block)
 
-                logger.info(f"Extracted {block.block_type} block", **block.log_context())
+                logger.info(f"Extracted {block.block_type} block", extra=block.log_context())
 
     # Summary
     print(f"\n\n{'=' * 60}")

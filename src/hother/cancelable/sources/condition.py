@@ -70,9 +70,11 @@ class ConditionSource(CancellationSource):
 
         logger.debug(
             "Condition source activated",
-            source=self.name,
-            condition_name=self.condition_name,
-            check_interval=self.check_interval,
+            extra={
+                "source": self.name,
+                "condition_name": self.condition_name,
+                "check_interval": self.check_interval,
+            },
         )
 
     async def stop_monitoring(self) -> None:
@@ -95,9 +97,11 @@ class ConditionSource(CancellationSource):
 
         logger.debug(
             "Condition source stopped",
-            source=self.name,
-            condition_name=self.condition_name,
-            triggered=self.triggered,
+            extra={
+                "source": self.name,
+                "condition_name": self.condition_name,
+                "triggered": self.triggered,
+            },
         )
 
     async def _monitor_condition(self) -> None:
@@ -130,9 +134,11 @@ class ConditionSource(CancellationSource):
                 except Exception as e:
                     logger.error(
                         "Error checking condition",
-                        source=self.name,
-                        condition_name=self.condition_name,
-                        error=str(e),
+                        extra={
+                            "source": self.name,
+                            "condition_name": self.condition_name,
+                            "error": str(e),
+                        },
                         exc_info=True,
                     )
                     # Continue monitoring despite errors
@@ -147,8 +153,10 @@ class ConditionSource(CancellationSource):
         except Exception as e:
             logger.error(
                 "Unexpected error in condition monitor",
-                source=self.name,
-                error=str(e),
+                extra={
+                    "source": self.name,
+                    "error": str(e),
+                },
                 exc_info=True,
             )
 
@@ -205,7 +213,7 @@ class ResourceConditionSource(ConditionSource):
         try:
             import psutil
         except ImportError:
-            logger.warning("psutil not available, resource monitoring disabled")
+            logger.warning("psutil not available, resource monitoring disabled", extra={})
             return False
 
         # Check memory
@@ -214,8 +222,10 @@ class ResourceConditionSource(ConditionSource):
             if memory_percent > self.memory_threshold:
                 logger.warning(
                     "Memory threshold exceeded",
-                    current=memory_percent,
-                    threshold=self.memory_threshold,
+                    extra={
+                        "current": memory_percent,
+                        "threshold": self.memory_threshold,
+                    },
                 )
                 return True
 
@@ -225,8 +235,10 @@ class ResourceConditionSource(ConditionSource):
             if cpu_percent > self.cpu_threshold:
                 logger.warning(
                     "CPU threshold exceeded",
-                    current=cpu_percent,
-                    threshold=self.cpu_threshold,
+                    extra={
+                        "current": cpu_percent,
+                        "threshold": self.cpu_threshold,
+                    },
                 )
                 return True
 
@@ -236,8 +248,10 @@ class ResourceConditionSource(ConditionSource):
             if disk_usage > self.disk_threshold:
                 logger.warning(
                     "Disk threshold exceeded",
-                    current=disk_usage,
-                    threshold=self.disk_threshold,
+                    extra={
+                        "current": disk_usage,
+                        "threshold": self.disk_threshold,
+                    },
                 )
                 return True
 

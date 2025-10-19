@@ -21,7 +21,11 @@ from .utils.anyio_bridge import AnyioBridge, call_soon_threadsafe
 import importlib.metadata
 
 from .utils.decorators import cancellable, with_timeout
+from .utils.logging import configure_logging
 from .utils.streams import cancellable_stream
+
+# Configure logging on import
+configure_logging()
 
 try:
     __version__ = importlib.metadata.version("hother-cancelable")

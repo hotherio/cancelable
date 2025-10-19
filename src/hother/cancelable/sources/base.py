@@ -73,9 +73,11 @@ class CancellationSource(ABC):
         if self.scope and not self.scope.cancel_called:
             logger.info(
                 "Cancellation triggered",
-                source=self.name,
-                reason=self.reason.value,
-                message=message,
+                extra={
+                    "source": self.name,
+                    "reason": self.reason.value,
+                    "cancel_message": message,
+                },
             )
 
             # Call callback if set

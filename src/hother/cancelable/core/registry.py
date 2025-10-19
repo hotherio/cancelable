@@ -209,8 +209,10 @@ class OperationRegistry:
 
         logger.info(
             "Bulk cancellation completed",
-            cancelled_count=count,
-            filter_status=status.value if status else None,
+            extra={
+                "cancelled_count": count,
+                "filter_status": status.value if status else None,
+            },
         )
 
         return count
@@ -297,8 +299,10 @@ class OperationRegistry:
 
         logger.info(
             "Cleaned up completed operations",
-            cleaned_count=len(to_remove),
-            older_than_seconds=older_than.total_seconds() if older_than else None,
+            extra={
+                "cleaned_count": len(to_remove),
+                "older_than_seconds": older_than.total_seconds() if older_than else None,
+            },
         )
 
         return len(to_remove)

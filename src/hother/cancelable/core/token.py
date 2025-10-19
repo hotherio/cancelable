@@ -53,7 +53,7 @@ class CancellationToken(BaseModel):
         self._state_lock = threading.Lock()  # Thread-safe lock for state updates
         self._callbacks = []
 
-        logger.debug("Created cancellation token", token_id=self.id)
+        logger.debug("Created cancellation token", extra={"token_id": self.id})
 
     def __hash__(self) -> int:
         """Make token hashable based on ID."""
@@ -85,8 +85,10 @@ class CancellationToken(BaseModel):
             if self.is_cancelled:
                 logger.debug(
                     "Token already cancelled",
-                    token_id=self.id,
-                    original_reason=self.reason.value if self.reason else None,
+                    extra={
+                        "token_id": self.id,
+                        "original_reason": self.reason.value if self.reason else None,
+                    },
                 )
                 return False
 
@@ -96,7 +98,7 @@ class CancellationToken(BaseModel):
             self.cancelled_at = datetime.now(UTC)
             self._event.set()
 
-            logger.info(f"Token {self.id} cancelled - calling {len(self._callbacks)} callbacks", token_id=self.id, reason=reason.value, message=message, callback_count=len(self._callbacks))
+            logger.info(f"Token {self.id} cancelled - calling {len(self._callbacks)} callbacks", extra={"token_id": self.id, "reason": reason.value, "cancel_message": message, "callback_count": len(self._callbacks)})
 
             # Notify callbacks
             for i, callback in enumerate(list(self._callbacks)):
@@ -107,9 +109,11 @@ class CancellationToken(BaseModel):
                 except Exception as e:
                     logger.error(
                         "Error in cancellation callback",
-                        token_id=self.id,
-                        callback_index=i,
-                        error=str(e),
+                        extra={
+                            "token_id": self.id,
+                            "callback_index": i,
+                            "error": str(e),
+                        },
                         exc_info=True,
                     )
 
@@ -148,8 +152,10 @@ class CancellationToken(BaseModel):
             if self.is_cancelled:
                 logger.debug(
                     "Token already cancelled",
-                    token_id=self.id,
-                    original_reason=self.reason.value if self.reason else None,
+                    extra={
+                        "token_id": self.id,
+                        "original_reason": self.reason.value if self.reason else None,
+                    },
                 )
                 return False
 
@@ -160,9 +166,11 @@ class CancellationToken(BaseModel):
 
         logger.info(
             f"Token {self.id} cancelled (sync) - notifying async waiters",
-            token_id=self.id,
-            reason=reason.value,
-            message=message,
+            extra={
+                "token_id": self.id,
+                "reason": reason.value,
+                "cancel_message": message,
+            },
         )
 
         # Notify async waiters (thread-safe)
@@ -198,8 +206,10 @@ class CancellationToken(BaseModel):
 
         logger.info(
             f"Scheduling {len(callbacks_to_call)} callbacks for token {self.id}",
-            token_id=self.id,
-            callback_count=len(callbacks_to_call),
+            extra={
+                "token_id": self.id,
+                "callback_count": len(callbacks_to_call),
+            },
         )
 
         # Schedule each callback via bridge

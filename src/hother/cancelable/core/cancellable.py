@@ -115,7 +115,7 @@ class Cancellable:
 
         logger.info(
             "Cancellable created",
-            **self.context.log_context(),
+            extra=self.context.log_context(),
         )
 
     # Factory methods
@@ -505,7 +505,7 @@ class Cancellable:
 
             logger.info(
                 f"Exited cancellation context - final status: {self.context.status}",
-                **self.context.log_context(),
+                extra=self.context.log_context(),
             )
 
         # Always propagate exceptions - cancellation context should not suppress them
@@ -767,9 +767,11 @@ class Cancellable:
 
         logger.info(
             "Operation cancelled",
-            **log_ctx,
-            cancel_reason=reason.value,
-            cancel_message=message,
+            extra={
+                **log_ctx,
+                "cancel_reason": reason.value,
+                "cancel_message": message,
+            },
         )
 
     # Status helpers

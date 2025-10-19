@@ -137,7 +137,9 @@ class OperationContext(BaseModel):
 
         logger.info(
             "Operation status changed",
-            old_status=old_status.value,
-            new_status=status.value,
-            **self.log_context(),
+            extra={
+                "old_status": old_status.value,
+                "new_status": status.value,
+                **self.log_context(),
+            },
         )

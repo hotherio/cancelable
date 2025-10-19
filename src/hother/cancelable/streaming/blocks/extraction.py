@@ -270,7 +270,7 @@ def create_block_extraction_processor(block_registry: BlockRegistry, debug: bool
 
         # Log extraction event
         if extracted_block:
-            logger.info("Block extracted", **extracted_block.log_context())
+            logger.info("Block extracted", extra=extracted_block.log_context())
 
         return BlockExtractionMetadata(
             timestamp=timestamp,

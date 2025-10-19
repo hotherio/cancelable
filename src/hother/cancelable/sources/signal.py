@@ -26,7 +26,7 @@ class SignalSource(CancellationSource):
     """
 
     # Class-level signal handlers registry
-    _handlers: dict[int, set[weakref.ref]] = {}
+    _handlers: dict[int, weakref.WeakSet["SignalSource"]] = {}
     _original_handlers: dict[int, Callable] = {}
     _lock = anyio.Lock()
 
@@ -92,7 +92,7 @@ class SignalSource(CancellationSource):
             for sig in self.signals:
                 # Create handler set if needed
                 if sig not in self._handlers:
-                    self._handlers[sig] = set()
+                    self._handlers[sig] = weakref.WeakSet()
 
                     # Store original handler
                     try:
@@ -106,16 +106,17 @@ class SignalSource(CancellationSource):
                         )
                         continue
 
-                # Add this instance to handlers
-                self._handlers[sig].add(weakref.ref(self, self._cleanup_ref))
+                # Add this instance to handlers (WeakSet handles weak references automatically)
+                self._handlers[sig].add(self)
 
     async def _unregister_handlers(self) -> None:
         """Unregister signal handlers."""
         async with self._lock:
             for sig in self.signals:
                 if sig in self._handlers:
-                    # Remove this instance
-                    self._handlers[sig].discard(weakref.ref(self))
+                    # WeakSet automatically removes dead references
+                    # Just remove this specific instance if it still exists
+                    self._handlers[sig].discard(self)
 
                     # If no more handlers, restore original
                     if not self._handlers[sig]:
@@ -141,17 +142,12 @@ class SignalSource(CancellationSource):
             signum: Signal number received
             frame: Current stack frame
         """
-        # Get all handlers for this signal
-        handlers = cls._handlers.get(signum, set())
+        # Get all live handlers for this signal (WeakSet automatically filters dead refs)
+        handlers = cls._handlers.get(signum, weakref.WeakSet())
 
-        # Notify each handler
-        for handler_ref in list(handlers):
-            handler = handler_ref()
-            if handler:
-                handler._on_signal(signum)
-            else:
-                # Dead reference, remove it
-                handlers.discard(handler_ref)
+        # Notify each live handler
+        for handler in handlers:  # No need to check if handler is alive
+            handler._on_signal(signum)
 
     def _on_signal(self, signum: int) -> None:
         """
@@ -191,9 +187,4 @@ class SignalSource(CancellationSource):
                 # Use bridge to schedule in anyio context
                 call_soon_threadsafe(schedule_cancellation)
 
-    @staticmethod
-    def _cleanup_ref(ref: weakref.ref) -> None:
-        """Cleanup callback for weak references."""
-        # Remove dead references from all handler sets
-        for handlers in SignalSource._handlers.values():
-            handlers.discard(ref)
+

@@ -85,6 +85,7 @@ class Cancellable:
         self._children: set[Cancellable] = set()
         self._sources: list[CancellationSource] = []
         self._shields: list[anyio.CancelScope] = []
+        self._cancellables_to_link: list["Cancellable"] | None = None
         self._register_globally = register_globally
 
         # Token linking state management
@@ -458,8 +459,8 @@ class Cancellable:
                 result.append(cancellable._token)
 
             # Recursively add tokens from nested cancellables
-            if hasattr(cancellable, "_cancellables_to_link"):
-                await self._collect_all_tokens(cancellable._cancellables_to_link, result)
+            if cancellable._cancellables_to_link is not None:
+                await self._collect_all_tokens(cancellable._cancellables_to_link, result)  # type: ignore
 
     async def _setup_monitoring(self) -> None:
         """Setup all cancellation sources."""
@@ -502,10 +503,10 @@ class Cancellable:
                     await self._token.link(self._parent._token)
 
                 # Recursively link to ALL underlying tokens from combined cancellables
-                if hasattr(self, "_cancellables_to_link"):
+                if self._cancellables_to_link is not None:
                     logger.info(f"Linking to {len(self._cancellables_to_link)} combined cancellables")
                     all_tokens = []
-                    await self._collect_all_tokens(self._cancellables_to_link, all_tokens)
+                    await self._collect_all_tokens(self._cancellables_to_link, all_tokens)  # type: ignore
 
                     # Check if we should preserve cancellation reasons
                     preserve_reason = self.context.metadata.get("preserve_reason", False)
@@ -530,8 +531,8 @@ class Cancellable:
                 result.append(cancellable._token)
 
             # Recursively add tokens from nested cancellables
-            if hasattr(cancellable, "_cancellables_to_link"):
-                await self._collect_all_tokens(cancellable._cancellables_to_link, result)
+            if cancellable._cancellables_to_link is not None:
+                await self._collect_all_tokens(cancellable._cancellables_to_link, result)  # type: ignore
 
     async def _on_source_cancelled(self, reason: CancellationReason, message: str) -> None:
         """Handle cancellation from a source."""

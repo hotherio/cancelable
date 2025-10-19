@@ -13,6 +13,8 @@ import random
 import tempfile
 from datetime import UTC, datetime, timedelta
 
+import anyio
+
 from sqlalchemy import Boolean, Column, DateTime, Float, Integer, String, func, select
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import declarative_base
@@ -199,7 +201,7 @@ async def example_cancellation():
 
                     print("This should not print!")
 
-        except asyncio.CancelledError:
+        except anyio.get_cancelled_exc_class():
             print(f"✓ Operation cancelled after processing {processed_count} records")
             print("  Cancellation reason: Timeout")
 

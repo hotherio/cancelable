@@ -95,49 +95,47 @@ class FileOperationsParser(BlockParser):
 
     def format_block(self, block) -> None:
         """Custom formatting for file operations blocks."""
-        print(f"\n{'-' * 30}")
-        print(f"📂 FILE OPERATIONS (Block: {block.hash_id})")
-        print(f"{'-' * 30}")
+        logger.info(f"FILE OPERATIONS (Block: {block.hash_id})")
 
         content = block.content
-        print(f"Total operations: {content.total_operations}")
+        logger.info(f"Total operations: {content.total_operations}")
 
         ops = content.operations
 
         if ops["create"]:
-            print(f"\n✅ CREATE ({len(ops['create'])} files):")
+            logger.info(f"CREATE ({len(ops['create'])} files):")
             for path in ops["create"][:10]:
-                print(f"   + {path}")
+                logger.info(f"  + {path}")
             if len(ops["create"]) > 10:
-                print(f"   ... and {len(ops['create']) - 10} more")
+                logger.info(f"  ... and {len(ops['create']) - 10} more")
 
         if ops["edit"]:
-            print(f"\n✏️  EDIT ({len(ops['edit'])} files):")
+            logger.info(f"EDIT ({len(ops['edit'])} files):")
             for path in ops["edit"][:10]:
-                print(f"   ~ {path}")
+                logger.info(f"  ~ {path}")
             if len(ops["edit"]) > 10:
-                print(f"   ... and {len(ops['edit']) - 10} more")
+                logger.info(f"  ... and {len(ops['edit']) - 10} more")
 
         if ops["delete"]:
-            print(f"\n❌ DELETE ({len(ops['delete'])} files):")
+            logger.info(f"DELETE ({len(ops['delete'])} files):")
             for path in ops["delete"][:10]:
-                print(f"   - {path}")
+                logger.info(f"  - {path}")
             if len(ops["delete"]) > 10:
-                print(f"   ... and {len(ops['delete']) - 10} more")
+                logger.info(f"  ... and {len(ops['delete']) - 10} more")
 
         # Show folder structure
         if content.folders:
-            print(f"\n📁 Folders affected ({len(content.folders)}):")
+            logger.info(f"Folders affected ({len(content.folders)}):")
             for folder in content.folders[:10]:
                 depth = folder.count("/")
                 indent = "  " * depth
                 folder_name = folder.split("/")[-1] if "/" in folder else folder
-                print(f"   {indent}📁 {folder_name}/")
+                logger.info(f"  {indent}📁 {folder_name}/")
             if len(content.folders) > 10:
-                print(f"   ... and {len(content.folders) - 10} more folders")
+                logger.info(f"  ... and {len(content.folders) - 10} more folders")
 
         # Show errors if any
         if content.errors:
-            print(f"\n⚠️  ERRORS ({len(content.errors)}):")
+            logger.warning(f"ERRORS ({len(content.errors)}):")
             for error in content.errors:
-                print(f"   ❗ {error}")
+                logger.warning(f"  {error}")

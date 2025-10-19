@@ -637,7 +637,7 @@ class Cancellable:
                 "buffer": buffer if buffer_partial else None,
             }
             raise
-        except Exception:
+        except Exception:  # Intentionally broad to save partial results on any error
             # Also save partial results on other exceptions
             self.context.partial_result = {
                 "count": count,

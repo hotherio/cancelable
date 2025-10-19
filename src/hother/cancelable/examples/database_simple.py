@@ -13,6 +13,8 @@ import asyncio
 import random
 from datetime import datetime, timedelta
 
+import anyio
+
 from sqlalchemy import Boolean, Column, DateTime, Float, Integer, String, func, select
 from sqlalchemy.ext.asyncio import AsyncSession, create_async_engine
 from sqlalchemy.orm import declarative_base
@@ -125,7 +127,7 @@ async def example_batch_processing():
     try:
         total_processed = await process_batch()
         print(f"✓ Successfully processed {total_processed} records")
-    except asyncio.CancelledError:
+    except anyio.get_cancelled_exc_class():
         print("⚠️ Processing was cancelled")
 
 
@@ -187,7 +189,7 @@ async def example_cancellation():
                 await session.commit()
                 print("This should not print!")
 
-    except asyncio.CancelledError:
+    except anyio.get_cancelled_exc_class():
         print("✓ Operation was cancelled as expected")
         print(f"  Reason: {cancel.context.cancel_reason}")
         print(f"  Duration: {cancel.context.duration}")

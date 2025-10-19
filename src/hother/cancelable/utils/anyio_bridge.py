@@ -24,8 +24,16 @@ class AnyioBridge:
     Provides call_soon_threadsafe equivalent for anyio by using
     memory object streams and a background worker task.
 
+    Args:
+        buffer_size: Maximum number of queued callbacks before blocking (default: 1000)
+
     Example:
         ```python
+        # Custom buffer size for high-throughput applications
+        bridge = AnyioBridge(buffer_size=5000)
+        await bridge.start()
+
+        # Or use default
         bridge = AnyioBridge.get_instance()
 
         async with anyio.create_task_group() as tg:
@@ -40,7 +48,14 @@ class AnyioBridge:
     _instance: AnyioBridge | None = None
     _lock = threading.Lock()
 
-    def __init__(self) -> None:
+    def __init__(self, buffer_size: int = 1000) -> None:
+        """
+        Initialize the AnyioBridge.
+
+        Args:
+            buffer_size: Maximum number of queued callbacks before blocking (default: 1000)
+        """
+        self._buffer_size = buffer_size
         self._send_stream: anyio.abc.ObjectSendStream | None = None
         self._receive_stream: anyio.abc.ObjectReceiveStream | None = None
         self._started: bool = False
@@ -88,7 +103,7 @@ class AnyioBridge:
 
         # Create communication streams
         self._send_stream, self._receive_stream = \
-            anyio.create_memory_object_stream(1000)
+            anyio.create_memory_object_stream(self._buffer_size)
 
         # Process any pending callbacks that arrived before bridge started
         with self._pending_lock:
@@ -184,7 +199,7 @@ class AnyioBridge:
             logger.debug("Callback successfully queued to bridge stream")
         except anyio.WouldBlock:
             logger.warning(
-                "Bridge queue full (1000 callbacks), "
+                f"Bridge queue full ({self._buffer_size} callbacks), "
                 "callback dropped - consider increasing buffer size"
             )
         except Exception as e:

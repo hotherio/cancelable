@@ -53,14 +53,11 @@ class BlockParser(BaseModel, ABC):
         Args:
             block: The extracted block to format
         """
-        print(f"\n{'=' * 60}")
-        print(f"Block Type: {block.block_type}")
-        print(f"Hash: {block.hash_id}")
-        print(f"Parameters: {block.parameters}")
-        print(f"{'-' * 60}")
-        print("Content (raw):")
-        print(block.raw_content)
-        print(f"{'=' * 60}")
+        logger.info(f"Block Type: {block.block_type}")
+        logger.info(f"Hash: {block.hash_id}")
+        logger.info(f"Parameters: {block.parameters}")
+        logger.debug("Content (raw):")
+        logger.debug(block.raw_content)
 
     def validate_block(self, block: ExtractedBlock) -> str | None:
         """

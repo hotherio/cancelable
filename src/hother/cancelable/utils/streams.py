@@ -175,7 +175,7 @@ class CancellableAsyncIterator(AsyncIterator[T]):
                 }
             raise
 
-        except Exception:
+        except Exception:  # Intentionally broad to save partial results on any error
             # Error
             if self._buffer is not None:
                 self._cancellable.context.partial_result = {

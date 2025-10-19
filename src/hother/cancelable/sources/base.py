@@ -35,6 +35,7 @@ class CancellationSource(ABC):
         self.scope: anyio.CancelScope | None = None
         self._cancel_callback: Callable | None = None
         self._monitoring_task: anyio.CancelScope | None = None
+        self.triggered: bool = False
 
     @abstractmethod
     async def start_monitoring(self, scope: anyio.CancelScope) -> None:

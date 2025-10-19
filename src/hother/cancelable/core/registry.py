@@ -3,12 +3,15 @@ Global operation registry for tracking and managing operations.
 """
 
 from datetime import UTC, datetime, timedelta
-from typing import Any, Optional
+from typing import TYPE_CHECKING, Any, Optional
 
 import anyio
 
 from hother.cancelable.core.models import CancellationReason, OperationContext, OperationStatus
 from hother.cancelable.utils.logging import get_logger
+
+if TYPE_CHECKING:
+    from .cancellable import Cancellable
 
 logger = get_logger(__name__)
 
@@ -22,7 +25,6 @@ class OperationRegistry:
     """
 
     _instance: Optional["OperationRegistry"] = None
-    _lock: anyio.Lock = None
 
     def __new__(cls) -> "OperationRegistry":
         """Ensure singleton instance."""
@@ -36,10 +38,10 @@ class OperationRegistry:
         if self._initialized:
             return
 
-        self._operations: dict[str, Cancellable] = {}
+        self._operations: dict[str, "Cancellable"] = {}
         self._history: list[OperationContext] = []
         self._history_limit = 1000
-        self._lock = anyio.Lock()
+        self._lock: anyio.Lock = anyio.Lock()
         self._initialized = True
 
         logger.info("Operation registry initialized")

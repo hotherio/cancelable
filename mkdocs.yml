@@ -6,7 +6,7 @@ dev_addr: 0.0.0.0:1234
 site_dir: "static/docs"
 nav:
   - Getting Started: 'getting_started.md'
-  - API Reference: 'api_reference.md'
+  - API Reference: 'reference/index.md'
   - Patterns: 'patterns.md'
   - Integrations:
     - FastAPI: 'integrations/fastapi.md'

@@ -5,13 +5,14 @@ Real-time monitoring dashboard for async operations.
 
 import signal
 from collections import defaultdict, deque
-from datetime import datetime, timedelta
-from typing import Any, Dict, List
+from datetime import UTC, datetime, timedelta
+from typing import Any, Dict, List, Optional
 
 import anyio
 
 from hother.cancelable import Cancellable, OperationRegistry, OperationStatus, cancellable
 from hother.cancelable.utils.logging import configure_logging, get_logger
+from hother.cancelable.utils.anyio_bridge import AnyioBridge
 
 # Configure logging
 configure_logging(log_level="INFO")
@@ -36,7 +37,7 @@ class OperationMonitor:
                 "name": operation.name,
                 "status": operation.status.value,
                 "duration": operation.duration_seconds,
-                "timestamp": datetime.utcnow(),
+                "timestamp": datetime.now(UTC),
             }
         )
 
@@ -103,7 +104,7 @@ class DashboardServer:
                 print("=" * 80)
                 print("🚀 Async Operations Dashboard".center(80))
                 print("=" * 80)
-                print(f"Time: {datetime.utcnow().strftime('%Y-%m-%d %H:%M:%S UTC')}")
+                print(f"Time: {datetime.now(UTC).strftime('%Y-%m-%d %H:%M:%S UTC')}")
                 print()
 
                 # Active operations
@@ -190,6 +191,10 @@ class DashboardServer:
             except anyio.get_cancelled_exc_class():
                 self.running = False
 
+    async def run_with_cancellable(self, cancellable: Cancellable):
+        """Run the dashboard with an existing cancellable."""
+        await self.update_loop(cancellable)
+
 
 # Simulated workloads for demonstration
 @cancellable(register_globally=True)
@@ -197,12 +202,13 @@ async def simulated_api_call(
     endpoint: str,
     duration: float,
     fail_rate: float = 0.1,
-    cancellable: Cancellable = None,
+    cancellable: Optional[Cancellable] = None,
 ):
     """Simulate an API call."""
     import random
 
-    await cancellable.report_progress(f"Calling {endpoint}")
+    if cancellable:
+        await cancellable.report_progress(f"Calling {endpoint}")
 
     # Simulate work
     steps = int(duration * 10)
@@ -213,7 +219,8 @@ async def simulated_api_call(
         if random.random() < fail_rate:
             raise Exception(f"API call to {endpoint} failed")
 
-    await cancellable.report_progress(f"Completed {endpoint}")
+    if cancellable:
+        await cancellable.report_progress(f"Completed {endpoint}")
     return {"endpoint": endpoint, "status": "success"}
 
 
@@ -221,7 +228,7 @@ async def simulated_api_call(
 async def simulated_data_processing(
     dataset_id: str,
     record_count: int,
-    cancellable: Cancellable = None,
+    cancellable: Optional[Cancellable] = None,
 ):
     """Simulate data processing."""
     batch_size = 100
@@ -234,7 +241,8 @@ async def simulated_data_processing(
         await anyio.sleep(0.2)
         processed += batch
 
-        await cancellable.report_progress(f"Processed {processed}/{record_count} records", {"progress_percent": (processed / record_count) * 100})
+        if cancellable:
+            await cancellable.report_progress(f"Processed {processed}/{record_count} records", {"progress_percent": (processed / record_count) * 100})
 
     return {"dataset_id": dataset_id, "records_processed": processed}
 
@@ -243,7 +251,7 @@ async def simulated_data_processing(
 async def simulated_file_download(
     file_id: str,
     size_mb: float,
-    cancellable: Cancellable = None,
+    cancellable: Optional[Cancellable] = None,
 ):
     """Simulate file download."""
     downloaded = 0
@@ -257,12 +265,13 @@ async def simulated_file_download(
         downloaded += chunk
 
         progress = (downloaded / size_mb) * 100
-        await cancellable.report_progress(f"Downloading: {progress:.1f}%", {"downloaded_mb": downloaded, "total_mb": size_mb})
+        if cancellable:
+            await cancellable.report_progress(f"Downloading: {progress:.1f}%", {"downloaded_mb": downloaded, "total_mb": size_mb})
 
     return {"file_id": file_id, "size_mb": size_mb}
 
 
-async def workload_generator(monitor: OperationMonitor):
+async def workload_generator(monitor: OperationMonitor, cancellable: Cancellable):
     """Generate random workloads for demonstration."""
     import random
 
@@ -287,7 +296,7 @@ async def workload_generator(monitor: OperationMonitor):
 
     async def monitor_completed():
         """Monitor and record completed operations."""
-        last_check = datetime.utcnow()
+        last_check = datetime.now(UTC)
 
         while True:
             await anyio.sleep(2.0)
@@ -297,7 +306,7 @@ async def workload_generator(monitor: OperationMonitor):
             for op in history:
                 monitor.record_operation(op)
 
-            last_check = datetime.utcnow()
+            last_check = datetime.now(UTC)
 
             # Cleanup old operations
             await registry.cleanup_completed(older_than=timedelta(minutes=5))
@@ -317,6 +326,9 @@ async def workload_generator(monitor: OperationMonitor):
 
         # Generate workloads
         while True:
+            # Check for cancellation
+            await cancellable._token.check_async()
+
             # Random delay between operations
             await anyio.sleep(random.uniform(0.5, 2.0))
 
@@ -342,13 +354,17 @@ async def example_dashboard():
     monitor = OperationMonitor()
     dashboard = DashboardServer(monitor)
 
-    # Run dashboard and workload generator
-    async with anyio.create_task_group() as tg:
-        # Start workload generator
-        tg.start_soon(workload_generator, monitor)
+    # Create shared cancellable for both dashboard and workload generator
+    async with Cancellable.with_signal(signal.SIGINT, name="dashboard_and_workloads") as cancel:
+        cancel.on_cancel(lambda ctx: print("\n👋 Dashboard and workloads shutting down..."))
 
-        # Run dashboard
-        await dashboard.run()
+        # Run dashboard and workload generator
+        async with anyio.create_task_group() as tg:
+            # Start workload generator
+            tg.start_soon(workload_generator, monitor, cancel)
+
+            # Run dashboard
+            await dashboard.run_with_cancellable(cancel)
 
 
 async def example_api_monitoring():
@@ -375,7 +391,7 @@ async def example_api_monitoring():
     async def simulate_request(
         endpoint: dict,
         request_id: int,
-        cancellable: Cancellable = None,
+        cancellable: Optional[Cancellable] = None,
     ):
         """Simulate API request with monitoring."""
         path = endpoint["path"]
@@ -516,7 +532,7 @@ async def example_resource_monitoring():
 
     # CPU-intensive workload
     @cancellable(register_globally=True)
-    async def cpu_intensive_task(task_id: int, cancellable: Cancellable = None):
+    async def cpu_intensive_task(task_id: int, cancellable: Optional[Cancellable] = None):
         """Simulate CPU-intensive work."""
         import hashlib
 
@@ -525,7 +541,8 @@ async def example_resource_monitoring():
 
         for i in range(iterations):
             if i % 10000 == 0:
-                await cancellable.report_progress(f"Task {task_id}: {i}/{iterations} iterations")
+                if cancellable:
+                    await cancellable.report_progress(f"Task {task_id}: {i}/{iterations} iterations")
                 # Allow cancellation
                 await anyio.sleep(0)
 
@@ -627,26 +644,37 @@ async def main():
     print("Async Cancellation - Monitoring Dashboard Examples")
     print("=================================================")
 
+    # Start the anyio bridge for signal handling
+    bridge = AnyioBridge.get_instance()
+
     examples = [
         ("Interactive Dashboard", example_dashboard),
         ("API Endpoint Monitoring", example_api_monitoring),
         ("Resource Monitoring", example_resource_monitoring),
     ]
 
-    for name, example in examples:
-        print(f"\n{'=' * 60}")
-        print(f"Example: {name}")
-        print(f"{'=' * 60}")
+    async with anyio.create_task_group() as tg:
+        # Start the bridge in background
+        tg.start_soon(bridge.start)
 
-        try:
-            await example()
-        except KeyboardInterrupt:
-            print("\nExample interrupted by user")
-        except Exception as e:
-            logger.error(f"Example failed: {e}", exc_info=True)
+        for name, example in examples:
+            print(f"\n{'=' * 60}")
+            print(f"Example: {name}")
+            print(f"{'=' * 60}")
 
-        print("\nPress Enter to continue to next example...")
-        input()
+            try:
+                await example()
+            except KeyboardInterrupt:
+                print("\nExample interrupted by user")
+            except Exception as e:
+                logger.error(f"Example failed: {e}", exc_info=True)
+
+            print("\nPress Enter to continue to next example...")
+            try:
+                input()
+            except EOFError:
+                # Handle case where input is not available (e.g., in tests)
+                break
 
 
 if __name__ == "__main__":

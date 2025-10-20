@@ -213,14 +213,14 @@ class ResourceConditionSource(ConditionSource):
         try:
             import psutil
         except ImportError:
-            logger.warning("psutil not available, resource monitoring disabled", extra={})
+            logger.warning("psutil not available, resource monitoring disabled")
             return False
 
         # Check memory
         if self.memory_threshold:
             memory_percent = psutil.virtual_memory().percent
             if memory_percent > self.memory_threshold:
-                logger.warning(
+                logger.info(
                     "Memory threshold exceeded",
                     extra={
                         "current": memory_percent,
@@ -233,7 +233,7 @@ class ResourceConditionSource(ConditionSource):
         if self.cpu_threshold:
             cpu_percent = psutil.cpu_percent(interval=0.1)
             if cpu_percent > self.cpu_threshold:
-                logger.warning(
+                logger.info(
                     "CPU threshold exceeded",
                     extra={
                         "current": cpu_percent,
@@ -246,7 +246,7 @@ class ResourceConditionSource(ConditionSource):
         if self.disk_threshold:
             disk_usage = psutil.disk_usage("/").percent
             if disk_usage > self.disk_threshold:
-                logger.warning(
+                logger.info(
                     "Disk threshold exceeded",
                     extra={
                         "current": disk_usage,

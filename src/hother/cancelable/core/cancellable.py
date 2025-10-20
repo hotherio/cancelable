@@ -10,7 +10,7 @@ from contextlib import asynccontextmanager
 from datetime import timedelta
 from enum import Enum
 from functools import wraps
-from typing import TYPE_CHECKING, Any, Optional, TypeVar
+from typing import TYPE_CHECKING, Any, Optional, TypeVar, cast
 
 import anyio
 
@@ -113,7 +113,7 @@ class Cancellable:
         if parent:
             parent._children.add(self)
 
-        logger.info(
+        logger.info(  # type: ignore
             "Cancellable created",
             extra=self.context.log_context(),
         )
@@ -149,9 +149,9 @@ class Cancellable:
         """
         instance = cls(operation_id=operation_id, name=name or "token_based", **kwargs)
         # Replace default token with provided one
-        logger.info(f"with_token: Replacing default token {instance._token.id} with user token {token.id}")
+        logger.debug(f"with_token: Replacing default token {instance._token.id} with user token {token.id}")
         instance._token = token
-        logger.info(f"with_token: Created cancellable {instance.context.id} with user token {token.id}")
+        logger.debug(f"with_token: Created cancellable {instance.context.id} with user token {token.id}")
         return instance
 
     @classmethod
@@ -209,10 +209,10 @@ class Cancellable:
         """
         Combine multiple cancellables into one.
         """
-        logger.info("=== COMBINE CALLED ===")
-        logger.info(f"Self: {self.context.id} ({self.context.name}) with token {self._token.id}")
+        logger.debug("=== COMBINE CALLED ===")
+        logger.debug(f"Self: {self.context.id} ({self.context.name}) with token {self._token.id}")
         for i, other in enumerate(others):
-            logger.info(f"Other {i}: {other.context.id} ({other.context.name}) with token {other._token.id}")
+            logger.debug(f"Other {i}: {other.context.id} ({other.context.name}) with token {other._token.id}")
 
         combined = Cancellable(
             name=f"combined_{self.context.name}",
@@ -223,23 +223,23 @@ class Cancellable:
             },
         )
 
-        logger.info(f"Created combined cancellable: {combined.context.id} with default token {combined._token.id}")
+        logger.debug(f"Created combined cancellable: {combined.context.id} with default token {combined._token.id}")
 
         # Store the actual cancellables to link their tokens later
         combined._cancellables_to_link = [self] + list(others)
-        logger.info(f"Will link to {len(combined._cancellables_to_link)} cancellables:")
+        logger.debug(f"Will link to {len(combined._cancellables_to_link)} cancellables:")
         for i, c in enumerate(combined._cancellables_to_link):
-            logger.info(f"  {i}: {c.context.id} with token {c._token.id}")
+            logger.debug(f"  {i}: {c.context.id} with token {c._token.id}")
 
         # Combine all sources
         combined._sources.extend(self._sources)
         for other in others:
             combined._sources.extend(other._sources)
 
-        logger.debug(
+        logger.debug(  # type: ignore
             "Created combined cancellable",
-            operation_id=combined.context.id,
-            source_count=len(combined._sources),
+            operation_id=combined.context.id,  # type: ignore
+            source_count=len(combined._sources),  # type: ignore
         )
 
         return combined
@@ -286,16 +286,16 @@ class Cancellable:
                     await result
             except Exception as e:
                 logger.error(
-                    "Progress callback error",
-                    operation_id=self.context.id,
-                    error=str(e),
+                    "Progress callback error for operation %s: %s",
+                    self.context.id,
+                    str(e),
                     exc_info=True,
                 )
 
     # Context manager
     async def __aenter__(self) -> "Cancellable":
         """Enter cancellation context."""
-        logger.info(f"=== ENTERING cancellation context for {self.context.id} ({self.context.name}) ===")
+        logger.debug(f"=== ENTERING cancellation context for {self.context.id} ({self.context.name}) ===")
 
         # Set as current operation
         self._context_token = _current_operation.set(self)
@@ -326,9 +326,9 @@ class Cancellable:
             else:
                 logger.error(f"🚨 SCOPE ALREADY CANCELLED OR NONE for {self.context.id} (scope={self._scope}, cancel_called={self._scope.cancel_called if self._scope else 'N/A'})")
 
-        logger.info(f"Registering token callback for token {self._token.id}")
+        logger.debug(f"Registering token callback for token {self._token.id}")
         await self._token.register_callback(on_token_cancel)
-        logger.info("Token callback registered successfully")
+        logger.debug("Token callback registered successfully")
 
         # Start monitoring
         await self._setup_monitoring()
@@ -339,7 +339,7 @@ class Cancellable:
         # Enter scope - sync operation
         self._scope_exit = self._scope.__enter__()
 
-        logger.info(f"=== COMPLETED ENTER for {self.context.id} ===")
+        logger.debug(f"=== COMPLETED ENTER for {self.context.id} ===")
         return self
 
     @property
@@ -503,7 +503,7 @@ class Cancellable:
             if hasattr(self, "_context_token"):
                 _current_operation.reset(self._context_token)
 
-            logger.info(
+            logger.debug(  # type: ignore
                 f"Exited cancellation context - final status: {self.context.status}",
                 extra=self.context.log_context(),
             )
@@ -528,7 +528,7 @@ class Cancellable:
         # Setup source monitoring
         for source in self._sources:
             source.set_cancel_callback(self._on_source_cancelled)
-            await source.start_monitoring(self._scope)
+            await source.start_monitoring(cast(anyio.CancelScope, self._scope))
 
     async def _check_cancellation(self) -> None:
         """Check for cancellation from various sources."""
@@ -543,9 +543,9 @@ class Cancellable:
                 await source.stop_monitoring()
             except Exception as e:
                 logger.error(
-                    "Error stopping source monitoring",
-                    source=str(source),
-                    error=str(e),
+                    "Error stopping source monitoring for %s: %s",
+                    str(source),
+                    str(e),
                     exc_info=True,
                 )
 
@@ -561,21 +561,21 @@ class Cancellable:
                 # Link to parent token if we have a parent
                 parent = self.parent
                 if parent:
-                    logger.info(f"Linking to parent token: {parent._token.id}")
+                    logger.debug(f"Linking to parent token: {parent._token.id}")
                     await self._token.link(parent._token)
 
                 # Recursively link to ALL underlying tokens from combined cancellables
                 if self._cancellables_to_link is not None:
-                    logger.info(f"Linking to {len(self._cancellables_to_link)} combined cancellables")
+                    logger.debug(f"Linking to {len(self._cancellables_to_link)} combined cancellables")
                     all_tokens = []
                     await self._collect_all_tokens(self._cancellables_to_link, all_tokens)  # type: ignore
 
                     # Check if we should preserve cancellation reasons
                     preserve_reason = self.context.metadata.get("preserve_reason", False)
 
-                    logger.info(f"Found {len(all_tokens)} total tokens to link:")
+                    logger.debug(f"Found {len(all_tokens)} total tokens to link:")
                     for i, token in enumerate(all_tokens):
-                        logger.info(f"  Token {i}: {token.id}")
+                        logger.debug(f"  Token {i}: {token.id}")
                         await self._token.link(token, preserve_reason=preserve_reason)
 
                 self._link_state = LinkState.LINKED
@@ -655,9 +655,9 @@ class Cancellable:
                 }
         finally:
             logger.debug(
-                "Stream processing completed",
-                operation_id=self.context.id,
-                item_count=count,
+                "Stream processing completed for operation %s with %d items",
+                self.context.id,
+                count,
             )
 
     # Function wrapper
@@ -765,7 +765,7 @@ class Cancellable:
         # Remove cancel_reason from log_context if it exists to avoid duplication
         log_ctx.pop("cancel_reason", None)
 
-        logger.info(
+        logger.info(  # type: ignore
             "Operation cancelled",
             extra={
                 **log_ctx,
@@ -806,9 +806,10 @@ class Cancellable:
                     await result
             except Exception as e:
                 logger.error(
-                    f"{callback_type.capitalize()} callback error",
-                    operation_id=self.context.id,
-                    error=str(e),
+                    "%s callback error for operation %s: %s",
+                    callback_type.capitalize(),
+                    self.context.id,
+                    str(e),
                     exc_info=True,
                 )
 
@@ -822,9 +823,9 @@ class Cancellable:
                     await result
             except Exception as e:
                 logger.error(
-                    "Error callback error",
-                    operation_id=self.context.id,
-                    error=str(e),
+                    "Error callback error for operation %s: %s",
+                    self.context.id,
+                    str(e),
                     exc_info=True,
                 )
 

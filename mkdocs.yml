@@ -14,6 +14,7 @@ nav:
       - Basic Examples: 'examples/basics.md'
       - Basic Usage: 'examples/basic_usage.md'
       - Stream Processing: 'examples/stream_processing.md'
+  - Troubleshooting: 'troubleshooting.md'
   - API Reference: 'reference/index.md'
   - Integrations:
     - FastAPI: 'integrations/fastapi.md'

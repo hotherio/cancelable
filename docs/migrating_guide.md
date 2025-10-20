@@ -73,7 +73,7 @@ class Worker:
 
 ### After:
 ```python
-from forge.async_cancellation import CancellationToken
+from hother.cancelable import CancellationToken
 
 class Worker:
     def __init__(self):
@@ -139,7 +139,7 @@ Start with operations that need timeouts:
 result = await critical_operation()
 
 # After
-from forge.async_cancellation import with_timeout
+from hother.cancelable import with_timeout
 result = await with_timeout(30.0, critical_operation())
 ```
 
@@ -147,7 +147,7 @@ result = await with_timeout(30.0, critical_operation())
 Enhance long-running operations:
 
 ```python
-from forge.async_cancellation import cancellable
+from hother.cancelable import cancellable
 
 @cancellable(timeout=300)
 async def process_data(data: list, cancellable=None):
@@ -162,7 +162,7 @@ For web applications:
 
 ```python
 # FastAPI example
-from forge.async_cancellation.integrations.fastapi import cancellable_dependency
+from hother.cancelable.integrations.fastapi import cancellable_dependency
 
 @app.post("/process")
 async def process_endpoint(

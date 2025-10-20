@@ -6,7 +6,7 @@ Handle application shutdown gracefully:
 
 ```python
 import signal
-from forge.async_cancellation import Cancellable
+from hother.cancelable import Cancellable
 
 async def main():
     # Handle SIGINT and SIGTERM

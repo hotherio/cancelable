@@ -11,6 +11,7 @@ nav:
   - Tutorials:
     - Patterns: 'patterns.md'
     - Examples:
+      - Basic Examples: 'examples/basics.md'
       - Basic Usage: 'examples/basic_usage.md'
       - Stream Processing: 'examples/stream_processing.md'
   - API Reference: 'reference/index.md'

@@ -56,20 +56,20 @@ class CancellableAsyncSession:
                 await self.cancellable._token.check_async()
                 await self.cancellable.report_progress(f"Database operations: {self._operation_count}")
 
-    async def execute(self, statement, params=None, execution_options=None, **kw):
+    async def execute(self, statement, params=None, execution_options=None, **kw) -> Any:
         """Execute statement with cancellation check."""
         await self._check_cancellation()
-        return await self.session.execute(statement, params, execution_options=execution_options, **kw)
+        return await self.session.execute(statement, params, execution_options=execution_options, **kw)  # type: ignore
 
-    async def scalar(self, statement, params=None, execution_options=None, **kw):
+    async def scalar(self, statement, params=None, execution_options=None, **kw) -> Any:
         """Execute and return scalar with cancellation check."""
         await self._check_cancellation()
-        return await self.session.scalar(statement, params, execution_options=execution_options, **kw)
+        return await self.session.scalar(statement, params, execution_options=execution_options, **kw)  # type: ignore
 
-    async def scalars(self, statement, params=None, execution_options=None, **kw):
+    async def scalars(self, statement, params=None, execution_options=None, **kw) -> Any:
         """Execute and return scalars with cancellation check."""
         await self._check_cancellation()
-        result = await self.session.scalars(statement, params, execution_options=execution_options, **kw)
+        result = await self.session.scalars(statement, params, execution_options=execution_options, **kw)  # type: ignore
         return result  # Return directly for now, wrapping might cause issues
 
     async def get(self, entity, ident, **kw):
@@ -80,13 +80,13 @@ class CancellableAsyncSession:
     async def stream(self, statement, params=None, execution_options=None, **kw):
         """Stream results with cancellation support."""
         await self._check_cancellation()
-        result = await self.session.stream(statement, params, execution_options=execution_options, **kw)
+        result = await self.session.stream(statement, params, execution_options=execution_options, **kw)  # type: ignore
         return CancellableAsyncResult(result, self.cancellable)
 
     async def stream_scalars(self, statement, params=None, execution_options=None, **kw):
         """Stream scalars with cancellation support."""
         await self._check_cancellation()
-        result = await self.session.stream_scalars(statement, params, execution_options=execution_options, **kw)
+        result = await self.session.stream_scalars(statement, params, execution_options=execution_options, **kw)  # type: ignore
         return CancellableAsyncScalarResult(result, self.cancellable)
 
     def add(self, instance, _warn=True):
@@ -135,7 +135,7 @@ class CancellableAsyncSession:
     async def merge(self, instance, load=True, options=None):
         """Merge instance with cancellation check."""
         await self._check_cancellation()
-        return await self.session.merge(instance, load, options)
+        return await self.session.merge(instance, load=load, options=options)
 
     # Bulk operations with progress reporting
     async def bulk_insert_mappings(
@@ -154,7 +154,7 @@ class CancellableAsyncSession:
             await self._check_cancellation()
             batch = mappings[i : i + batch_size]
 
-            await self.session.bulk_insert_mappings(mapper, batch, return_defaults, render_nulls)
+            await self.session.bulk_insert_mappings(mapper, batch, return_defaults, render_nulls)  # type: ignore
 
             if self.cancellable:
                 await self.cancellable.report_progress(f"Inserted batch {i // batch_size + 1}: {len(batch)} records")
@@ -169,7 +169,7 @@ class CancellableAsyncSession:
             await self._check_cancellation()
             batch = mappings[i : i + batch_size]
 
-            await self.session.bulk_update_mappings(mapper, batch)
+            await self.session.bulk_update_mappings(mapper, batch)  # type: ignore
 
             if self.cancellable:
                 await self.cancellable.report_progress(f"Updated batch {i // batch_size + 1}: {len(batch)} records")
@@ -327,7 +327,7 @@ async def cancellable_session(engine: AsyncEngine, cancellable: Cancellable, **s
         await session.commit()
     except anyio.get_cancelled_exc_class():
         # Handle cancellation gracefully
-        logger.info("Session cancelled, rolling back")
+        logger.warning("Session cancelled, rolling back")
         try:
             await session.rollback()
         except Exception as e:
@@ -389,12 +389,12 @@ class CancellableTransaction:
             # Rollback on any exception
             if self.session.cancellable:
                 await self.session.cancellable.report_progress(f"Rolling back transaction: {exc_type.__name__}")
-            await self._transaction.rollback()
+            await self._transaction.rollback()  # type: ignore
         else:
             # Commit on success
             if self.session.cancellable:
                 await self.session.cancellable.report_progress("Committing transaction")
-            await self._transaction.commit()
+            await self._transaction.commit()  # type: ignore
 
 
 async def execute_chunked(

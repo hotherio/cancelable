@@ -53,7 +53,7 @@ class CancellationToken(BaseModel):
         self._state_lock = threading.Lock()  # Thread-safe lock for state updates
         self._callbacks = []
 
-        logger.debug("Created cancellation token", extra={"token_id": self.id})
+        logger.debug(f"Created cancellation token {self.id}")
 
     def __hash__(self) -> int:
         """Make token hashable based on ID."""
@@ -103,9 +103,9 @@ class CancellationToken(BaseModel):
             # Notify callbacks
             for i, callback in enumerate(list(self._callbacks)):
                 try:
-                    logger.info(f"Calling callback {i} for token {self.id}")
+                    logger.debug(f"Calling callback {i} for token {self.id}")
                     await callback(self)
-                    logger.info(f"Callback {i} completed successfully")
+                    logger.debug(f"Callback {i} completed successfully")
                 except Exception as e:
                     logger.error(
                         "Error in cancellation callback",
@@ -164,7 +164,7 @@ class CancellationToken(BaseModel):
             self.message = message
             self.cancelled_at = datetime.now(UTC)
 
-        logger.info(
+        logger.debug(
             f"Token {self.id} cancelled (sync) - notifying async waiters",
             extra={
                 "token_id": self.id,
@@ -179,7 +179,7 @@ class CancellationToken(BaseModel):
         # Schedule callbacks (thread-safe)
         self._schedule_callbacks()
 
-        logger.info(f"=== CANCEL_SYNC COMPLETED for token {self.id} ===")
+        logger.debug(f"=== CANCEL_SYNC COMPLETED for token {self.id} ===")
         return True
 
     def _notify_async_waiters(self) -> None:
@@ -204,7 +204,7 @@ class CancellationToken(BaseModel):
         with self._state_lock:
             callbacks_to_call = list(self._callbacks)
 
-        logger.info(
+        logger.debug(
             f"Scheduling {len(callbacks_to_call)} callbacks for token {self.id}",
             extra={
                 "token_id": self.id,
@@ -219,9 +219,9 @@ class CancellationToken(BaseModel):
                 idx: int = i, cb: Any = callback
             ) -> None:  # Capture loop variables
                 try:
-                    logger.info(f"Calling callback {idx} for token {self.id}")
+                    logger.debug(f"Calling callback {idx} for token {self.id}")
                     await cb(self)
-                    logger.info(f"Callback {idx} completed successfully")
+                    logger.debug(f"Callback {idx} completed successfully")
                 except Exception as e:
                     logger.error(
                         "Error in cancellation callback",

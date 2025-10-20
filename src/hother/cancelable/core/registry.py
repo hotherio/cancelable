@@ -68,7 +68,7 @@ class OperationRegistry:
         async with self._lock:
             self._operations[operation.context.id] = operation
 
-            logger.debug(
+            logger.info(
                 "Operation registered",
                 operation_id=operation.context.id,
                 operation_name=operation.context.name,

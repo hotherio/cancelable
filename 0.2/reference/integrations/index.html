@@ -1,7 +1,4 @@
-
-<!doctype html>
-<html lang="en" class="no-js">
-  <head>
+<!DOCTYPE html><html lang="en" class="no-js"><head>
     
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -9,6 +6,10 @@
       
       
       
+        <link rel="prev" href="../sources/">
+      
+      
+        <link rel="next" href="../utilities/">
       
       
       <link rel="icon" href="../../assets/images/favicon.png">
@@ -78,7 +79,7 @@
         
         
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback">
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
@@ -93,8 +94,44 @@
 
     
     
+      
+        <meta property="og:type" content="website">
+      
+        <meta property="og:title" content="Integrations - Cancelable">
+      
+        <meta property="og:description" content="None">
+      
+        <meta property="og:image" content="./assets/images/social/reference/integrations.png">
+      
+        <meta property="og:image:type" content="image/png">
+      
+        <meta property="og:image:width" content="1200">
+      
+        <meta property="og:image:height" content="630">
+      
+        <meta property="og:url" content="None">
+      
+        <meta name="twitter:card" content="summary_large_image">
+      
+        <meta name="twitter:title" content="Integrations - Cancelable">
+      
+        <meta name="twitter:description" content="None">
+      
+        <meta name="twitter:image" content="./assets/images/social/reference/integrations.png">
+      
     
-  </head>
+    
+  <link href="../../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
+        </style></head>
   
   
     
@@ -131,17 +168,17 @@
 
   
 
-<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+<header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href="../.." title="Cancelable" class="md-header__button md-logo" aria-label="Cancelable" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 4 1.75 5.27 4.5 8.03A8.9 8.9 0 0 0 3 13a9 9 0 0 0 9 9c1.84 0 3.55-.55 5-1.5l2.5 2.5 1.25-1.27L13.04 14zm12-3H9v2h6m6 10c0 1.83-.55 3.53-1.5 4.94L13 11.45V7h-2v2.45L7.05 5.5C8.47 4.55 10.17 4 12 4c2.12 0 4.07.74 5.62 1.97l1.42-1.42 1.41 1.42-1.42 1.42A8.96 8.96 0 0 1 21 13"></path></svg>
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
       
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
@@ -166,20 +203,20 @@
     
     
     
-    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="red" data-md-color-accent="pink"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="red" data-md-color-accent="pink" aria-label="Switch to dark mode" type="radio" name="__palette" id="__palette_0">
     
       <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6m0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4M7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6m0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4M7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3"></path></svg>
       </label>
     
   
     
     
     
-    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="red" data-md-color-accent="deep-orange"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="red" data-md-color-accent="deep-orange" aria-label="Switch to light mode" type="radio" name="__palette" id="__palette_1">
     
       <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"></path></svg>
       </label>
     
   
@@ -193,7 +230,7 @@
     
       <label class="md-header__button md-icon" for="__search">
         
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
       </label>
       <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
@@ -202,17 +239,24 @@
       <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
         
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
         
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
       </label>
       <nav class="md-search__options" aria-label="Search">
         
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"></path></svg>
+          </a>
+        
         <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
           
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
         </button>
       </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
       
     </form>
     <div class="md-search__output">
@@ -233,7 +277,7 @@
         <a href="https://github.com/hotherio/cancelable" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"></path></svg>
   </div>
   <div class="md-source__repository">
     hotherio/cancelable
@@ -243,116 +287,13 @@
     
   </nav>
   
-    
-      
-<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
-  <div class="md-grid">
-    <ul class="md-tabs__list">
-      
-        
-  
-  
-  
-    
-    
-      <li class="md-tabs__item">
-        <a href="../../getting_started/" class="md-tabs__link">
-          
-  
-    
-  
-  Overview
-
-        </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-  
-    
-    
-      <li class="md-tabs__item">
-        <a href="../../patterns/" class="md-tabs__link">
-          
-  
-    
-  
-  Tutorials
-
-        </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../../troubleshooting/" class="md-tabs__link">
-        
-  
-    
-  
-  Troubleshooting
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../" class="md-tabs__link">
-        
-  
-    
-  
-  API Reference
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-    
-    
-      <li class="md-tabs__item">
-        <a href="../../integrations/fastapi/" class="md-tabs__link">
-          
-  
-    
-  
-  Integrations
-
-        </a>
-      </li>
-    
-  
-
-      
-    </ul>
-  </div>
-</nav>
-    
-  
 </header>
     
     <div class="md-container" data-md-component="container">
       
       
+        
+          
         
       
       <main class="md-main" data-md-component="main">
@@ -360,23 +301,19 @@
           
             
               
-              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
 
 
-  
 
-
-  
-
-<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="Cancelable" class="md-nav__button md-logo" aria-label="Cancelable" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 4 1.75 5.27 4.5 8.03A8.9 8.9 0 0 0 3 13a9 9 0 0 0 9 9c1.84 0 3.55-.55 5-1.5l2.5 2.5 1.25-1.27L13.04 14zm12-3H9v2h6m6 10c0 1.83-.55 3.53-1.5 4.94L13 11.45V7h-2v2.45L7.05 5.5C8.47 4.55 10.17 4 12 4c2.12 0 4.07.74 5.62 1.97l1.42-1.42 1.41 1.42-1.42 1.42A8.96 8.96 0 0 1 21 13"></path></svg>
 
     </a>
     Cancelable
@@ -386,7 +323,7 @@
       <a href="https://github.com/hotherio/cancelable" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"></path></svg>
   </div>
   <div class="md-source__repository">
     hotherio/cancelable
@@ -402,48 +339,42 @@
   
   
   
-    
-    
-      
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
         
-      
-        
-      
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
-        
-          
-          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
-            
   
   <span class="md-ellipsis">
-    Overview
+    Cancelable
   </span>
   
 
-            <span class="md-nav__icon md-icon"></span>
-          </label>
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../installation/" class="md-nav__link">
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_1">
-            <span class="md-nav__icon md-icon"></span>
-            Overview
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
+  
+  <span class="md-ellipsis">
+    Installation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
   
   
   
@@ -461,6 +392,84 @@
     </li>
   
 
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4">
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Documentation
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Documentation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../basics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Basics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
               
             
               
@@ -470,11 +479,137 @@
   
   
     <li class="md-nav__item">
-      <a href="../../about/" class="md-nav__link">
+      <a href="../../advanced/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    About
+    Advanced Usage
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../streaming/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Streaming Cancellation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../threading/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Threading &amp; Bridges
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../registry/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Operation Registry
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../patterns/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Common Patterns
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../custom_sources/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Custom Sources
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../performance/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Performance
   </span>
   
 
@@ -503,104 +638,55 @@
         
       
         
+          
+        
       
-    
-    
+        
       
+        
+      
+        
+      
+        
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5">
         
           
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Tutorials
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2">
-            <span class="md-nav__icon md-icon"></span>
-            Tutorials
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../patterns/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Patterns
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-        
-      
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
-        
           
-          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
-            
+          <div class="md-nav__link md-nav__container">
+            <a href="../../examples/" class="md-nav__link ">
+              
   
   <span class="md-ellipsis">
     Examples
   </span>
   
 
-            <span class="md-nav__icon md-icon"></span>
-          </label>
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_2">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             Examples
           </label>
@@ -613,11 +699,34 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/basics/" class="md-nav__link">
+      <a href="../../examples/setup/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Basic Examples
+    Setup
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/basic/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Basic Patterns
   </span>
   
 
@@ -634,28 +743,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../examples/basic_usage/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Basic Usage
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/stream_processing/" class="md-nav__link">
+      <a href="../../examples/streams/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -669,9 +757,64 @@
 
               
             
-          </ul>
-        </nav>
-      
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/web/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Web Applications
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/monitoring/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Monitoring Dashboard
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/llm/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    LLM Integration
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -690,87 +833,59 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="../../troubleshooting/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Troubleshooting
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    API Reference
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
     
     
       
-        
-      
-        
-      
-        
-      
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
-            
+        
+      
+        
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6">
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../integrations/" class="md-nav__link ">
+              
   
   <span class="md-ellipsis">
     Integrations
   </span>
   
 
-            <span class="md-nav__icon md-icon"></span>
-          </label>
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             Integrations
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
             
               
                 
@@ -800,11 +915,105 @@
   
   
     <li class="md-nav__item">
-      <a href="../../integrations/httpx/" class="md-nav__link">
+      <a href="../../integrations/tenacity/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    HTTPX
+    Tenacity (Retry)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Reference
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../core/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Core Components
   </span>
   
 
@@ -821,11 +1030,400 @@
   
   
     <li class="md-nav__item">
-      <a href="../../integrations/sqlalchemy/" class="md-nav__link">
+      <a href="../sources/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    SQLAlchemy
+    Cancellation Sources
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Integrations
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Integrations
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#fastapi" class="md-nav__link">
+    <span class="md-ellipsis">
+      FastAPI
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi" class="md-nav__link">
+    <span class="md-ellipsis">
+      fastapi
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="fastapi">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi.logger" class="md-nav__link">
+    <span class="md-ellipsis">
+      logger
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi.RequestCancellationMiddleware" class="md-nav__link">
+    <span class="md-ellipsis">
+      RequestCancellationMiddleware
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RequestCancellationMiddleware">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi.RequestCancellationMiddleware.app" class="md-nav__link">
+    <span class="md-ellipsis">
+      app
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi.RequestCancellationMiddleware.default_timeout" class="md-nav__link">
+    <span class="md-ellipsis">
+      default_timeout
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi.CancellableWebSocket" class="md-nav__link">
+    <span class="md-ellipsis">
+      CancellableWebSocket
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CancellableWebSocket">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi.CancellableWebSocket.websocket" class="md-nav__link">
+    <span class="md-ellipsis">
+      websocket
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi.CancellableWebSocket.cancellable" class="md-nav__link">
+    <span class="md-ellipsis">
+      cancellable
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi.CancellableWebSocket.accept" class="md-nav__link">
+    <span class="md-ellipsis">
+      accept
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi.CancellableWebSocket.send_text" class="md-nav__link">
+    <span class="md-ellipsis">
+      send_text
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi.CancellableWebSocket.send_json" class="md-nav__link">
+    <span class="md-ellipsis">
+      send_json
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi.CancellableWebSocket.receive_text" class="md-nav__link">
+    <span class="md-ellipsis">
+      receive_text
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi.CancellableWebSocket.receive_json" class="md-nav__link">
+    <span class="md-ellipsis">
+      receive_json
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi.CancellableWebSocket.close" class="md-nav__link">
+    <span class="md-ellipsis">
+      close
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi.get_request_token" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_request_token
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi.cancellable_dependency" class="md-nav__link">
+    <span class="md-ellipsis">
+      cancellable_dependency
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi.with_cancellation" class="md-nav__link">
+    <span class="md-ellipsis">
+      with_cancellation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi.cancellable_streaming_response" class="md-nav__link">
+    <span class="md-ellipsis">
+      cancellable_streaming_response
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../utilities/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Utilities
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8">
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Help
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Help
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../troubleshooting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../community/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Community &amp; Support
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../contributing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contributing
   </span>
   
 
@@ -849,6 +1447,221 @@
               </div>
             
             
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#fastapi" class="md-nav__link">
+    <span class="md-ellipsis">
+      FastAPI
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi" class="md-nav__link">
+    <span class="md-ellipsis">
+      fastapi
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="fastapi">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi.logger" class="md-nav__link">
+    <span class="md-ellipsis">
+      logger
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi.RequestCancellationMiddleware" class="md-nav__link">
+    <span class="md-ellipsis">
+      RequestCancellationMiddleware
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="RequestCancellationMiddleware">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi.RequestCancellationMiddleware.app" class="md-nav__link">
+    <span class="md-ellipsis">
+      app
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi.RequestCancellationMiddleware.default_timeout" class="md-nav__link">
+    <span class="md-ellipsis">
+      default_timeout
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi.CancellableWebSocket" class="md-nav__link">
+    <span class="md-ellipsis">
+      CancellableWebSocket
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="CancellableWebSocket">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi.CancellableWebSocket.websocket" class="md-nav__link">
+    <span class="md-ellipsis">
+      websocket
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi.CancellableWebSocket.cancellable" class="md-nav__link">
+    <span class="md-ellipsis">
+      cancellable
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi.CancellableWebSocket.accept" class="md-nav__link">
+    <span class="md-ellipsis">
+      accept
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi.CancellableWebSocket.send_text" class="md-nav__link">
+    <span class="md-ellipsis">
+      send_text
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi.CancellableWebSocket.send_json" class="md-nav__link">
+    <span class="md-ellipsis">
+      send_json
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi.CancellableWebSocket.receive_text" class="md-nav__link">
+    <span class="md-ellipsis">
+      receive_text
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi.CancellableWebSocket.receive_json" class="md-nav__link">
+    <span class="md-ellipsis">
+      receive_json
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi.CancellableWebSocket.close" class="md-nav__link">
+    <span class="md-ellipsis">
+      close
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi.get_request_token" class="md-nav__link">
+    <span class="md-ellipsis">
+      get_request_token
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi.cancellable_dependency" class="md-nav__link">
+    <span class="md-ellipsis">
+      cancellable_dependency
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi.with_cancellation" class="md-nav__link">
+    <span class="md-ellipsis">
+      with_cancellation
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#hother.cancelable.integrations.fastapi.cancellable_streaming_response" class="md-nav__link">
+    <span class="md-ellipsis">
+      cancellable_streaming_response
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           
             <div class="md-content" data-md-component="content">
@@ -868,7 +1681,7 @@
 
 
 <h2 id="hother.cancelable.integrations.fastapi" class="doc doc-heading">
-            <code>hother.cancelable.integrations.fastapi</code>
+            <span class="doc doc-object-name doc-module-name">hother.cancelable.integrations.fastapi</span>
 
 
 </h2>
@@ -892,13 +1705,34 @@
 
 
 
+<div class="doc doc-object doc-attribute">
+
+
+
+<h3 id="hother.cancelable.integrations.fastapi.logger" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">logger</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-module-attribute"><code>module-attribute</code></small>
+  </span>
+
+</h3>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">logger</span> <span class="o">=</span> <span class="n"><a class="autorefs autorefs-internal" title="hother.cancelable.utils.logging.get_logger" href="../utilities/#hother.cancelable.utils.logging.get_logger">get_logger</a></span><span class="p">(</span><span class="n">__name__</span><span class="p">)</span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+    </div>
+
+</div>
+
 
 <div class="doc doc-object doc-class">
 
 
 
 <h3 id="hother.cancelable.integrations.fastapi.RequestCancellationMiddleware" class="doc doc-heading">
-            <code>RequestCancellationMiddleware</code>
+            <span class="doc doc-object-name doc-class-name">RequestCancellationMiddleware</span>
 
 
 </h3>
@@ -916,7 +1750,7 @@
 
               <details class="quote">
                 <summary>Source code in <code>src/hother/cancelable/integrations/fastapi.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-20">20</a></span>
+                <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-20">20</a></span>
 <span class="normal"><a href="#__codelineno-0-21">21</a></span>
 <span class="normal"><a href="#__codelineno-0-22">22</a></span>
 <span class="normal"><a href="#__codelineno-0-23">23</a></span>
@@ -953,34 +1787,34 @@
 <span class="normal"><a href="#__codelineno-0-54">54</a></span>
 <span class="normal"><a href="#__codelineno-0-55">55</a></span>
 <span class="normal"><a href="#__codelineno-0-56">56</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-20" name="__codelineno-0-20"></a><span class="k">class</span><span class="w"> </span><span class="nc">RequestCancellationMiddleware</span><span class="p">:</span>
-<a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21"></a><span class="w">    </span><span class="sd">"""</span>
 <a id="__codelineno-0-22" name="__codelineno-0-22"></a><span class="sd">    FastAPI middleware that provides request-scoped cancellation.</span>
-<a id="__codelineno-0-23" name="__codelineno-0-23"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-23" name="__codelineno-0-23"></a><span class="sd">    """</span>
 <a id="__codelineno-0-24" name="__codelineno-0-24"></a>
 <a id="__codelineno-0-25" name="__codelineno-0-25"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">,</span> <span class="n">default_timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="w">        </span><span class="sd">"""</span>
 <a id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="sd">        Initialize middleware.</span>
 <a id="__codelineno-0-28" name="__codelineno-0-28"></a>
 <a id="__codelineno-0-29" name="__codelineno-0-29"></a><span class="sd">        Args:</span>
 <a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="sd">            app: FastAPI application</span>
 <a id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="sd">            default_timeout: Default timeout for all requests</span>
-<a id="__codelineno-0-32" name="__codelineno-0-32"></a><span class="sd">        &quot;&quot;&quot;</span>
+<a id="__codelineno-0-32" name="__codelineno-0-32"></a><span class="sd">        """</span>
 <a id="__codelineno-0-33" name="__codelineno-0-33"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">app</span>
 <a id="__codelineno-0-34" name="__codelineno-0-34"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">default_timeout</span> <span class="o">=</span> <span class="n">default_timeout</span>
 <a id="__codelineno-0-35" name="__codelineno-0-35"></a>
 <a id="__codelineno-0-36" name="__codelineno-0-36"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scope</span><span class="p">,</span> <span class="n">receive</span><span class="p">,</span> <span class="n">send</span><span class="p">):</span>
-<a id="__codelineno-0-37" name="__codelineno-0-37"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;ASGI middleware implementation.&quot;&quot;&quot;</span>
-<a id="__codelineno-0-38" name="__codelineno-0-38"></a>        <span class="k">if</span> <span class="n">scope</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;http&quot;</span><span class="p">:</span>
+<a id="__codelineno-0-37" name="__codelineno-0-37"></a><span class="w">        </span><span class="sd">"""ASGI middleware implementation."""</span>
+<a id="__codelineno-0-38" name="__codelineno-0-38"></a>        <span class="k">if</span> <span class="n">scope</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"http"</span><span class="p">:</span>
 <a id="__codelineno-0-39" name="__codelineno-0-39"></a>            <span class="c1"># Create cancellation token for this request</span>
 <a id="__codelineno-0-40" name="__codelineno-0-40"></a>            <span class="n">token</span> <span class="o">=</span> <span class="n">CancellationToken</span><span class="p">()</span>
-<a id="__codelineno-0-41" name="__codelineno-0-41"></a>            <span class="n">scope</span><span class="p">[</span><span class="s2">&quot;cancellation_token&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">token</span>
+<a id="__codelineno-0-41" name="__codelineno-0-41"></a>            <span class="n">scope</span><span class="p">[</span><span class="s2">"cancellation_token"</span><span class="p">]</span> <span class="o">=</span> <span class="n">token</span>
 <a id="__codelineno-0-42" name="__codelineno-0-42"></a>
 <a id="__codelineno-0-43" name="__codelineno-0-43"></a>            <span class="c1"># Monitor for client disconnect</span>
 <a id="__codelineno-0-44" name="__codelineno-0-44"></a>            <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">monitor_disconnect</span><span class="p">():</span>
 <a id="__codelineno-0-45" name="__codelineno-0-45"></a>                <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
 <a id="__codelineno-0-46" name="__codelineno-0-46"></a>                    <span class="n">message</span> <span class="o">=</span> <span class="k">await</span> <span class="n">receive</span><span class="p">()</span>
-<a id="__codelineno-0-47" name="__codelineno-0-47"></a>                    <span class="k">if</span> <span class="n">message</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;http.disconnect&quot;</span><span class="p">:</span>
-<a id="__codelineno-0-48" name="__codelineno-0-48"></a>                        <span class="k">await</span> <span class="n">token</span><span class="o">.</span><span class="n">cancel</span><span class="p">(</span><span class="n">CancellationReason</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">,</span> <span class="s2">&quot;Client disconnected&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-47" name="__codelineno-0-47"></a>                    <span class="k">if</span> <span class="n">message</span><span class="p">[</span><span class="s2">"type"</span><span class="p">]</span> <span class="o">==</span> <span class="s2">"http.disconnect"</span><span class="p">:</span>
+<a id="__codelineno-0-48" name="__codelineno-0-48"></a>                        <span class="k">await</span> <span class="n">token</span><span class="o">.</span><span class="n">cancel</span><span class="p">(</span><span class="n">CancellationReason</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">,</span> <span class="s2">"Client disconnected"</span><span class="p">)</span>
 <a id="__codelineno-0-49" name="__codelineno-0-49"></a>                        <span class="k">break</span>
 <a id="__codelineno-0-50" name="__codelineno-0-50"></a>
 <a id="__codelineno-0-51" name="__codelineno-0-51"></a>            <span class="c1"># Run app with monitoring</span>
@@ -989,7 +1823,7 @@
 <a id="__codelineno-0-54" name="__codelineno-0-54"></a>                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">receive</span><span class="p">,</span> <span class="n">send</span><span class="p">)</span>
 <a id="__codelineno-0-55" name="__codelineno-0-55"></a>        <span class="k">else</span><span class="p">:</span>
 <a id="__codelineno-0-56" name="__codelineno-0-56"></a>            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">receive</span><span class="p">,</span> <span class="n">send</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
+</code></pre></div></td></tr></tbody></table></div>
               </details>
 
 
@@ -1002,159 +1836,49 @@
 
 
 
+<div class="doc doc-object doc-attribute">
 
 
-<div class="doc doc-object doc-function">
 
+<h4 id="hother.cancelable.integrations.fastapi.RequestCancellationMiddleware.app" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">app</span>
 
-<h4 id="hother.cancelable.integrations.fastapi.RequestCancellationMiddleware.__init__" class="doc doc-heading">
-            <code class="highlight language-python"><span class="fm">__init__</span><span class="p">(</span><span class="n">app</span><span class="p">,</span> <span class="n">default_timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
-
-</h4>
-
-
-    <div class="doc doc-contents ">
-
-        <p>Initialize middleware.</p>
-
-
-<p><span class="doc-section-title">Parameters:</span></p>
-    <table>
-      <thead>
-        <tr>
-          <th>Name</th>
-          <th>Type</th>
-          <th>Description</th>
-          <th>Default</th>
-        </tr>
-      </thead>
-      <tbody>
-          <tr class="doc-section-item">
-            <td>
-                <code>app</code>
-            </td>
-            <td>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>FastAPI application</p>
-              </div>
-            </td>
-            <td>
-                <em>required</em>
-            </td>
-          </tr>
-          <tr class="doc-section-item">
-            <td>
-                <code>default_timeout</code>
-            </td>
-            <td>
-                  <code><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a> | None</code>
-            </td>
-            <td>
-              <div class="doc-md-description">
-                <p>Default timeout for all requests</p>
-              </div>
-            </td>
-            <td>
-                  <code>None</code>
-            </td>
-          </tr>
-      </tbody>
-    </table>
-
-            <details class="quote">
-              <summary>Source code in <code>src/hother/cancelable/integrations/fastapi.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-25">25</a></span>
-<span class="normal"><a href="#__codelineno-0-26">26</a></span>
-<span class="normal"><a href="#__codelineno-0-27">27</a></span>
-<span class="normal"><a href="#__codelineno-0-28">28</a></span>
-<span class="normal"><a href="#__codelineno-0-29">29</a></span>
-<span class="normal"><a href="#__codelineno-0-30">30</a></span>
-<span class="normal"><a href="#__codelineno-0-31">31</a></span>
-<span class="normal"><a href="#__codelineno-0-32">32</a></span>
-<span class="normal"><a href="#__codelineno-0-33">33</a></span>
-<span class="normal"><a href="#__codelineno-0-34">34</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-25" name="__codelineno-0-25"></a><span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">app</span><span class="p">,</span> <span class="n">default_timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
-<a id="__codelineno-0-26" name="__codelineno-0-26"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
-<a id="__codelineno-0-27" name="__codelineno-0-27"></a><span class="sd">    Initialize middleware.</span>
-<a id="__codelineno-0-28" name="__codelineno-0-28"></a>
-<a id="__codelineno-0-29" name="__codelineno-0-29"></a><span class="sd">    Args:</span>
-<a id="__codelineno-0-30" name="__codelineno-0-30"></a><span class="sd">        app: FastAPI application</span>
-<a id="__codelineno-0-31" name="__codelineno-0-31"></a><span class="sd">        default_timeout: Default timeout for all requests</span>
-<a id="__codelineno-0-32" name="__codelineno-0-32"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-33" name="__codelineno-0-33"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">app</span> <span class="o">=</span> <span class="n">app</span>
-<a id="__codelineno-0-34" name="__codelineno-0-34"></a>    <span class="bp">self</span><span class="o">.</span><span class="n">default_timeout</span> <span class="o">=</span> <span class="n">default_timeout</span>
-</code></pre></div></td></tr></table></div>
-            </details>
-    </div>
-
-</div>
-
-<div class="doc doc-object doc-function">
-
-
-<h4 id="hother.cancelable.integrations.fastapi.RequestCancellationMiddleware.__call__" class="doc doc-heading">
-            <code class="highlight language-python"><span class="fm">__call__</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">receive</span><span class="p">,</span> <span class="n">send</span><span class="p">)</span></code>
 
   <span class="doc doc-labels">
-      <small class="doc doc-label doc-label-async"><code>async</code></small>
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
   </span>
 
 </h4>
-
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">app</span> <span class="o">=</span> <span class="n"><span title="hother.cancelable.integrations.fastapi.RequestCancellationMiddleware(app)">app</span></span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
-
-        <p>ASGI middleware implementation.</p>
-
-            <details class="quote">
-              <summary>Source code in <code>src/hother/cancelable/integrations/fastapi.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-36">36</a></span>
-<span class="normal"><a href="#__codelineno-0-37">37</a></span>
-<span class="normal"><a href="#__codelineno-0-38">38</a></span>
-<span class="normal"><a href="#__codelineno-0-39">39</a></span>
-<span class="normal"><a href="#__codelineno-0-40">40</a></span>
-<span class="normal"><a href="#__codelineno-0-41">41</a></span>
-<span class="normal"><a href="#__codelineno-0-42">42</a></span>
-<span class="normal"><a href="#__codelineno-0-43">43</a></span>
-<span class="normal"><a href="#__codelineno-0-44">44</a></span>
-<span class="normal"><a href="#__codelineno-0-45">45</a></span>
-<span class="normal"><a href="#__codelineno-0-46">46</a></span>
-<span class="normal"><a href="#__codelineno-0-47">47</a></span>
-<span class="normal"><a href="#__codelineno-0-48">48</a></span>
-<span class="normal"><a href="#__codelineno-0-49">49</a></span>
-<span class="normal"><a href="#__codelineno-0-50">50</a></span>
-<span class="normal"><a href="#__codelineno-0-51">51</a></span>
-<span class="normal"><a href="#__codelineno-0-52">52</a></span>
-<span class="normal"><a href="#__codelineno-0-53">53</a></span>
-<span class="normal"><a href="#__codelineno-0-54">54</a></span>
-<span class="normal"><a href="#__codelineno-0-55">55</a></span>
-<span class="normal"><a href="#__codelineno-0-56">56</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-36" name="__codelineno-0-36"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="fm">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scope</span><span class="p">,</span> <span class="n">receive</span><span class="p">,</span> <span class="n">send</span><span class="p">):</span>
-<a id="__codelineno-0-37" name="__codelineno-0-37"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;ASGI middleware implementation.&quot;&quot;&quot;</span>
-<a id="__codelineno-0-38" name="__codelineno-0-38"></a>    <span class="k">if</span> <span class="n">scope</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;http&quot;</span><span class="p">:</span>
-<a id="__codelineno-0-39" name="__codelineno-0-39"></a>        <span class="c1"># Create cancellation token for this request</span>
-<a id="__codelineno-0-40" name="__codelineno-0-40"></a>        <span class="n">token</span> <span class="o">=</span> <span class="n">CancellationToken</span><span class="p">()</span>
-<a id="__codelineno-0-41" name="__codelineno-0-41"></a>        <span class="n">scope</span><span class="p">[</span><span class="s2">&quot;cancellation_token&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">token</span>
-<a id="__codelineno-0-42" name="__codelineno-0-42"></a>
-<a id="__codelineno-0-43" name="__codelineno-0-43"></a>        <span class="c1"># Monitor for client disconnect</span>
-<a id="__codelineno-0-44" name="__codelineno-0-44"></a>        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">monitor_disconnect</span><span class="p">():</span>
-<a id="__codelineno-0-45" name="__codelineno-0-45"></a>            <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
-<a id="__codelineno-0-46" name="__codelineno-0-46"></a>                <span class="n">message</span> <span class="o">=</span> <span class="k">await</span> <span class="n">receive</span><span class="p">()</span>
-<a id="__codelineno-0-47" name="__codelineno-0-47"></a>                <span class="k">if</span> <span class="n">message</span><span class="p">[</span><span class="s2">&quot;type&quot;</span><span class="p">]</span> <span class="o">==</span> <span class="s2">&quot;http.disconnect&quot;</span><span class="p">:</span>
-<a id="__codelineno-0-48" name="__codelineno-0-48"></a>                    <span class="k">await</span> <span class="n">token</span><span class="o">.</span><span class="n">cancel</span><span class="p">(</span><span class="n">CancellationReason</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">,</span> <span class="s2">&quot;Client disconnected&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-49" name="__codelineno-0-49"></a>                    <span class="k">break</span>
-<a id="__codelineno-0-50" name="__codelineno-0-50"></a>
-<a id="__codelineno-0-51" name="__codelineno-0-51"></a>        <span class="c1"># Run app with monitoring</span>
-<a id="__codelineno-0-52" name="__codelineno-0-52"></a>        <span class="k">async</span> <span class="k">with</span> <span class="n">anyio</span><span class="o">.</span><span class="n">create_task_group</span><span class="p">()</span> <span class="k">as</span> <span class="n">tg</span><span class="p">:</span>
-<a id="__codelineno-0-53" name="__codelineno-0-53"></a>            <span class="n">tg</span><span class="o">.</span><span class="n">start_soon</span><span class="p">(</span><span class="n">monitor_disconnect</span><span class="p">)</span>
-<a id="__codelineno-0-54" name="__codelineno-0-54"></a>            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">receive</span><span class="p">,</span> <span class="n">send</span><span class="p">)</span>
-<a id="__codelineno-0-55" name="__codelineno-0-55"></a>    <span class="k">else</span><span class="p">:</span>
-<a id="__codelineno-0-56" name="__codelineno-0-56"></a>        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">app</span><span class="p">(</span><span class="n">scope</span><span class="p">,</span> <span class="n">receive</span><span class="p">,</span> <span class="n">send</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
-            </details>
     </div>
 
 </div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="hother.cancelable.integrations.fastapi.RequestCancellationMiddleware.default_timeout" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">default_timeout</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h4>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">default_timeout</span> <span class="o">=</span> <span class="n"><span title="hother.cancelable.integrations.fastapi.RequestCancellationMiddleware(default_timeout)">default_timeout</span></span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+    </div>
+
+</div>
+
+
 
 
 
@@ -1169,7 +1893,7 @@
 
 
 <h3 id="hother.cancelable.integrations.fastapi.CancellableWebSocket" class="doc doc-heading">
-            <code>CancellableWebSocket</code>
+            <span class="doc doc-object-name doc-class-name">CancellableWebSocket</span>
 
 
 </h3>
@@ -1187,7 +1911,7 @@
 
               <details class="quote">
                 <summary>Source code in <code>src/hother/cancelable/integrations/fastapi.py</code></summary>
-                <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-224">224</a></span>
+                <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-224">224</a></span>
 <span class="normal"><a href="#__codelineno-0-225">225</a></span>
 <span class="normal"><a href="#__codelineno-0-226">226</a></span>
 <span class="normal"><a href="#__codelineno-0-227">227</a></span>
@@ -1225,44 +1949,44 @@
 <span class="normal"><a href="#__codelineno-0-259">259</a></span>
 <span class="normal"><a href="#__codelineno-0-260">260</a></span>
 <span class="normal"><a href="#__codelineno-0-261">261</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-224" name="__codelineno-0-224"></a><span class="k">class</span><span class="w"> </span><span class="nc">CancellableWebSocket</span><span class="p">:</span>
-<a id="__codelineno-0-225" name="__codelineno-0-225"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-0-225" name="__codelineno-0-225"></a><span class="w">    </span><span class="sd">"""</span>
 <a id="__codelineno-0-226" name="__codelineno-0-226"></a><span class="sd">    WebSocket wrapper with cancellation support.</span>
-<a id="__codelineno-0-227" name="__codelineno-0-227"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-227" name="__codelineno-0-227"></a><span class="sd">    """</span>
 <a id="__codelineno-0-228" name="__codelineno-0-228"></a>
 <a id="__codelineno-0-229" name="__codelineno-0-229"></a>    <span class="k">def</span><span class="w"> </span><span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">websocket</span><span class="p">,</span> <span class="n">cancellable</span><span class="p">:</span> <span class="n">Cancellable</span><span class="p">):</span>
 <a id="__codelineno-0-230" name="__codelineno-0-230"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">websocket</span> <span class="o">=</span> <span class="n">websocket</span>
 <a id="__codelineno-0-231" name="__codelineno-0-231"></a>        <span class="bp">self</span><span class="o">.</span><span class="n">cancellable</span> <span class="o">=</span> <span class="n">cancellable</span>
 <a id="__codelineno-0-232" name="__codelineno-0-232"></a>
 <a id="__codelineno-0-233" name="__codelineno-0-233"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">accept</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<a id="__codelineno-0-234" name="__codelineno-0-234"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Accept WebSocket connection.&quot;&quot;&quot;</span>
+<a id="__codelineno-0-234" name="__codelineno-0-234"></a><span class="w">        </span><span class="sd">"""Accept WebSocket connection."""</span>
 <a id="__codelineno-0-235" name="__codelineno-0-235"></a>        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">websocket</span><span class="o">.</span><span class="n">accept</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-<a id="__codelineno-0-236" name="__codelineno-0-236"></a>        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">cancellable</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span><span class="s2">&quot;WebSocket connected&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-236" name="__codelineno-0-236"></a>        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">cancellable</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span><span class="s2">"WebSocket connected"</span><span class="p">)</span>
 <a id="__codelineno-0-237" name="__codelineno-0-237"></a>
 <a id="__codelineno-0-238" name="__codelineno-0-238"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">send_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<a id="__codelineno-0-239" name="__codelineno-0-239"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Send text with cancellation check.&quot;&quot;&quot;</span>
+<a id="__codelineno-0-239" name="__codelineno-0-239"></a><span class="w">        </span><span class="sd">"""Send text with cancellation check."""</span>
 <a id="__codelineno-0-240" name="__codelineno-0-240"></a>        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">cancellable</span><span class="o">.</span><span class="n">_token</span><span class="o">.</span><span class="n">check_async</span><span class="p">()</span>
 <a id="__codelineno-0-241" name="__codelineno-0-241"></a>        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">websocket</span><span class="o">.</span><span class="n">send_text</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 <a id="__codelineno-0-242" name="__codelineno-0-242"></a>
 <a id="__codelineno-0-243" name="__codelineno-0-243"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">send_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
-<a id="__codelineno-0-244" name="__codelineno-0-244"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Send JSON with cancellation check.&quot;&quot;&quot;</span>
+<a id="__codelineno-0-244" name="__codelineno-0-244"></a><span class="w">        </span><span class="sd">"""Send JSON with cancellation check."""</span>
 <a id="__codelineno-0-245" name="__codelineno-0-245"></a>        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">cancellable</span><span class="o">.</span><span class="n">_token</span><span class="o">.</span><span class="n">check_async</span><span class="p">()</span>
 <a id="__codelineno-0-246" name="__codelineno-0-246"></a>        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">websocket</span><span class="o">.</span><span class="n">send_json</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 <a id="__codelineno-0-247" name="__codelineno-0-247"></a>
 <a id="__codelineno-0-248" name="__codelineno-0-248"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">receive_text</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<a id="__codelineno-0-249" name="__codelineno-0-249"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Receive text with cancellation check.&quot;&quot;&quot;</span>
+<a id="__codelineno-0-249" name="__codelineno-0-249"></a><span class="w">        </span><span class="sd">"""Receive text with cancellation check."""</span>
 <a id="__codelineno-0-250" name="__codelineno-0-250"></a>        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">cancellable</span><span class="o">.</span><span class="n">_token</span><span class="o">.</span><span class="n">check_async</span><span class="p">()</span>
 <a id="__codelineno-0-251" name="__codelineno-0-251"></a>        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">websocket</span><span class="o">.</span><span class="n">receive_text</span><span class="p">()</span>
 <a id="__codelineno-0-252" name="__codelineno-0-252"></a>
 <a id="__codelineno-0-253" name="__codelineno-0-253"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">receive_json</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<a id="__codelineno-0-254" name="__codelineno-0-254"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Receive JSON with cancellation check.&quot;&quot;&quot;</span>
+<a id="__codelineno-0-254" name="__codelineno-0-254"></a><span class="w">        </span><span class="sd">"""Receive JSON with cancellation check."""</span>
 <a id="__codelineno-0-255" name="__codelineno-0-255"></a>        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">cancellable</span><span class="o">.</span><span class="n">_token</span><span class="o">.</span><span class="n">check_async</span><span class="p">()</span>
 <a id="__codelineno-0-256" name="__codelineno-0-256"></a>        <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">websocket</span><span class="o">.</span><span class="n">receive_json</span><span class="p">()</span>
 <a id="__codelineno-0-257" name="__codelineno-0-257"></a>
-<a id="__codelineno-0-258" name="__codelineno-0-258"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">reason</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
-<a id="__codelineno-0-259" name="__codelineno-0-259"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Close WebSocket connection.&quot;&quot;&quot;</span>
+<a id="__codelineno-0-258" name="__codelineno-0-258"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">reason</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">):</span>
+<a id="__codelineno-0-259" name="__codelineno-0-259"></a><span class="w">        </span><span class="sd">"""Close WebSocket connection."""</span>
 <a id="__codelineno-0-260" name="__codelineno-0-260"></a>        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">websocket</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">reason</span><span class="p">)</span>
-<a id="__codelineno-0-261" name="__codelineno-0-261"></a>        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">cancellable</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span><span class="s2">&quot;WebSocket closed&quot;</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
+<a id="__codelineno-0-261" name="__codelineno-0-261"></a>        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">cancellable</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span><span class="s2">"WebSocket closed"</span><span class="p">)</span>
+</code></pre></div></td></tr></tbody></table></div>
               </details>
 
 
@@ -1275,20 +1999,64 @@
 
 
 
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="hother.cancelable.integrations.fastapi.CancellableWebSocket.websocket" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">websocket</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h4>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">websocket</span> <span class="o">=</span> <span class="n"><span title="hother.cancelable.integrations.fastapi.CancellableWebSocket(websocket)">websocket</span></span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+    </div>
+
+</div>
+
+<div class="doc doc-object doc-attribute">
+
+
+
+<h4 id="hother.cancelable.integrations.fastapi.CancellableWebSocket.cancellable" class="doc doc-heading">
+            <span class="doc doc-object-name doc-attribute-name">cancellable</span>
+
+
+  <span class="doc doc-labels">
+      <small class="doc doc-label doc-label-instance-attribute"><code>instance-attribute</code></small>
+  </span>
+
+</h4>
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="n">cancellable</span> <span class="o">=</span> <span class="n"><span title="hother.cancelable.integrations.fastapi.CancellableWebSocket(cancellable)">cancellable</span></span>
+</code></pre></div>
+
+    <div class="doc doc-contents ">
+    </div>
+
+</div>
+
 
 
 <div class="doc doc-object doc-function">
 
 
 <h4 id="hother.cancelable.integrations.fastapi.CancellableWebSocket.accept" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">accept</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></code>
+            <span class="doc doc-object-name doc-function-name">accept</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-async"><code>async</code></small>
   </span>
 
 </h4>
-
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">accept</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -1296,14 +2064,14 @@
 
             <details class="quote">
               <summary>Source code in <code>src/hother/cancelable/integrations/fastapi.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-233">233</a></span>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-233">233</a></span>
 <span class="normal"><a href="#__codelineno-0-234">234</a></span>
 <span class="normal"><a href="#__codelineno-0-235">235</a></span>
 <span class="normal"><a href="#__codelineno-0-236">236</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-233" name="__codelineno-0-233"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">accept</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
-<a id="__codelineno-0-234" name="__codelineno-0-234"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Accept WebSocket connection.&quot;&quot;&quot;</span>
+<a id="__codelineno-0-234" name="__codelineno-0-234"></a><span class="w">    </span><span class="sd">"""Accept WebSocket connection."""</span>
 <a id="__codelineno-0-235" name="__codelineno-0-235"></a>    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">websocket</span><span class="o">.</span><span class="n">accept</span><span class="p">(</span><span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
-<a id="__codelineno-0-236" name="__codelineno-0-236"></a>    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">cancellable</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span><span class="s2">&quot;WebSocket connected&quot;</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
+<a id="__codelineno-0-236" name="__codelineno-0-236"></a>    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">cancellable</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span><span class="s2">"WebSocket connected"</span><span class="p">)</span>
+</code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>
 
@@ -1313,14 +2081,16 @@
 
 
 <h4 id="hother.cancelable.integrations.fastapi.CancellableWebSocket.send_text" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">send_text</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></code>
+            <span class="doc doc-object-name doc-function-name">send_text</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-async"><code>async</code></small>
   </span>
 
 </h4>
-
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">send_text</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span><span class="p">)</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -1328,14 +2098,14 @@
 
             <details class="quote">
               <summary>Source code in <code>src/hother/cancelable/integrations/fastapi.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-238">238</a></span>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-238">238</a></span>
 <span class="normal"><a href="#__codelineno-0-239">239</a></span>
 <span class="normal"><a href="#__codelineno-0-240">240</a></span>
 <span class="normal"><a href="#__codelineno-0-241">241</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-238" name="__codelineno-0-238"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">send_text</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<a id="__codelineno-0-239" name="__codelineno-0-239"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Send text with cancellation check.&quot;&quot;&quot;</span>
+<a id="__codelineno-0-239" name="__codelineno-0-239"></a><span class="w">    </span><span class="sd">"""Send text with cancellation check."""</span>
 <a id="__codelineno-0-240" name="__codelineno-0-240"></a>    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">cancellable</span><span class="o">.</span><span class="n">_token</span><span class="o">.</span><span class="n">check_async</span><span class="p">()</span>
 <a id="__codelineno-0-241" name="__codelineno-0-241"></a>    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">websocket</span><span class="o">.</span><span class="n">send_text</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
+</code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>
 
@@ -1345,14 +2115,16 @@
 
 
 <h4 id="hother.cancelable.integrations.fastapi.CancellableWebSocket.send_json" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">send_json</span><span class="p">(</span><span class="n">data</span><span class="p">)</span></code>
+            <span class="doc doc-object-name doc-function-name">send_json</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-async"><code>async</code></small>
   </span>
 
 </h4>
-
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">send_json</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">)</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -1360,14 +2132,14 @@
 
             <details class="quote">
               <summary>Source code in <code>src/hother/cancelable/integrations/fastapi.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-243">243</a></span>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-243">243</a></span>
 <span class="normal"><a href="#__codelineno-0-244">244</a></span>
 <span class="normal"><a href="#__codelineno-0-245">245</a></span>
 <span class="normal"><a href="#__codelineno-0-246">246</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-243" name="__codelineno-0-243"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">send_json</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">:</span> <span class="n">Any</span><span class="p">):</span>
-<a id="__codelineno-0-244" name="__codelineno-0-244"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Send JSON with cancellation check.&quot;&quot;&quot;</span>
+<a id="__codelineno-0-244" name="__codelineno-0-244"></a><span class="w">    </span><span class="sd">"""Send JSON with cancellation check."""</span>
 <a id="__codelineno-0-245" name="__codelineno-0-245"></a>    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">cancellable</span><span class="o">.</span><span class="n">_token</span><span class="o">.</span><span class="n">check_async</span><span class="p">()</span>
 <a id="__codelineno-0-246" name="__codelineno-0-246"></a>    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">websocket</span><span class="o">.</span><span class="n">send_json</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
+</code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>
 
@@ -1377,14 +2149,16 @@
 
 
 <h4 id="hother.cancelable.integrations.fastapi.CancellableWebSocket.receive_text" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">receive_text</span><span class="p">()</span></code>
+            <span class="doc doc-object-name doc-function-name">receive_text</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-async"><code>async</code></small>
   </span>
 
 </h4>
-
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">receive_text</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -1392,14 +2166,14 @@
 
             <details class="quote">
               <summary>Source code in <code>src/hother/cancelable/integrations/fastapi.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-248">248</a></span>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-248">248</a></span>
 <span class="normal"><a href="#__codelineno-0-249">249</a></span>
 <span class="normal"><a href="#__codelineno-0-250">250</a></span>
 <span class="normal"><a href="#__codelineno-0-251">251</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-248" name="__codelineno-0-248"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">receive_text</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
-<a id="__codelineno-0-249" name="__codelineno-0-249"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Receive text with cancellation check.&quot;&quot;&quot;</span>
+<a id="__codelineno-0-249" name="__codelineno-0-249"></a><span class="w">    </span><span class="sd">"""Receive text with cancellation check."""</span>
 <a id="__codelineno-0-250" name="__codelineno-0-250"></a>    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">cancellable</span><span class="o">.</span><span class="n">_token</span><span class="o">.</span><span class="n">check_async</span><span class="p">()</span>
 <a id="__codelineno-0-251" name="__codelineno-0-251"></a>    <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">websocket</span><span class="o">.</span><span class="n">receive_text</span><span class="p">()</span>
-</code></pre></div></td></tr></table></div>
+</code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>
 
@@ -1409,14 +2183,16 @@
 
 
 <h4 id="hother.cancelable.integrations.fastapi.CancellableWebSocket.receive_json" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">receive_json</span><span class="p">()</span></code>
+            <span class="doc doc-object-name doc-function-name">receive_json</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-async"><code>async</code></small>
   </span>
 
 </h4>
-
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">receive_json</span><span class="p">()</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -1424,14 +2200,14 @@
 
             <details class="quote">
               <summary>Source code in <code>src/hother/cancelable/integrations/fastapi.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-253">253</a></span>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-253">253</a></span>
 <span class="normal"><a href="#__codelineno-0-254">254</a></span>
 <span class="normal"><a href="#__codelineno-0-255">255</a></span>
 <span class="normal"><a href="#__codelineno-0-256">256</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-253" name="__codelineno-0-253"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">receive_json</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Any</span><span class="p">:</span>
-<a id="__codelineno-0-254" name="__codelineno-0-254"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Receive JSON with cancellation check.&quot;&quot;&quot;</span>
+<a id="__codelineno-0-254" name="__codelineno-0-254"></a><span class="w">    </span><span class="sd">"""Receive JSON with cancellation check."""</span>
 <a id="__codelineno-0-255" name="__codelineno-0-255"></a>    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">cancellable</span><span class="o">.</span><span class="n">_token</span><span class="o">.</span><span class="n">check_async</span><span class="p">()</span>
 <a id="__codelineno-0-256" name="__codelineno-0-256"></a>    <span class="k">return</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">websocket</span><span class="o">.</span><span class="n">receive_json</span><span class="p">()</span>
-</code></pre></div></td></tr></table></div>
+</code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>
 
@@ -1441,14 +2217,16 @@
 
 
 <h4 id="hother.cancelable.integrations.fastapi.CancellableWebSocket.close" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">close</span><span class="p">(</span><span class="n">code</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span> <span class="n">reason</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span></code>
+            <span class="doc doc-object-name doc-function-name">close</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-async"><code>async</code></small>
   </span>
 
 </h4>
-
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">close</span><span class="p">(</span><span class="n">code</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">reason</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s1">''</span><span class="p">)</span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -1456,14 +2234,14 @@
 
             <details class="quote">
               <summary>Source code in <code>src/hother/cancelable/integrations/fastapi.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-258">258</a></span>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-258">258</a></span>
 <span class="normal"><a href="#__codelineno-0-259">259</a></span>
 <span class="normal"><a href="#__codelineno-0-260">260</a></span>
-<span class="normal"><a href="#__codelineno-0-261">261</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-258" name="__codelineno-0-258"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">reason</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;&quot;</span><span class="p">):</span>
-<a id="__codelineno-0-259" name="__codelineno-0-259"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Close WebSocket connection.&quot;&quot;&quot;</span>
+<span class="normal"><a href="#__codelineno-0-261">261</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-258" name="__codelineno-0-258"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">code</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="mi">1000</span><span class="p">,</span> <span class="n">reason</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">""</span><span class="p">):</span>
+<a id="__codelineno-0-259" name="__codelineno-0-259"></a><span class="w">    </span><span class="sd">"""Close WebSocket connection."""</span>
 <a id="__codelineno-0-260" name="__codelineno-0-260"></a>    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">websocket</span><span class="o">.</span><span class="n">close</span><span class="p">(</span><span class="n">code</span><span class="p">,</span> <span class="n">reason</span><span class="p">)</span>
-<a id="__codelineno-0-261" name="__codelineno-0-261"></a>    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">cancellable</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span><span class="s2">&quot;WebSocket closed&quot;</span><span class="p">)</span>
-</code></pre></div></td></tr></table></div>
+<a id="__codelineno-0-261" name="__codelineno-0-261"></a>    <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">cancellable</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span><span class="s2">"WebSocket closed"</span><span class="p">)</span>
+</code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>
 
@@ -1482,10 +2260,12 @@
 
 
 <h3 id="hother.cancelable.integrations.fastapi.get_request_token" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">get_request_token</span><span class="p">(</span><span class="n">request</span><span class="p">)</span></code>
+            <span class="doc doc-object-name doc-function-name">get_request_token</span>
+
 
 </h3>
-
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">get_request_token</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="fastapi.Request" href="https://fastapi.tiangolo.com/reference/request/#fastapi.Request">Request</a></span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="hother.cancelable.core.token.CancellationToken">CancellationToken</span></span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -1508,7 +2288,7 @@
                 <code>request</code>
             </td>
             <td>
-                  <code><span title="fastapi.Request">Request</span></code>
+                  <code><a class="autorefs autorefs-external" title="fastapi.Request" href="https://fastapi.tiangolo.com/reference/request/#fastapi.Request">Request</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -1547,7 +2327,7 @@
 
             <details class="quote">
               <summary>Source code in <code>src/hother/cancelable/integrations/fastapi.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-59">59</a></span>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-59">59</a></span>
 <span class="normal"><a href="#__codelineno-0-60">60</a></span>
 <span class="normal"><a href="#__codelineno-0-61">61</a></span>
 <span class="normal"><a href="#__codelineno-0-62">62</a></span>
@@ -1564,7 +2344,7 @@
 <span class="normal"><a href="#__codelineno-0-73">73</a></span>
 <span class="normal"><a href="#__codelineno-0-74">74</a></span>
 <span class="normal"><a href="#__codelineno-0-75">75</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-59" name="__codelineno-0-59"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_request_token</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">CancellationToken</span><span class="p">:</span>
-<a id="__codelineno-0-60" name="__codelineno-0-60"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-0-60" name="__codelineno-0-60"></a><span class="w">    </span><span class="sd">"""</span>
 <a id="__codelineno-0-61" name="__codelineno-0-61"></a><span class="sd">    Get cancellation token from request.</span>
 <a id="__codelineno-0-62" name="__codelineno-0-62"></a>
 <a id="__codelineno-0-63" name="__codelineno-0-63"></a><span class="sd">    Args:</span>
@@ -1572,15 +2352,15 @@
 <a id="__codelineno-0-65" name="__codelineno-0-65"></a>
 <a id="__codelineno-0-66" name="__codelineno-0-66"></a><span class="sd">    Returns:</span>
 <a id="__codelineno-0-67" name="__codelineno-0-67"></a><span class="sd">        Cancellation token for this request</span>
-<a id="__codelineno-0-68" name="__codelineno-0-68"></a><span class="sd">    &quot;&quot;&quot;</span>
-<a id="__codelineno-0-69" name="__codelineno-0-69"></a>    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">&quot;scope&quot;</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">&quot;cancellation_token&quot;</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">scope</span><span class="p">:</span>
-<a id="__codelineno-0-70" name="__codelineno-0-70"></a>        <span class="k">return</span> <span class="n">request</span><span class="o">.</span><span class="n">scope</span><span class="p">[</span><span class="s2">&quot;cancellation_token&quot;</span><span class="p">]</span>
+<a id="__codelineno-0-68" name="__codelineno-0-68"></a><span class="sd">    """</span>
+<a id="__codelineno-0-69" name="__codelineno-0-69"></a>    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="s2">"scope"</span><span class="p">)</span> <span class="ow">and</span> <span class="s2">"cancellation_token"</span> <span class="ow">in</span> <span class="n">request</span><span class="o">.</span><span class="n">scope</span><span class="p">:</span>
+<a id="__codelineno-0-70" name="__codelineno-0-70"></a>        <span class="k">return</span> <span class="n">request</span><span class="o">.</span><span class="n">scope</span><span class="p">[</span><span class="s2">"cancellation_token"</span><span class="p">]</span>
 <a id="__codelineno-0-71" name="__codelineno-0-71"></a>
 <a id="__codelineno-0-72" name="__codelineno-0-72"></a>    <span class="c1"># Create new token if middleware not installed</span>
 <a id="__codelineno-0-73" name="__codelineno-0-73"></a>    <span class="n">token</span> <span class="o">=</span> <span class="n">CancellationToken</span><span class="p">()</span>
-<a id="__codelineno-0-74" name="__codelineno-0-74"></a>    <span class="n">request</span><span class="o">.</span><span class="n">scope</span><span class="p">[</span><span class="s2">&quot;cancellation_token&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">token</span>
+<a id="__codelineno-0-74" name="__codelineno-0-74"></a>    <span class="n">request</span><span class="o">.</span><span class="n">scope</span><span class="p">[</span><span class="s2">"cancellation_token"</span><span class="p">]</span> <span class="o">=</span> <span class="n">token</span>
 <a id="__codelineno-0-75" name="__codelineno-0-75"></a>    <span class="k">return</span> <span class="n">token</span>
-</code></pre></div></td></tr></table></div>
+</code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>
 
@@ -1590,14 +2370,18 @@
 
 
 <h3 id="hother.cancelable.integrations.fastapi.cancellable_dependency" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">cancellable_dependency</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+            <span class="doc doc-object-name doc-function-name">cancellable_dependency</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-async"><code>async</code></small>
   </span>
 
 </h3>
-
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">cancellable_dependency</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">request</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="fastapi.Request" href="https://fastapi.tiangolo.com/reference/request/#fastapi.Request">Request</a></span><span class="p">,</span> <span class="n">timeout</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><span title="hother.cancelable.core.cancellable.Cancellable">Cancellable</span></span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -1620,7 +2404,7 @@
                 <code>request</code>
             </td>
             <td>
-                  <code><span title="fastapi.Request">Request</span></code>
+                  <code><a class="autorefs autorefs-external" title="fastapi.Request" href="https://fastapi.tiangolo.com/reference/request/#fastapi.Request">Request</a></code>
             </td>
             <td>
               <div class="doc-md-description">
@@ -1685,7 +2469,7 @@ async def get_data(
 </details>
             <details class="quote">
               <summary>Source code in <code>src/hother/cancelable/integrations/fastapi.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-78"> 78</a></span>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-78"> 78</a></span>
 <span class="normal"><a href="#__codelineno-0-79"> 79</a></span>
 <span class="normal"><a href="#__codelineno-0-80"> 80</a></span>
 <span class="normal"><a href="#__codelineno-0-81"> 81</a></span>
@@ -1732,7 +2516,7 @@ async def get_data(
 <a id="__codelineno-0-79" name="__codelineno-0-79"></a>    <span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span>
 <a id="__codelineno-0-80" name="__codelineno-0-80"></a>    <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-81" name="__codelineno-0-81"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Cancellable</span><span class="p">:</span>
-<a id="__codelineno-0-82" name="__codelineno-0-82"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-0-82" name="__codelineno-0-82"></a><span class="w">    </span><span class="sd">"""</span>
 <a id="__codelineno-0-83" name="__codelineno-0-83"></a><span class="sd">    FastAPI dependency that provides a cancellable for the request.</span>
 <a id="__codelineno-0-84" name="__codelineno-0-84"></a>
 <a id="__codelineno-0-85" name="__codelineno-0-85"></a><span class="sd">    Args:</span>
@@ -1743,28 +2527,28 @@ async def get_data(
 <a id="__codelineno-0-90" name="__codelineno-0-90"></a><span class="sd">        Cancellable instance for this request</span>
 <a id="__codelineno-0-91" name="__codelineno-0-91"></a>
 <a id="__codelineno-0-92" name="__codelineno-0-92"></a><span class="sd">    Example:</span>
-<a id="__codelineno-0-93" name="__codelineno-0-93"></a><span class="sd">        @app.get(&quot;/data&quot;)</span>
+<a id="__codelineno-0-93" name="__codelineno-0-93"></a><span class="sd">        @app.get("/data")</span>
 <a id="__codelineno-0-94" name="__codelineno-0-94"></a><span class="sd">        async def get_data(</span>
 <a id="__codelineno-0-95" name="__codelineno-0-95"></a><span class="sd">            cancel: Cancellable = Depends(cancellable_dependency)</span>
 <a id="__codelineno-0-96" name="__codelineno-0-96"></a><span class="sd">        ):</span>
 <a id="__codelineno-0-97" name="__codelineno-0-97"></a><span class="sd">            async with cancel:</span>
 <a id="__codelineno-0-98" name="__codelineno-0-98"></a><span class="sd">                return await fetch_data()</span>
-<a id="__codelineno-0-99" name="__codelineno-0-99"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-99" name="__codelineno-0-99"></a><span class="sd">    """</span>
 <a id="__codelineno-0-100" name="__codelineno-0-100"></a>    <span class="n">token</span> <span class="o">=</span> <span class="n">get_request_token</span><span class="p">(</span><span class="n">request</span><span class="p">)</span>
 <a id="__codelineno-0-101" name="__codelineno-0-101"></a>
 <a id="__codelineno-0-102" name="__codelineno-0-102"></a>    <span class="c1"># Create base cancellable with token</span>
-<a id="__codelineno-0-103" name="__codelineno-0-103"></a>    <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">method</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span>
+<a id="__codelineno-0-103" name="__codelineno-0-103"></a>    <span class="n">name</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">method</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">request</span><span class="o">.</span><span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="si">}</span><span class="s2">"</span>
 <a id="__codelineno-0-104" name="__codelineno-0-104"></a>    <span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span>
-<a id="__codelineno-0-105" name="__codelineno-0-105"></a>        <span class="s2">&quot;method&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span><span class="p">,</span>
-<a id="__codelineno-0-106" name="__codelineno-0-106"></a>        <span class="s2">&quot;path&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
-<a id="__codelineno-0-107" name="__codelineno-0-107"></a>        <span class="s2">&quot;client&quot;</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">host</span> <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">client</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-105" name="__codelineno-0-105"></a>        <span class="s2">"method"</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">method</span><span class="p">,</span>
+<a id="__codelineno-0-106" name="__codelineno-0-106"></a>        <span class="s2">"path"</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">url</span><span class="o">.</span><span class="n">path</span><span class="p">,</span>
+<a id="__codelineno-0-107" name="__codelineno-0-107"></a>        <span class="s2">"client"</span><span class="p">:</span> <span class="n">request</span><span class="o">.</span><span class="n">client</span><span class="o">.</span><span class="n">host</span> <span class="k">if</span> <span class="n">request</span><span class="o">.</span><span class="n">client</span> <span class="k">else</span> <span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-108" name="__codelineno-0-108"></a>    <span class="p">}</span>
 <a id="__codelineno-0-109" name="__codelineno-0-109"></a>
 <a id="__codelineno-0-110" name="__codelineno-0-110"></a>    <span class="n">base_cancellable</span> <span class="o">=</span> <span class="n">Cancellable</span><span class="o">.</span><span class="n">with_token</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">,</span> <span class="n">metadata</span><span class="o">=</span><span class="n">metadata</span><span class="p">)</span>
 <a id="__codelineno-0-111" name="__codelineno-0-111"></a>
 <a id="__codelineno-0-112" name="__codelineno-0-112"></a>    <span class="c1"># Add timeout if specified</span>
 <a id="__codelineno-0-113" name="__codelineno-0-113"></a>    <span class="k">if</span> <span class="n">timeout</span><span class="p">:</span>
-<a id="__codelineno-0-114" name="__codelineno-0-114"></a>        <span class="n">timeout_cancellable</span> <span class="o">=</span> <span class="n">Cancellable</span><span class="o">.</span><span class="n">with_timeout</span><span class="p">(</span><span class="n">timeout</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;timeout_</span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-114" name="__codelineno-0-114"></a>        <span class="n">timeout_cancellable</span> <span class="o">=</span> <span class="n">Cancellable</span><span class="o">.</span><span class="n">with_timeout</span><span class="p">(</span><span class="n">timeout</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">"timeout_</span><span class="si">{</span><span class="n">timeout</span><span class="si">}</span><span class="s2">s"</span><span class="p">)</span>
 <a id="__codelineno-0-115" name="__codelineno-0-115"></a>        <span class="c1"># Combine but preserve the original name and metadata</span>
 <a id="__codelineno-0-116" name="__codelineno-0-116"></a>        <span class="n">combined</span> <span class="o">=</span> <span class="n">base_cancellable</span><span class="o">.</span><span class="n">combine</span><span class="p">(</span><span class="n">timeout_cancellable</span><span class="p">)</span>
 <a id="__codelineno-0-117" name="__codelineno-0-117"></a>        <span class="n">combined</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>  <span class="c1"># Override the combined name</span>
@@ -1772,7 +2556,7 @@ async def get_data(
 <a id="__codelineno-0-119" name="__codelineno-0-119"></a>        <span class="k">return</span> <span class="n">combined</span>
 <a id="__codelineno-0-120" name="__codelineno-0-120"></a>
 <a id="__codelineno-0-121" name="__codelineno-0-121"></a>    <span class="k">return</span> <span class="n">base_cancellable</span>
-</code></pre></div></td></tr></table></div>
+</code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>
 
@@ -1782,10 +2566,15 @@ async def get_data(
 
 
 <h3 id="hother.cancelable.integrations.fastapi.with_cancellation" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">with_cancellation</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">raise_on_cancel</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></code>
+            <span class="doc doc-object-name doc-function-name">with_cancellation</span>
+
 
 </h3>
-
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">with_cancellation</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">timeout</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#float">float</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">raise_on_cancel</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#bool">bool</a></span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="collections.abc.Callable" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.Callable">Callable</a></span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -1873,7 +2662,7 @@ async def slow_endpoint(request: Request):
 </details>
             <details class="quote">
               <summary>Source code in <code>src/hother/cancelable/integrations/fastapi.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-124">124</a></span>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-124">124</a></span>
 <span class="normal"><a href="#__codelineno-0-125">125</a></span>
 <span class="normal"><a href="#__codelineno-0-126">126</a></span>
 <span class="normal"><a href="#__codelineno-0-127">127</a></span>
@@ -1919,7 +2708,7 @@ async def slow_endpoint(request: Request):
 <a id="__codelineno-0-125" name="__codelineno-0-125"></a>    <span class="n">timeout</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-126" name="__codelineno-0-126"></a>    <span class="n">raise_on_cancel</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span>
 <a id="__codelineno-0-127" name="__codelineno-0-127"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
-<a id="__codelineno-0-128" name="__codelineno-0-128"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-0-128" name="__codelineno-0-128"></a><span class="w">    </span><span class="sd">"""</span>
 <a id="__codelineno-0-129" name="__codelineno-0-129"></a><span class="sd">    Decorator for FastAPI endpoints with automatic cancellation.</span>
 <a id="__codelineno-0-130" name="__codelineno-0-130"></a>
 <a id="__codelineno-0-131" name="__codelineno-0-131"></a><span class="sd">    Args:</span>
@@ -1930,13 +2719,13 @@ async def slow_endpoint(request: Request):
 <a id="__codelineno-0-136" name="__codelineno-0-136"></a><span class="sd">        Decorator function</span>
 <a id="__codelineno-0-137" name="__codelineno-0-137"></a>
 <a id="__codelineno-0-138" name="__codelineno-0-138"></a><span class="sd">    Example:</span>
-<a id="__codelineno-0-139" name="__codelineno-0-139"></a><span class="sd">        @app.get(&quot;/slow&quot;)</span>
+<a id="__codelineno-0-139" name="__codelineno-0-139"></a><span class="sd">        @app.get("/slow")</span>
 <a id="__codelineno-0-140" name="__codelineno-0-140"></a><span class="sd">        @with_cancellation(timeout=30.0)</span>
 <a id="__codelineno-0-141" name="__codelineno-0-141"></a><span class="sd">        async def slow_endpoint(request: Request):</span>
 <a id="__codelineno-0-142" name="__codelineno-0-142"></a><span class="sd">            # Cancellable is automatically injected</span>
 <a id="__codelineno-0-143" name="__codelineno-0-143"></a><span class="sd">            cancellable = current_operation()</span>
 <a id="__codelineno-0-144" name="__codelineno-0-144"></a><span class="sd">            await long_operation()</span>
-<a id="__codelineno-0-145" name="__codelineno-0-145"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-145" name="__codelineno-0-145"></a><span class="sd">    """</span>
 <a id="__codelineno-0-146" name="__codelineno-0-146"></a>
 <a id="__codelineno-0-147" name="__codelineno-0-147"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">:</span> <span class="n">Callable</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Callable</span><span class="p">:</span>
 <a id="__codelineno-0-148" name="__codelineno-0-148"></a>        <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">wrapper</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
@@ -1949,16 +2738,16 @@ async def slow_endpoint(request: Request):
 <a id="__codelineno-0-155" name="__codelineno-0-155"></a>            <span class="k">except</span> <span class="n">anyio</span><span class="o">.</span><span class="n">get_cancelled_exc_class</span><span class="p">():</span>
 <a id="__codelineno-0-156" name="__codelineno-0-156"></a>                <span class="k">if</span> <span class="n">raise_on_cancel</span><span class="p">:</span>
 <a id="__codelineno-0-157" name="__codelineno-0-157"></a>                    <span class="k">if</span> <span class="n">cancellable</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">cancel_reason</span> <span class="o">==</span> <span class="n">CancellationReason</span><span class="o">.</span><span class="n">TIMEOUT</span><span class="p">:</span>
-<a id="__codelineno-0-158" name="__codelineno-0-158"></a>                        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">504</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Request timeout&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-158" name="__codelineno-0-158"></a>                        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">504</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">"Request timeout"</span><span class="p">)</span>
 <a id="__codelineno-0-159" name="__codelineno-0-159"></a>                    <span class="k">if</span> <span class="n">cancellable</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">cancel_reason</span> <span class="o">==</span> <span class="n">CancellationReason</span><span class="o">.</span><span class="n">SIGNAL</span><span class="p">:</span>
-<a id="__codelineno-0-160" name="__codelineno-0-160"></a>                        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">499</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">&quot;Client closed connection&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-161" name="__codelineno-0-161"></a>                    <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">503</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Request cancelled: </span><span class="si">{</span><span class="n">cancellable</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">cancel_message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-160" name="__codelineno-0-160"></a>                        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">499</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">"Client closed connection"</span><span class="p">)</span>
+<a id="__codelineno-0-161" name="__codelineno-0-161"></a>                    <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">503</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="sa">f</span><span class="s2">"Request cancelled: </span><span class="si">{</span><span class="n">cancellable</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">cancel_message</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <a id="__codelineno-0-162" name="__codelineno-0-162"></a>                <span class="k">raise</span>
 <a id="__codelineno-0-163" name="__codelineno-0-163"></a>
 <a id="__codelineno-0-164" name="__codelineno-0-164"></a>        <span class="k">return</span> <span class="n">wrapper</span>
 <a id="__codelineno-0-165" name="__codelineno-0-165"></a>
 <a id="__codelineno-0-166" name="__codelineno-0-166"></a>    <span class="k">return</span> <span class="n">decorator</span>
-</code></pre></div></td></tr></table></div>
+</code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>
 
@@ -1968,14 +2757,21 @@ async def slow_endpoint(request: Request):
 
 
 <h3 id="hother.cancelable.integrations.fastapi.cancellable_streaming_response" class="doc doc-heading">
-            <code class="highlight language-python"><span class="n">cancellable_streaming_response</span><span class="p">(</span><span class="n">generator</span><span class="p">,</span> <span class="n">cancellable</span><span class="p">,</span> <span class="n">media_type</span><span class="o">=</span><span class="s1">&#39;text/plain&#39;</span><span class="p">,</span> <span class="n">chunk_size</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></code>
+            <span class="doc doc-object-name doc-function-name">cancellable_streaming_response</span>
+
 
   <span class="doc doc-labels">
       <small class="doc doc-label doc-label-async"><code>async</code></small>
   </span>
 
 </h3>
-
+<div class="doc-signature highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="nf">cancellable_streaming_response</span><span class="p">(</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">generator</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" title="collections.abc.AsyncIterator" href="https://docs.python.org/3/library/collections.abc.html#collections.abc.AsyncIterator">AsyncIterator</a></span><span class="p">[</span><span class="n"><a class="autorefs autorefs-external" title="typing.Any" href="https://docs.python.org/3/library/typing.html#typing.Any">Any</a></span><span class="p">],</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="n">cancellable</span><span class="p">:</span> <span class="n"><span title="hother.cancelable.core.cancellable.Cancellable">Cancellable</span></span><span class="p">,</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="n">media_type</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/stdtypes.html#str">str</a></span> <span class="o">=</span> <span class="s2">"text/plain"</span><span class="p">,</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="n">chunk_size</span><span class="p">:</span> <span class="n"><a class="autorefs autorefs-external" href="https://docs.python.org/3/library/functions.html#int">int</a></span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n"><a class="autorefs autorefs-external" title="fastapi.responses.StreamingResponse" href="https://fastapi.tiangolo.com/reference/responses/#fastapi.responses.StreamingResponse">StreamingResponse</a></span>
+</code></pre></div>
 
     <div class="doc doc-contents ">
 
@@ -1991,24 +2787,24 @@ Returns:
     FastAPI StreamingResponse
 
 Example:
-    @app.get(&quot;/stream&quot;)
+    @app.get("/stream")
     async def stream_data(cancel: Cancellable = Depends(cancellable_dependency)):
         async def generate():
             for i in range(1000):
                 await anyio.sleep(0.1)
-                yield f&quot;data: {i}
+                yield f"data: {i}
 </code></pre></div>
 <p>"</p>
 <div class="highlight"><pre><span></span><code>        return await cancellable_streaming_response(
             generate(),
             cancel,
-            media_type=&quot;text/event-stream&quot;
+            media_type="text/event-stream"
         )
 </code></pre></div>
 
             <details class="quote">
               <summary>Source code in <code>src/hother/cancelable/integrations/fastapi.py</code></summary>
-              <div class="highlight"><table class="highlighttable"><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-169">169</a></span>
+              <div class="highlight"><table class="highlighttable"><tbody><tr><td class="linenos"><div class="linenodiv"><pre><span></span><span class="normal"><a href="#__codelineno-0-169">169</a></span>
 <span class="normal"><a href="#__codelineno-0-170">170</a></span>
 <span class="normal"><a href="#__codelineno-0-171">171</a></span>
 <span class="normal"><a href="#__codelineno-0-172">172</a></span>
@@ -2062,10 +2858,10 @@ Example:
 <span class="normal"><a href="#__codelineno-0-220">220</a></span></pre></div></td><td class="code"><div><pre><span></span><code><a id="__codelineno-0-169" name="__codelineno-0-169"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">cancellable_streaming_response</span><span class="p">(</span>
 <a id="__codelineno-0-170" name="__codelineno-0-170"></a>    <span class="n">generator</span><span class="p">:</span> <span class="n">AsyncIterator</span><span class="p">[</span><span class="n">Any</span><span class="p">],</span>
 <a id="__codelineno-0-171" name="__codelineno-0-171"></a>    <span class="n">cancellable</span><span class="p">:</span> <span class="n">Cancellable</span><span class="p">,</span>
-<a id="__codelineno-0-172" name="__codelineno-0-172"></a>    <span class="n">media_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">&quot;text/plain&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-172" name="__codelineno-0-172"></a>    <span class="n">media_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s2">"text/plain"</span><span class="p">,</span>
 <a id="__codelineno-0-173" name="__codelineno-0-173"></a>    <span class="n">chunk_size</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
 <a id="__codelineno-0-174" name="__codelineno-0-174"></a><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">StreamingResponse</span><span class="p">:</span>
-<a id="__codelineno-0-175" name="__codelineno-0-175"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<a id="__codelineno-0-175" name="__codelineno-0-175"></a><span class="w">    </span><span class="sd">"""</span>
 <a id="__codelineno-0-176" name="__codelineno-0-176"></a><span class="sd">    Create a streaming response with cancellation support.</span>
 <a id="__codelineno-0-177" name="__codelineno-0-177"></a>
 <a id="__codelineno-0-178" name="__codelineno-0-178"></a><span class="sd">    Args:</span>
@@ -2078,19 +2874,19 @@ Example:
 <a id="__codelineno-0-185" name="__codelineno-0-185"></a><span class="sd">        FastAPI StreamingResponse</span>
 <a id="__codelineno-0-186" name="__codelineno-0-186"></a>
 <a id="__codelineno-0-187" name="__codelineno-0-187"></a><span class="sd">    Example:</span>
-<a id="__codelineno-0-188" name="__codelineno-0-188"></a><span class="sd">        @app.get(&quot;/stream&quot;)</span>
+<a id="__codelineno-0-188" name="__codelineno-0-188"></a><span class="sd">        @app.get("/stream")</span>
 <a id="__codelineno-0-189" name="__codelineno-0-189"></a><span class="sd">        async def stream_data(cancel: Cancellable = Depends(cancellable_dependency)):</span>
 <a id="__codelineno-0-190" name="__codelineno-0-190"></a><span class="sd">            async def generate():</span>
 <a id="__codelineno-0-191" name="__codelineno-0-191"></a><span class="sd">                for i in range(1000):</span>
 <a id="__codelineno-0-192" name="__codelineno-0-192"></a><span class="sd">                    await anyio.sleep(0.1)</span>
-<a id="__codelineno-0-193" name="__codelineno-0-193"></a><span class="sd">                    yield f&quot;data: {i}\n\n&quot;</span>
+<a id="__codelineno-0-193" name="__codelineno-0-193"></a><span class="sd">                    yield f"data: {i}\n\n"</span>
 <a id="__codelineno-0-194" name="__codelineno-0-194"></a>
 <a id="__codelineno-0-195" name="__codelineno-0-195"></a><span class="sd">            return await cancellable_streaming_response(</span>
 <a id="__codelineno-0-196" name="__codelineno-0-196"></a><span class="sd">                generate(),</span>
 <a id="__codelineno-0-197" name="__codelineno-0-197"></a><span class="sd">                cancel,</span>
-<a id="__codelineno-0-198" name="__codelineno-0-198"></a><span class="sd">                media_type=&quot;text/event-stream&quot;</span>
+<a id="__codelineno-0-198" name="__codelineno-0-198"></a><span class="sd">                media_type="text/event-stream"</span>
 <a id="__codelineno-0-199" name="__codelineno-0-199"></a><span class="sd">            )</span>
-<a id="__codelineno-0-200" name="__codelineno-0-200"></a><span class="sd">    &quot;&quot;&quot;</span>
+<a id="__codelineno-0-200" name="__codelineno-0-200"></a><span class="sd">    """</span>
 <a id="__codelineno-0-201" name="__codelineno-0-201"></a>
 <a id="__codelineno-0-202" name="__codelineno-0-202"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">wrapped_generator</span><span class="p">():</span>
 <a id="__codelineno-0-203" name="__codelineno-0-203"></a>        <span class="k">try</span><span class="p">:</span>
@@ -2099,19 +2895,19 @@ Example:
 <a id="__codelineno-0-206" name="__codelineno-0-206"></a>        <span class="k">except</span> <span class="n">anyio</span><span class="o">.</span><span class="n">get_cancelled_exc_class</span><span class="p">():</span>
 <a id="__codelineno-0-207" name="__codelineno-0-207"></a>            <span class="c1"># Handle cancellation gracefully</span>
 <a id="__codelineno-0-208" name="__codelineno-0-208"></a>            <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span>
-<a id="__codelineno-0-209" name="__codelineno-0-209"></a>                <span class="s2">&quot;Streaming response cancelled&quot;</span><span class="p">,</span>
+<a id="__codelineno-0-209" name="__codelineno-0-209"></a>                <span class="s2">"Streaming response cancelled"</span><span class="p">,</span>
 <a id="__codelineno-0-210" name="__codelineno-0-210"></a>                <span class="n">operation_id</span><span class="o">=</span><span class="n">cancellable</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
 <a id="__codelineno-0-211" name="__codelineno-0-211"></a>                <span class="n">cancel_reason</span><span class="o">=</span><span class="n">cancellable</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">cancel_reason</span><span class="p">,</span>
 <a id="__codelineno-0-212" name="__codelineno-0-212"></a>            <span class="p">)</span>
 <a id="__codelineno-0-213" name="__codelineno-0-213"></a>            <span class="c1"># Optionally yield a final message</span>
-<a id="__codelineno-0-214" name="__codelineno-0-214"></a>            <span class="k">if</span> <span class="n">media_type</span> <span class="o">==</span> <span class="s2">&quot;text/event-stream&quot;</span><span class="p">:</span>
-<a id="__codelineno-0-215" name="__codelineno-0-215"></a>                <span class="k">yield</span> <span class="s2">&quot;event: cancelled</span><span class="se">\n</span><span class="s2">data: Stream cancelled</span><span class="se">\n\n</span><span class="s2">&quot;</span>
+<a id="__codelineno-0-214" name="__codelineno-0-214"></a>            <span class="k">if</span> <span class="n">media_type</span> <span class="o">==</span> <span class="s2">"text/event-stream"</span><span class="p">:</span>
+<a id="__codelineno-0-215" name="__codelineno-0-215"></a>                <span class="k">yield</span> <span class="s2">"event: cancelled</span><span class="se">\n</span><span class="s2">data: Stream cancelled</span><span class="se">\n\n</span><span class="s2">"</span>
 <a id="__codelineno-0-216" name="__codelineno-0-216"></a>
 <a id="__codelineno-0-217" name="__codelineno-0-217"></a>    <span class="k">return</span> <span class="n">StreamingResponse</span><span class="p">(</span>
 <a id="__codelineno-0-218" name="__codelineno-0-218"></a>        <span class="n">wrapped_generator</span><span class="p">(),</span>
 <a id="__codelineno-0-219" name="__codelineno-0-219"></a>        <span class="n">media_type</span><span class="o">=</span><span class="n">media_type</span><span class="p">,</span>
 <a id="__codelineno-0-220" name="__codelineno-0-220"></a>    <span class="p">)</span>
-</code></pre></div></td></tr></table></div>
+</code></pre></div></td></tr></tbody></table></div>
             </details>
     </div>
 
@@ -2131,6 +2927,9 @@ Example:
 
 
 
+  
+  
+
 
 
 
@@ -2148,7 +2947,7 @@ Example:
         
           <button type="button" class="md-top md-icon" data-md-component="top" hidden>
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
   Back to top
 </button>
         
@@ -2173,7 +2972,7 @@ Example:
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.annotate", "content.tabs.link", "navigation.instant", "navigation.tracking", "navigation.top", "header.autohide", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.indexes", "toc.follow", "toc.integrate"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["content.code.annotate", "content.tabs.link", "content.code.annotate", "navigation.instant", "navigation.tracking", "navigation.top", "header.autohide", "navigation.sections", "navigation.indexes", "toc.follow", "search.suggest", "search.highlight", "search.share"], "search": "../../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.88dd0f4e.min.js"></script>
@@ -2188,6 +2987,12 @@ Example:
       
         <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       
+        <script src="../../javascripts/mermaid.js"></script>
+      
+        <script src="https://unpkg.com/mermaid@10/dist/mermaid.min.js"></script>
+      
     
-  </body>
-</html>
+  
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(()=>{ lightbox.reload(); });
+</script></body></html>

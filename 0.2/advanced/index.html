@@ -1,7 +1,4 @@
-
-<!doctype html>
-<html lang="en" class="no-js">
-  <head>
+<!DOCTYPE html><html lang="en" class="no-js"><head>
     
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -9,6 +6,10 @@
       
       
       
+        <link rel="prev" href="../basics/">
+      
+      
+        <link rel="next" href="../streaming/">
       
       
       <link rel="icon" href="../assets/images/favicon.png">
@@ -78,7 +79,7 @@
         
         
         <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&amp;display=fallback">
         <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
       
     
@@ -93,8 +94,44 @@
 
     
     
+      
+        <meta property="og:type" content="website">
+      
+        <meta property="og:title" content="Advanced Usage - Cancelable">
+      
+        <meta property="og:description" content="None">
+      
+        <meta property="og:image" content="./assets/images/social/advanced.png">
+      
+        <meta property="og:image:type" content="image/png">
+      
+        <meta property="og:image:width" content="1200">
+      
+        <meta property="og:image:height" content="630">
+      
+        <meta property="og:url" content="None">
+      
+        <meta name="twitter:card" content="summary_large_image">
+      
+        <meta name="twitter:title" content="Advanced Usage - Cancelable">
+      
+        <meta name="twitter:description" content="None">
+      
+        <meta name="twitter:image" content="./assets/images/social/advanced.png">
+      
     
-  </head>
+    
+  <link href="../assets/stylesheets/glightbox.min.css" rel="stylesheet"><script src="../assets/javascripts/glightbox.min.js"></script><style id="glightbox-style">
+            html.glightbox-open { overflow: initial; height: 100%; }
+            .gslide-title { margin-top: 0px; user-select: text; }
+            .gslide-desc { color: #666; user-select: text; }
+            .gslide-image img { background: white; }
+            .gscrollbar-fixer { padding-right: 15px; }
+            .gdesc-inner { font-size: 0.75rem; }
+            body[data-md-color-scheme="slate"] .gdesc-inner { background: var(--md-default-bg-color); }
+            body[data-md-color-scheme="slate"] .gslide-title { color: var(--md-default-fg-color); }
+            body[data-md-color-scheme="slate"] .gslide-desc { color: var(--md-default-fg-color); }
+        </style></head>
   
   
     
@@ -131,17 +168,17 @@
 
   
 
-<header class="md-header md-header--shadow md-header--lifted" data-md-component="header">
+<header class="md-header md-header--shadow" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
     <a href=".." title="Cancelable" class="md-header__button md-logo" aria-label="Cancelable" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 4 1.75 5.27 4.5 8.03A8.9 8.9 0 0 0 3 13a9 9 0 0 0 9 9c1.84 0 3.55-.55 5-1.5l2.5 2.5 1.25-1.27L13.04 14zm12-3H9v2h6m6 10c0 1.83-.55 3.53-1.5 4.94L13 11.45V7h-2v2.45L7.05 5.5C8.47 4.55 10.17 4 12 4c2.12 0 4.07.74 5.62 1.97l1.42-1.42 1.41 1.42-1.42 1.42A8.96 8.96 0 0 1 21 13"></path></svg>
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
       
-      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"></path></svg>
     </label>
     <div class="md-header__title" data-md-component="header-title">
       <div class="md-header__ellipsis">
@@ -166,20 +203,20 @@
     
     
     
-    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="red" data-md-color-accent="pink"  aria-label="Switch to dark mode"  type="radio" name="__palette" id="__palette_0">
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="red" data-md-color-accent="pink" aria-label="Switch to dark mode" type="radio" name="__palette" id="__palette_0">
     
       <label class="md-header__button md-icon" title="Switch to dark mode" for="__palette_1" hidden>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6m0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4M7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 6H7c-3.31 0-6 2.69-6 6s2.69 6 6 6h10c3.31 0 6-2.69 6-6s-2.69-6-6-6m0 10H7c-2.21 0-4-1.79-4-4s1.79-4 4-4h10c2.21 0 4 1.79 4 4s-1.79 4-4 4M7 9c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3"></path></svg>
       </label>
     
   
     
     
     
-    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="red" data-md-color-accent="deep-orange"  aria-label="Switch to light mode"  type="radio" name="__palette" id="__palette_1">
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="red" data-md-color-accent="deep-orange" aria-label="Switch to light mode" type="radio" name="__palette" id="__palette_1">
     
       <label class="md-header__button md-icon" title="Switch to light mode" for="__palette_0" hidden>
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 7H7a5 5 0 0 0-5 5 5 5 0 0 0 5 5h10a5 5 0 0 0 5-5 5 5 0 0 0-5-5m0 8a3 3 0 0 1-3-3 3 3 0 0 1 3-3 3 3 0 0 1 3 3 3 3 0 0 1-3 3"></path></svg>
       </label>
     
   
@@ -193,7 +230,7 @@
     
       <label class="md-header__button md-icon" for="__search">
         
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
       </label>
       <div class="md-search" data-md-component="search" role="dialog">
   <label class="md-search__overlay" for="__search"></label>
@@ -202,17 +239,24 @@
       <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
       <label class="md-search__icon md-icon" for="__search">
         
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"></path></svg>
         
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"></path></svg>
       </label>
       <nav class="md-search__options" aria-label="Search">
         
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91s2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08"></path></svg>
+          </a>
+        
         <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
           
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"></path></svg>
         </button>
       </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
       
     </form>
     <div class="md-search__output">
@@ -233,7 +277,7 @@
         <a href="https://github.com/hotherio/cancelable" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"></path></svg>
   </div>
   <div class="md-source__repository">
     hotherio/cancelable
@@ -243,116 +287,13 @@
     
   </nav>
   
-    
-      
-<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
-  <div class="md-grid">
-    <ul class="md-tabs__list">
-      
-        
-  
-  
-  
-    
-    
-      <li class="md-tabs__item">
-        <a href="../getting_started/" class="md-tabs__link">
-          
-  
-    
-  
-  Overview
-
-        </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-  
-    
-    
-      <li class="md-tabs__item">
-        <a href="../patterns/" class="md-tabs__link">
-          
-  
-    
-  
-  Tutorials
-
-        </a>
-      </li>
-    
-  
-
-      
-        
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../troubleshooting/" class="md-tabs__link">
-        
-  
-    
-  
-  Troubleshooting
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-    <li class="md-tabs__item">
-      <a href="../reference/" class="md-tabs__link">
-        
-  
-    
-  
-  API Reference
-
-      </a>
-    </li>
-  
-
-      
-        
-  
-  
-  
-    
-    
-      <li class="md-tabs__item">
-        <a href="../integrations/fastapi/" class="md-tabs__link">
-          
-  
-    
-  
-  Integrations
-
-        </a>
-      </li>
-    
-  
-
-      
-    </ul>
-  </div>
-</nav>
-    
-  
 </header>
     
     <div class="md-container" data-md-component="container">
       
       
+        
+          
         
       
       <main class="md-main" data-md-component="main">
@@ -360,23 +301,19 @@
           
             
               
-              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation">
                 <div class="md-sidebar__scrollwrap">
                   <div class="md-sidebar__inner">
                     
 
 
-  
 
-
-  
-
-<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href=".." title="Cancelable" class="md-nav__button md-logo" aria-label="Cancelable" data-md-component="logo">
       
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 4 1.75 5.27 4.5 8.03A8.9 8.9 0 0 0 3 13a9 9 0 0 0 9 9c1.84 0 3.55-.55 5-1.5l2.5 2.5 1.25-1.27L13.04 14zm12-3H9v2h6m6 10c0 1.83-.55 3.53-1.5 4.94L13 11.45V7h-2v2.45L7.05 5.5C8.47 4.55 10.17 4 12 4c2.12 0 4.07.74 5.62 1.97l1.42-1.42 1.41 1.42-1.42 1.42A8.96 8.96 0 0 1 21 13"></path></svg>
 
     </a>
     Cancelable
@@ -386,7 +323,7 @@
       <a href="https://github.com/hotherio/cancelable" title="Go to repository" class="md-source" data-md-component="source">
   <div class="md-source__icon md-icon">
     
-    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"/></svg>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512"><!--! Font Awesome Free 6.7.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2024 Fonticons, Inc.--><path d="M439.55 236.05 244 40.45a28.87 28.87 0 0 0-40.81 0l-40.66 40.63 51.52 51.52c27.06-9.14 52.68 16.77 43.39 43.68l49.66 49.66c34.23-11.8 61.18 31 35.47 56.69-26.49 26.49-70.21-2.87-56-37.34L240.22 199v121.85c25.3 12.54 22.26 41.85 9.08 55a34.34 34.34 0 0 1-48.55 0c-17.57-17.6-11.07-46.91 11.25-56v-123c-20.8-8.51-24.6-30.74-18.64-45L142.57 101 8.45 235.14a28.86 28.86 0 0 0 0 40.81l195.61 195.6a28.86 28.86 0 0 0 40.8 0l194.69-194.69a28.86 28.86 0 0 0 0-40.81"></path></svg>
   </div>
   <div class="md-source__repository">
     hotherio/cancelable
@@ -402,48 +339,42 @@
   
   
   
-    
-    
-      
+    <li class="md-nav__item">
+      <a href=".." class="md-nav__link">
         
-      
-        
-      
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_1" >
-        
-          
-          <label class="md-nav__link" for="__nav_1" id="__nav_1_label" tabindex="0">
-            
   
   <span class="md-ellipsis">
-    Overview
+    Cancelable
   </span>
   
 
-            <span class="md-nav__icon md-icon"></span>
-          </label>
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../installation/" class="md-nav__link">
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_1_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_1">
-            <span class="md-nav__icon md-icon"></span>
-            Overview
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
+  
+  <span class="md-ellipsis">
+    Installation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
   
   
   
@@ -461,6 +392,537 @@
     </li>
   
 
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Documentation
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            Documentation
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../basics/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Basics
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Advanced Usage
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Advanced Usage
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#operation-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      Operation Context
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-current-context-with-current_operation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Get current context with current_operation()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hierarchical-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Hierarchical Operations
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Hierarchical Operations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nested-timeouts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Nested Timeouts
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#progress-reporting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Progress Reporting
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Progress Reporting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multiple-callbacks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Multiple Callbacks
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#progress-in-hierarchies" class="md-nav__link">
+    <span class="md-ellipsis">
+      Progress in Hierarchies
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metadata-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Metadata Structure
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#async-progress-reporting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Async Progress Reporting
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#performance-tips" class="md-nav__link">
+    <span class="md-ellipsis">
+      Performance Tips
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-web-ui-progress" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example: Web UI Progress
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#combining-hierarchies-and-progress" class="md-nav__link">
+    <span class="md-ellipsis">
+      Combining Hierarchies and Progress
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#custom-combining-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      Custom Combining Patterns
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Custom Combining Patterns">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#or-vs-and-logic-for-source-combining" class="md-nav__link">
+    <span class="md-ellipsis">
+      OR vs AND Logic for Source Combining
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#and-logic-all-of-require-multiple-conditions" class="md-nav__link">
+    <span class="md-ellipsis">
+      AND Logic (All-Of) - Require Multiple Conditions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#practical-use-cases-for-and-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      Practical Use Cases for AND Logic
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Practical Use Cases for AND Logic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-rate-limited-operations-with-minimum-duration" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Rate-Limited Operations with Minimum Duration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-resource-ready-and-quota-available" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Resource-Ready AND Quota-Available
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-multi-stage-completion-gates" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Multi-Stage Completion Gates
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#thread-safety" class="md-nav__link">
+    <span class="md-ellipsis">
+      Thread Safety
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#combining-or-and-and-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      Combining OR and AND Logic
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      Best Practices
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decorators" class="md-nav__link">
+    <span class="md-ellipsis">
+      Decorators
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Decorators">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cancelable-vs-with_cancelable" class="md-nav__link">
+    <span class="md-ellipsis">
+      @cancelable vs @with_cancelable
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#all-decorator-variants" class="md-nav__link">
+    <span class="md-ellipsis">
+      All Decorator Variants
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameter-injection" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameter Injection
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decision-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      Decision Guide
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#additional-decorators" class="md-nav__link">
+    <span class="md-ellipsis">
+      Additional Decorators
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#wrapping-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Wrapping Operations
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Wrapping Operations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-wrap" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using wrap()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-wrapping-context-manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using wrapping() Context Manager
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-to-use-wrapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      When to Use Wrapping
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-token-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced Token Features
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced Token Features">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#linkedcancelationtoken" class="md-nav__link">
+    <span class="md-ellipsis">
+      LinkedCancelationToken
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#token-callbacks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Token Callbacks
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#token-checking-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Token Checking Methods
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partial-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      Partial Results
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Partial Results">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#operationcontextpartial_result" class="md-nav__link">
+    <span class="md-ellipsis">
+      OperationContext.partial_result
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
               
             
               
@@ -470,11 +932,116 @@
   
   
     <li class="md-nav__item">
-      <a href="../about/" class="md-nav__link">
+      <a href="../streaming/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    About
+    Streaming Cancellation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../threading/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Threading &amp; Bridges
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../registry/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Operation Registry
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../patterns/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Common Patterns
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../custom_sources/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Custom Sources
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../performance/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Performance
   </span>
   
 
@@ -503,104 +1070,55 @@
         
       
         
+          
+        
       
-    
-    
+        
       
+        
+      
+        
+      
+        
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5">
         
           
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Tutorials
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2">
-            <span class="md-nav__icon md-icon"></span>
-            Tutorials
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../patterns/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Patterns
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-        
-      
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
-        
           
-          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
-            
+          <div class="md-nav__link md-nav__container">
+            <a href="../examples/" class="md-nav__link ">
+              
   
   <span class="md-ellipsis">
     Examples
   </span>
   
 
-            <span class="md-nav__icon md-icon"></span>
-          </label>
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_2_2">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
             <span class="md-nav__icon md-icon"></span>
             Examples
           </label>
@@ -613,11 +1131,34 @@
   
   
     <li class="md-nav__item">
-      <a href="../examples/basics/" class="md-nav__link">
+      <a href="../examples/setup/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Basic Examples
+    Setup
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/basic/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Basic Patterns
   </span>
   
 
@@ -634,28 +1175,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../examples/basic_usage/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Basic Usage
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../examples/stream_processing/" class="md-nav__link">
+      <a href="../examples/streams/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -669,9 +1189,64 @@
 
               
             
-          </ul>
-        </nav>
-      
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/web/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Web Applications
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/monitoring/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Monitoring Dashboard
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../examples/llm/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    LLM Integration
+  </span>
+  
+
+      </a>
     </li>
   
 
@@ -690,87 +1265,59 @@
   
   
   
-    <li class="md-nav__item">
-      <a href="../troubleshooting/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Troubleshooting
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../reference/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    API Reference
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
     
     
       
-        
-      
-        
-      
-        
-      
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
         
           
-          <label class="md-nav__link" for="__nav_5" id="__nav_5_label" tabindex="0">
-            
+        
+      
+        
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6">
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../integrations/" class="md-nav__link ">
+              
   
   <span class="md-ellipsis">
     Integrations
   </span>
   
 
-            <span class="md-nav__icon md-icon"></span>
-          </label>
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_5">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
             <span class="md-nav__icon md-icon"></span>
             Integrations
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
+            
+              
             
               
                 
@@ -800,11 +1347,103 @@
   
   
     <li class="md-nav__item">
-      <a href="../integrations/httpx/" class="md-nav__link">
+      <a href="../integrations/tenacity/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    HTTPX
+    Tenacity (Retry)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7">
+        
+          
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../reference/" class="md-nav__link ">
+              
+  
+  <span class="md-ellipsis">
+    Reference
+  </span>
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            Reference
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/core/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Core Components
   </span>
   
 
@@ -821,11 +1460,171 @@
   
   
     <li class="md-nav__item">
-      <a href="../integrations/sqlalchemy/" class="md-nav__link">
+      <a href="../reference/sources/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    SQLAlchemy
+    Cancellation Sources
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/integrations/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Integrations
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../reference/utilities/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Utilities
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+        
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_8">
+        
+          
+          <label class="md-nav__link" for="__nav_8" id="__nav_8_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Help
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_8_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_8">
+            <span class="md-nav__icon md-icon"></span>
+            Help
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../troubleshooting/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Troubleshooting
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../community/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Community &amp; Support
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../contributing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Contributing
   </span>
   
 
@@ -849,6 +1648,422 @@
               </div>
             
             
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc">
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#operation-context" class="md-nav__link">
+    <span class="md-ellipsis">
+      Operation Context
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#get-current-context-with-current_operation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Get current context with current_operation()
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hierarchical-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Hierarchical Operations
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Hierarchical Operations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#nested-timeouts" class="md-nav__link">
+    <span class="md-ellipsis">
+      Nested Timeouts
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#progress-reporting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Progress Reporting
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Progress Reporting">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#multiple-callbacks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Multiple Callbacks
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#progress-in-hierarchies" class="md-nav__link">
+    <span class="md-ellipsis">
+      Progress in Hierarchies
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#metadata-structure" class="md-nav__link">
+    <span class="md-ellipsis">
+      Metadata Structure
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#async-progress-reporting" class="md-nav__link">
+    <span class="md-ellipsis">
+      Async Progress Reporting
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#performance-tips" class="md-nav__link">
+    <span class="md-ellipsis">
+      Performance Tips
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#example-web-ui-progress" class="md-nav__link">
+    <span class="md-ellipsis">
+      Example: Web UI Progress
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#combining-hierarchies-and-progress" class="md-nav__link">
+    <span class="md-ellipsis">
+      Combining Hierarchies and Progress
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#custom-combining-patterns" class="md-nav__link">
+    <span class="md-ellipsis">
+      Custom Combining Patterns
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Custom Combining Patterns">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#or-vs-and-logic-for-source-combining" class="md-nav__link">
+    <span class="md-ellipsis">
+      OR vs AND Logic for Source Combining
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#and-logic-all-of-require-multiple-conditions" class="md-nav__link">
+    <span class="md-ellipsis">
+      AND Logic (All-Of) - Require Multiple Conditions
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#practical-use-cases-for-and-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      Practical Use Cases for AND Logic
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Practical Use Cases for AND Logic">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#1-rate-limited-operations-with-minimum-duration" class="md-nav__link">
+    <span class="md-ellipsis">
+      1. Rate-Limited Operations with Minimum Duration
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#2-resource-ready-and-quota-available" class="md-nav__link">
+    <span class="md-ellipsis">
+      2. Resource-Ready AND Quota-Available
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#3-multi-stage-completion-gates" class="md-nav__link">
+    <span class="md-ellipsis">
+      3. Multi-Stage Completion Gates
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#thread-safety" class="md-nav__link">
+    <span class="md-ellipsis">
+      Thread Safety
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#combining-or-and-and-logic" class="md-nav__link">
+    <span class="md-ellipsis">
+      Combining OR and AND Logic
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#best-practices" class="md-nav__link">
+    <span class="md-ellipsis">
+      Best Practices
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#decorators" class="md-nav__link">
+    <span class="md-ellipsis">
+      Decorators
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Decorators">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#cancelable-vs-with_cancelable" class="md-nav__link">
+    <span class="md-ellipsis">
+      @cancelable vs @with_cancelable
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#all-decorator-variants" class="md-nav__link">
+    <span class="md-ellipsis">
+      All Decorator Variants
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#parameter-injection" class="md-nav__link">
+    <span class="md-ellipsis">
+      Parameter Injection
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#decision-guide" class="md-nav__link">
+    <span class="md-ellipsis">
+      Decision Guide
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#additional-decorators" class="md-nav__link">
+    <span class="md-ellipsis">
+      Additional Decorators
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#wrapping-operations" class="md-nav__link">
+    <span class="md-ellipsis">
+      Wrapping Operations
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Wrapping Operations">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#using-wrap" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using wrap()
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#using-wrapping-context-manager" class="md-nav__link">
+    <span class="md-ellipsis">
+      Using wrapping() Context Manager
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#when-to-use-wrapping" class="md-nav__link">
+    <span class="md-ellipsis">
+      When to Use Wrapping
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#advanced-token-features" class="md-nav__link">
+    <span class="md-ellipsis">
+      Advanced Token Features
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Advanced Token Features">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#linkedcancelationtoken" class="md-nav__link">
+    <span class="md-ellipsis">
+      LinkedCancelationToken
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#token-callbacks" class="md-nav__link">
+    <span class="md-ellipsis">
+      Token Callbacks
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#token-checking-methods" class="md-nav__link">
+    <span class="md-ellipsis">
+      Token Checking Methods
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#partial-results" class="md-nav__link">
+    <span class="md-ellipsis">
+      Partial Results
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Partial Results">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#operationcontextpartial_result" class="md-nav__link">
+    <span class="md-ellipsis">
+      OperationContext.partial_result
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
           
           
             <div class="md-content" data-md-component="content">
@@ -861,19 +2076,19 @@
 <p>In addition to the basic cancelation mechanism, Cancelable offers some features to manage finely the context and monitor progress.</p>
 <h2 id="operation-context">Operation Context</h2>
 <p>The cancel context provides state and metadata that can be directly accessed:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="o">.</span><span class="n">with_timeout</span><span class="p">(</span><span class="mf">30.0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;task&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">cancel</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="o">.</span><span class="n">with_timeout</span><span class="p">(</span><span class="mf">30.0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"task"</span><span class="p">)</span> <span class="k">as</span> <span class="n">cancel</span><span class="p">:</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="c1"># Context properties</span>
-<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;ID: </span><span class="si">{</span><span class="n">cancel</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># (1)!</span>
-<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Name: </span><span class="si">{</span><span class="n">cancel</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Status: </span><span class="si">{</span><span class="n">cancel</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">status</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># (2)!</span>
-<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Started: </span><span class="si">{</span><span class="n">cancel</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">start_time</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"ID: </span><span class="si">{</span><span class="n">cancel</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">id</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>  <span class="c1"># (1)!</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Name: </span><span class="si">{</span><span class="n">cancel</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Status: </span><span class="si">{</span><span class="n">cancel</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">status</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>  <span class="c1"># (2)!</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Started: </span><span class="si">{</span><span class="n">cancel</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">start_time</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
 <a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>    <span class="k">await</span> <span class="n">operation</span><span class="p">()</span>
 <a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
 <a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="c1"># After completion</span>
-<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Reason: </span><span class="si">{</span><span class="n">cancel</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">cancel_reason</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>  <span class="c1"># (3)!</span>
-<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Message: </span><span class="si">{</span><span class="n">cancel</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">cancel_message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Elapsed: </span><span class="si">{</span><span class="n">cancel</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">elapsed_time</span><span class="si">}</span><span class="s2">s&quot;</span><span class="p">)</span>  <span class="c1"># (4)!</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Reason: </span><span class="si">{</span><span class="n">cancel</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">cancel_reason</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>  <span class="c1"># (3)!</span>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Message: </span><span class="si">{</span><span class="n">cancel</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">cancel_message</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Elapsed: </span><span class="si">{</span><span class="n">cancel</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">elapsed_time</span><span class="si">}</span><span class="s2">s"</span><span class="p">)</span>  <span class="c1"># (4)!</span>
 </code></pre></div>
 <ol>
 <li>Unique UUID for operation tracking and log correlation</li>
@@ -886,14 +2101,14 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hother.cancelable</span><span class="w"> </span><span class="kn">import</span> <span class="n">Cancelable</span><span class="p">,</span> <span class="n">current_operation</span>
 <a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
 <a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">nested_function</span><span class="p">():</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;No explicit cancel parameter needed.&quot;&quot;&quot;</span>
+<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="sd">"""No explicit cancel parameter needed."""</span>
 <a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="n">ctx</span> <span class="o">=</span> <span class="n">current_operation</span><span class="p">()</span>  <span class="c1"># (1)!</span>
 <a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>    <span class="k">if</span> <span class="n">ctx</span><span class="p">:</span>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>        <span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span><span class="s2">&quot;Working in nested function&quot;</span><span class="p">)</span>  <span class="c1"># (2)!</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Operation: </span><span class="si">{</span><span class="n">ctx</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>        <span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span><span class="s2">"Working in nested function"</span><span class="p">)</span>  <span class="c1"># (2)!</span>
+<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Operation: </span><span class="si">{</span><span class="n">ctx</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>
 <a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
-<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    <span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="o">.</span><span class="n">with_timeout</span><span class="p">(</span><span class="mf">30.0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;my_op&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">cancel</span><span class="p">:</span>
+<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>    <span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="o">.</span><span class="n">with_timeout</span><span class="p">(</span><span class="mf">30.0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"my_op"</span><span class="p">)</span> <span class="k">as</span> <span class="n">cancel</span><span class="p">:</span>
 <a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>        <span class="k">await</span> <span class="n">nested_function</span><span class="p">()</span>  <span class="c1"># (3)!</span>
 </code></pre></div>
 <ol>
@@ -907,14 +2122,14 @@
 </div>
 <h2 id="hierarchical-operations">Hierarchical Operations</h2>
 <p>Create parent-child relationships for structured concurrency:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;parent&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">parent</span><span class="p">:</span>  <span class="c1"># (1)!</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"parent"</span><span class="p">)</span> <span class="k">as</span> <span class="n">parent</span><span class="p">:</span>  <span class="c1"># (1)!</span>
 <a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>    <span class="k">await</span> <span class="n">parent_setup</span><span class="p">()</span>
 <a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
 <a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="c1"># Child operations</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;child_1&quot;</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span> <span class="k">as</span> <span class="n">child1</span><span class="p">:</span>  <span class="c1"># (2)!</span>
+<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>    <span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"child_1"</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span> <span class="k">as</span> <span class="n">child1</span><span class="p">:</span>  <span class="c1"># (2)!</span>
 <a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>        <span class="k">await</span> <span class="n">child1_work</span><span class="p">()</span>
 <a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;child_2&quot;</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span> <span class="k">as</span> <span class="n">child2</span><span class="p">:</span>
+<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"child_2"</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">parent</span><span class="p">)</span> <span class="k">as</span> <span class="n">child2</span><span class="p">:</span>
 <a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>        <span class="k">await</span> <span class="n">child2_work</span><span class="p">()</span>
 <a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>
 <a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>    <span class="c1"># (3)!</span>
@@ -933,14 +2148,14 @@
 <h3 id="nested-timeouts">Nested Timeouts</h3>
 <p>Different timeout requirements for different steps:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Outer: 60-second total budget</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="o">.</span><span class="n">with_timeout</span><span class="p">(</span><span class="mf">60.0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;outer&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">outer</span><span class="p">:</span>
+<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="o">.</span><span class="n">with_timeout</span><span class="p">(</span><span class="mf">60.0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"outer"</span><span class="p">)</span> <span class="k">as</span> <span class="n">outer</span><span class="p">:</span>
 <a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
 <a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>    <span class="c1"># Inner: 10-second timeout for quick step</span>
-<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="o">.</span><span class="n">with_timeout</span><span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;step1&quot;</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">outer</span><span class="p">)</span> <span class="k">as</span> <span class="n">step1</span><span class="p">:</span>
+<a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>    <span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="o">.</span><span class="n">with_timeout</span><span class="p">(</span><span class="mf">10.0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"step1"</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">outer</span><span class="p">)</span> <span class="k">as</span> <span class="n">step1</span><span class="p">:</span>
 <a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>        <span class="k">await</span> <span class="n">quick_operation</span><span class="p">()</span>
 <a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>
 <a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>    <span class="c1"># Inner: 45-second timeout for slow step</span>
-<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>    <span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="o">.</span><span class="n">with_timeout</span><span class="p">(</span><span class="mf">45.0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;step2&quot;</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">outer</span><span class="p">)</span> <span class="k">as</span> <span class="n">step2</span><span class="p">:</span>
+<a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>    <span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="o">.</span><span class="n">with_timeout</span><span class="p">(</span><span class="mf">45.0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"step2"</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">outer</span><span class="p">)</span> <span class="k">as</span> <span class="n">step2</span><span class="p">:</span>
 <a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>        <span class="k">await</span> <span class="n">long_operation</span><span class="p">()</span>
 <a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a>
 <a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a>    <span class="c1"># If outer times out, both steps cancel</span>
@@ -948,12 +2163,12 @@
 </code></pre></div>
 <h2 id="progress-reporting">Progress Reporting</h2>
 <p>Track and report operation progress with callbacks:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;processor&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">cancel</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"processor"</span><span class="p">)</span> <span class="k">as</span> <span class="n">cancel</span><span class="p">:</span>
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>    <span class="c1"># Register progress callback</span>
 <a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">on_progress</span><span class="p">(</span><span class="n">operation_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">metadata</span><span class="p">:</span> <span class="nb">dict</span><span class="p">):</span>  <span class="c1"># (1)!</span>
-<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;[</span><span class="si">{</span><span class="n">operation_id</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>        <span class="n">progress_percent</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;progress&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
-<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Progress: </span><span class="si">{</span><span class="n">progress_percent</span><span class="si">}</span><span class="s2">%&quot;</span><span class="p">)</span>
+<a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"[</span><span class="si">{</span><span class="n">operation_id</span><span class="si">}</span><span class="s2">] </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>        <span class="n">progress_percent</span> <span class="o">=</span> <span class="n">metadata</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'progress'</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+<a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Progress: </span><span class="si">{</span><span class="n">progress_percent</span><span class="si">}</span><span class="s2">%"</span><span class="p">)</span>
 <a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>
 <a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>    <span class="n">cancel</span><span class="o">.</span><span class="n">on_progress</span><span class="p">(</span><span class="n">on_progress</span><span class="p">)</span>  <span class="c1"># (2)!</span>
 <a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>
@@ -964,11 +2179,11 @@
 <a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>
 <a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>        <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># (3)!</span>
 <a id="__codelineno-4-16" name="__codelineno-4-16" href="#__codelineno-4-16"></a>            <span class="k">await</span> <span class="n">cancel</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span>  <span class="c1"># (4)!</span>
-<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a>                <span class="sa">f</span><span class="s2">&quot;Processed </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">total</span><span class="si">}</span><span class="s2"> items&quot;</span><span class="p">,</span>
+<a id="__codelineno-4-17" name="__codelineno-4-17" href="#__codelineno-4-17"></a>                <span class="sa">f</span><span class="s2">"Processed </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="n">total</span><span class="si">}</span><span class="s2"> items"</span><span class="p">,</span>
 <a id="__codelineno-4-18" name="__codelineno-4-18" href="#__codelineno-4-18"></a>                <span class="p">{</span>
-<a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a>                    <span class="s2">&quot;progress&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">i</span> <span class="o">/</span> <span class="n">total</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
-<a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a>                    <span class="s2">&quot;current&quot;</span><span class="p">:</span> <span class="n">i</span><span class="p">,</span>
-<a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a>                    <span class="s2">&quot;total&quot;</span><span class="p">:</span> <span class="n">total</span>
+<a id="__codelineno-4-19" name="__codelineno-4-19" href="#__codelineno-4-19"></a>                    <span class="s2">"progress"</span><span class="p">:</span> <span class="p">(</span><span class="n">i</span> <span class="o">/</span> <span class="n">total</span><span class="p">)</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+<a id="__codelineno-4-20" name="__codelineno-4-20" href="#__codelineno-4-20"></a>                    <span class="s2">"current"</span><span class="p">:</span> <span class="n">i</span><span class="p">,</span>
+<a id="__codelineno-4-21" name="__codelineno-4-21" href="#__codelineno-4-21"></a>                    <span class="s2">"total"</span><span class="p">:</span> <span class="n">total</span>
 <a id="__codelineno-4-22" name="__codelineno-4-22" href="#__codelineno-4-22"></a>                <span class="p">}</span>
 <a id="__codelineno-4-23" name="__codelineno-4-23" href="#__codelineno-4-23"></a>            <span class="p">)</span>
 </code></pre></div>
@@ -980,19 +2195,19 @@
 </ol>
 <h3 id="multiple-callbacks">Multiple Callbacks</h3>
 <p>Register different callbacks for different purposes:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;processor&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">cancel</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"processor"</span><span class="p">)</span> <span class="k">as</span> <span class="n">cancel</span><span class="p">:</span>
 <a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>    <span class="c1"># UI callback</span>
 <a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_ui</span><span class="p">(</span><span class="n">op_id</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">meta</span><span class="p">):</span>
-<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>        <span class="n">progress_bar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;progress&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>        <span class="n">progress_bar</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'progress'</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
 <a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>        <span class="n">status_label</span><span class="o">.</span><span class="n">set_text</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
 <a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
 <a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>    <span class="c1"># Logging callback</span>
 <a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">log_progress</span><span class="p">(</span><span class="n">op_id</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">meta</span><span class="p">):</span>
-<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Operation </span><span class="si">{</span><span class="n">op_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="n">meta</span><span class="p">)</span>
+<a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a>        <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Operation </span><span class="si">{</span><span class="n">op_id</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span> <span class="n">extra</span><span class="o">=</span><span class="n">meta</span><span class="p">)</span>
 <a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a>
 <a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>    <span class="c1"># Metrics callback</span>
 <a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">update_metrics</span><span class="p">(</span><span class="n">op_id</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">meta</span><span class="p">):</span>
-<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>        <span class="n">metrics</span><span class="o">.</span><span class="n">gauge</span><span class="p">(</span><span class="s1">&#39;operation.progress&#39;</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;progress&#39;</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
+<a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a>        <span class="n">metrics</span><span class="o">.</span><span class="n">gauge</span><span class="p">(</span><span class="s1">'operation.progress'</span><span class="p">,</span> <span class="n">meta</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">'progress'</span><span class="p">,</span> <span class="mi">0</span><span class="p">))</span>
 <a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a>
 <a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a>    <span class="c1"># Register all</span>
 <a id="__codelineno-5-16" name="__codelineno-5-16" href="#__codelineno-5-16"></a>    <span class="n">cancel</span><span class="o">.</span><span class="n">on_progress</span><span class="p">(</span><span class="n">update_ui</span><span class="p">)</span>
@@ -1003,20 +2218,20 @@
 </code></pre></div>
 <h3 id="progress-in-hierarchies">Progress in Hierarchies</h3>
 <p>Progress reports bubble up through the hierarchy:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;pipeline&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">pipeline</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"pipeline"</span><span class="p">)</span> <span class="k">as</span> <span class="n">pipeline</span><span class="p">:</span>
 <a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>    <span class="k">def</span><span class="w"> </span><span class="nf">pipeline_progress</span><span class="p">(</span><span class="n">op_id</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">meta</span><span class="p">):</span>
-<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Pipeline: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Pipeline: </span><span class="si">{</span><span class="n">msg</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>
 <a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>    <span class="n">pipeline</span><span class="o">.</span><span class="n">on_progress</span><span class="p">(</span><span class="n">pipeline_progress</span><span class="p">)</span>  <span class="c1"># (1)!</span>
 <a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a>
-<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>    <span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;step1&quot;</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">pipeline</span><span class="p">)</span> <span class="k">as</span> <span class="n">step1</span><span class="p">:</span>
-<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>        <span class="n">step1</span><span class="o">.</span><span class="n">on_progress</span><span class="p">(</span><span class="k">lambda</span> <span class="n">oid</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">meta</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Step1: </span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span>
-<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>        <span class="k">await</span> <span class="n">step1</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span><span class="s2">&quot;Starting step 1&quot;</span><span class="p">)</span>  <span class="c1"># (2)!</span>
+<a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>    <span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"step1"</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">pipeline</span><span class="p">)</span> <span class="k">as</span> <span class="n">step1</span><span class="p">:</span>
+<a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a>        <span class="n">step1</span><span class="o">.</span><span class="n">on_progress</span><span class="p">(</span><span class="k">lambda</span> <span class="n">oid</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">meta</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Step1: </span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2">"</span><span class="p">))</span>
+<a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a>        <span class="k">await</span> <span class="n">step1</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span><span class="s2">"Starting step 1"</span><span class="p">)</span>  <span class="c1"># (2)!</span>
 <a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a>        <span class="k">await</span> <span class="n">work</span><span class="p">()</span>
 <a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a>
-<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>    <span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;step2&quot;</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">pipeline</span><span class="p">)</span> <span class="k">as</span> <span class="n">step2</span><span class="p">:</span>
-<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>        <span class="n">step2</span><span class="o">.</span><span class="n">on_progress</span><span class="p">(</span><span class="k">lambda</span> <span class="n">oid</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">meta</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Step2: </span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span>
-<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>        <span class="k">await</span> <span class="n">step2</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span><span class="s2">&quot;Starting step 2&quot;</span><span class="p">)</span>  <span class="c1"># (3)!</span>
+<a id="__codelineno-6-12" name="__codelineno-6-12" href="#__codelineno-6-12"></a>    <span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"step2"</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">pipeline</span><span class="p">)</span> <span class="k">as</span> <span class="n">step2</span><span class="p">:</span>
+<a id="__codelineno-6-13" name="__codelineno-6-13" href="#__codelineno-6-13"></a>        <span class="n">step2</span><span class="o">.</span><span class="n">on_progress</span><span class="p">(</span><span class="k">lambda</span> <span class="n">oid</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">meta</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Step2: </span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2">"</span><span class="p">))</span>
+<a id="__codelineno-6-14" name="__codelineno-6-14" href="#__codelineno-6-14"></a>        <span class="k">await</span> <span class="n">step2</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span><span class="s2">"Starting step 2"</span><span class="p">)</span>  <span class="c1"># (3)!</span>
 <a id="__codelineno-6-15" name="__codelineno-6-15" href="#__codelineno-6-15"></a>        <span class="k">await</span> <span class="n">work</span><span class="p">()</span>
 </code></pre></div>
 <ol>
@@ -1028,24 +2243,24 @@
 <p>Use consistent metadata structure for better tooling:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># Standard fields</span>
 <a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="n">metadata</span> <span class="o">=</span> <span class="p">{</span>
-<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    <span class="s2">&quot;progress&quot;</span><span class="p">:</span> <span class="mf">65.5</span><span class="p">,</span>        <span class="c1"># Percentage (0-100)</span>
-<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>    <span class="s2">&quot;current&quot;</span><span class="p">:</span> <span class="mi">655</span><span class="p">,</span>          <span class="c1"># Current item number</span>
-<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>    <span class="s2">&quot;total&quot;</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>           <span class="c1"># Total items</span>
-<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>    <span class="s2">&quot;rate&quot;</span><span class="p">:</span> <span class="mf">12.5</span><span class="p">,</span>            <span class="c1"># Items per second</span>
-<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>    <span class="s2">&quot;eta&quot;</span><span class="p">:</span> <span class="mf">27.6</span><span class="p">,</span>             <span class="c1"># Estimated seconds remaining</span>
-<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>    <span class="s2">&quot;phase&quot;</span><span class="p">:</span> <span class="s2">&quot;processing&quot;</span>    <span class="c1"># Current phase name</span>
+<a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>    <span class="s2">"progress"</span><span class="p">:</span> <span class="mf">65.5</span><span class="p">,</span>        <span class="c1"># Percentage (0-100)</span>
+<a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>    <span class="s2">"current"</span><span class="p">:</span> <span class="mi">655</span><span class="p">,</span>          <span class="c1"># Current item number</span>
+<a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>    <span class="s2">"total"</span><span class="p">:</span> <span class="mi">1000</span><span class="p">,</span>           <span class="c1"># Total items</span>
+<a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>    <span class="s2">"rate"</span><span class="p">:</span> <span class="mf">12.5</span><span class="p">,</span>            <span class="c1"># Items per second</span>
+<a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>    <span class="s2">"eta"</span><span class="p">:</span> <span class="mf">27.6</span><span class="p">,</span>             <span class="c1"># Estimated seconds remaining</span>
+<a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>    <span class="s2">"phase"</span><span class="p">:</span> <span class="s2">"processing"</span>    <span class="c1"># Current phase name</span>
 <a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="p">}</span>
 <a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>
-<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="k">await</span> <span class="n">cancel</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span><span class="s2">&quot;Processing batch 7/10&quot;</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
+<a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a><span class="k">await</span> <span class="n">cancel</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span><span class="s2">"Processing batch 7/10"</span><span class="p">,</span> <span class="n">metadata</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="async-progress-reporting">Async Progress Reporting</h3>
 <p>Progress reporting is async to allow for async callbacks:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">async_progress_handler</span><span class="p">(</span><span class="n">op_id</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">meta</span><span class="p">):</span>
-<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Callback can be async for database/API updates.&quot;&quot;&quot;</span>
-<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>    <span class="k">await</span> <span class="n">db</span><span class="o">.</span><span class="n">update_job_progress</span><span class="p">(</span><span class="n">op_id</span><span class="p">,</span> <span class="n">meta</span><span class="p">[</span><span class="s1">&#39;progress&#39;</span><span class="p">])</span>
+<a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">    </span><span class="sd">"""Callback can be async for database/API updates."""</span>
+<a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>    <span class="k">await</span> <span class="n">db</span><span class="o">.</span><span class="n">update_job_progress</span><span class="p">(</span><span class="n">op_id</span><span class="p">,</span> <span class="n">meta</span><span class="p">[</span><span class="s1">'progress'</span><span class="p">])</span>
 <a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>    <span class="k">await</span> <span class="n">metrics_api</span><span class="o">.</span><span class="n">send</span><span class="p">(</span><span class="n">op_id</span><span class="p">,</span> <span class="n">meta</span><span class="p">)</span>
 <a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>
-<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;job&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">cancel</span><span class="p">:</span>
+<a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"job"</span><span class="p">)</span> <span class="k">as</span> <span class="n">cancel</span><span class="p">:</span>
 <a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>    <span class="n">cancel</span><span class="o">.</span><span class="n">on_progress</span><span class="p">(</span><span class="n">async_progress_handler</span><span class="p">)</span>  <span class="c1"># (1)!</span>
 <a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>    <span class="k">await</span> <span class="n">process_job</span><span class="p">()</span>
 </code></pre></div>
@@ -1070,19 +2285,19 @@
 <h3 id="example-web-ui-progress">Example: Web UI Progress</h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">WebSocket</span>
 <a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>
-<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="nd">@app</span><span class="o">.</span><span class="n">websocket</span><span class="p">(</span><span class="s2">&quot;/progress/</span><span class="si">{job_id}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="nd">@app</span><span class="o">.</span><span class="n">websocket</span><span class="p">(</span><span class="s2">"/progress/</span><span class="si">{job_id}</span><span class="s2">"</span><span class="p">)</span>
 <a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">progress_websocket</span><span class="p">(</span><span class="n">websocket</span><span class="p">:</span> <span class="n">WebSocket</span><span class="p">,</span> <span class="n">job_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>    <span class="k">await</span> <span class="n">websocket</span><span class="o">.</span><span class="n">accept</span><span class="p">()</span>
 <a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>
 <a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">send_progress</span><span class="p">(</span><span class="n">op_id</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">meta</span><span class="p">):</span>
-<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w">        </span><span class="sd">&quot;&quot;&quot;Send progress updates to WebSocket client.&quot;&quot;&quot;</span>
+<a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a><span class="w">        </span><span class="sd">"""Send progress updates to WebSocket client."""</span>
 <a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>        <span class="k">await</span> <span class="n">websocket</span><span class="o">.</span><span class="n">send_json</span><span class="p">({</span>
-<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>            <span class="s2">&quot;operation_id&quot;</span><span class="p">:</span> <span class="n">op_id</span><span class="p">,</span>
-<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>            <span class="s2">&quot;message&quot;</span><span class="p">:</span> <span class="n">msg</span><span class="p">,</span>
-<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>            <span class="s2">&quot;metadata&quot;</span><span class="p">:</span> <span class="n">meta</span>
+<a id="__codelineno-9-10" name="__codelineno-9-10" href="#__codelineno-9-10"></a>            <span class="s2">"operation_id"</span><span class="p">:</span> <span class="n">op_id</span><span class="p">,</span>
+<a id="__codelineno-9-11" name="__codelineno-9-11" href="#__codelineno-9-11"></a>            <span class="s2">"message"</span><span class="p">:</span> <span class="n">msg</span><span class="p">,</span>
+<a id="__codelineno-9-12" name="__codelineno-9-12" href="#__codelineno-9-12"></a>            <span class="s2">"metadata"</span><span class="p">:</span> <span class="n">meta</span>
 <a id="__codelineno-9-13" name="__codelineno-9-13" href="#__codelineno-9-13"></a>        <span class="p">})</span>
 <a id="__codelineno-9-14" name="__codelineno-9-14" href="#__codelineno-9-14"></a>
-<a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>    <span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;job_</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">cancel</span><span class="p">:</span>
+<a id="__codelineno-9-15" name="__codelineno-9-15" href="#__codelineno-9-15"></a>    <span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="sa">f</span><span class="s2">"job_</span><span class="si">{</span><span class="n">job_id</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span> <span class="k">as</span> <span class="n">cancel</span><span class="p">:</span>
 <a id="__codelineno-9-16" name="__codelineno-9-16" href="#__codelineno-9-16"></a>        <span class="n">cancel</span><span class="o">.</span><span class="n">on_progress</span><span class="p">(</span><span class="n">send_progress</span><span class="p">)</span>
 <a id="__codelineno-9-17" name="__codelineno-9-17" href="#__codelineno-9-17"></a>
 <a id="__codelineno-9-18" name="__codelineno-9-18" href="#__codelineno-9-18"></a>        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">item</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">items</span><span class="p">):</span>
@@ -1090,39 +2305,39 @@
 <a id="__codelineno-9-20" name="__codelineno-9-20" href="#__codelineno-9-20"></a>
 <a id="__codelineno-9-21" name="__codelineno-9-21" href="#__codelineno-9-21"></a>            <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1"># Update UI every 10 items</span>
 <a id="__codelineno-9-22" name="__codelineno-9-22" href="#__codelineno-9-22"></a>                <span class="k">await</span> <span class="n">cancel</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span>
-<a id="__codelineno-9-23" name="__codelineno-9-23" href="#__codelineno-9-23"></a>                    <span class="sa">f</span><span class="s2">&quot;Processing item </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">,</span>
+<a id="__codelineno-9-23" name="__codelineno-9-23" href="#__codelineno-9-23"></a>                    <span class="sa">f</span><span class="s2">"Processing item </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">/</span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span><span class="si">}</span><span class="s2">"</span><span class="p">,</span>
 <a id="__codelineno-9-24" name="__codelineno-9-24" href="#__codelineno-9-24"></a>                    <span class="p">{</span>
-<a id="__codelineno-9-25" name="__codelineno-9-25" href="#__codelineno-9-25"></a>                        <span class="s2">&quot;progress&quot;</span><span class="p">:</span> <span class="p">(</span><span class="n">i</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
-<a id="__codelineno-9-26" name="__codelineno-9-26" href="#__codelineno-9-26"></a>                        <span class="s2">&quot;current&quot;</span><span class="p">:</span> <span class="n">i</span><span class="p">,</span>
-<a id="__codelineno-9-27" name="__codelineno-9-27" href="#__codelineno-9-27"></a>                        <span class="s2">&quot;total&quot;</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
+<a id="__codelineno-9-25" name="__codelineno-9-25" href="#__codelineno-9-25"></a>                        <span class="s2">"progress"</span><span class="p">:</span> <span class="p">(</span><span class="n">i</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">))</span> <span class="o">*</span> <span class="mi">100</span><span class="p">,</span>
+<a id="__codelineno-9-26" name="__codelineno-9-26" href="#__codelineno-9-26"></a>                        <span class="s2">"current"</span><span class="p">:</span> <span class="n">i</span><span class="p">,</span>
+<a id="__codelineno-9-27" name="__codelineno-9-27" href="#__codelineno-9-27"></a>                        <span class="s2">"total"</span><span class="p">:</span> <span class="nb">len</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
 <a id="__codelineno-9-28" name="__codelineno-9-28" href="#__codelineno-9-28"></a>                    <span class="p">}</span>
 <a id="__codelineno-9-29" name="__codelineno-9-29" href="#__codelineno-9-29"></a>                <span class="p">)</span>
 </code></pre></div>
 <h3 id="combining-hierarchies-and-progress">Combining Hierarchies and Progress</h3>
 <p>Use together for comprehensive operation monitoring:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;workflow&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">workflow</span><span class="p">:</span>
-<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>    <span class="n">workflow</span><span class="o">.</span><span class="n">on_progress</span><span class="p">(</span><span class="k">lambda</span> <span class="n">oid</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">meta</span><span class="p">:</span> <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Workflow: </span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"workflow"</span><span class="p">)</span> <span class="k">as</span> <span class="n">workflow</span><span class="p">:</span>
+<a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>    <span class="n">workflow</span><span class="o">.</span><span class="n">on_progress</span><span class="p">(</span><span class="k">lambda</span> <span class="n">oid</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">meta</span><span class="p">:</span> <span class="n">logger</span><span class="o">.</span><span class="n">info</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Workflow: </span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2">"</span><span class="p">))</span>
 <a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>
-<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>    <span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;stage1&quot;</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">workflow</span><span class="p">)</span> <span class="k">as</span> <span class="n">stage1</span><span class="p">:</span>
-<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>        <span class="n">stage1</span><span class="o">.</span><span class="n">on_progress</span><span class="p">(</span><span class="k">lambda</span> <span class="n">oid</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">meta</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Stage 1: </span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span>
+<a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>    <span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"stage1"</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">workflow</span><span class="p">)</span> <span class="k">as</span> <span class="n">stage1</span><span class="p">:</span>
+<a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>        <span class="n">stage1</span><span class="o">.</span><span class="n">on_progress</span><span class="p">(</span><span class="k">lambda</span> <span class="n">oid</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">meta</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Stage 1: </span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2">"</span><span class="p">))</span>
 <a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>
 <a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
 <a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>            <span class="k">await</span> <span class="n">work</span><span class="p">()</span>
 <a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>            <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">10</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
 <a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a>                <span class="k">await</span> <span class="n">stage1</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span>
-<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a>                    <span class="sa">f</span><span class="s2">&quot;Stage 1: </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">/100&quot;</span><span class="p">,</span>
-<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a>                    <span class="p">{</span><span class="s2">&quot;progress&quot;</span><span class="p">:</span> <span class="n">i</span><span class="p">,</span> <span class="s2">&quot;stage&quot;</span><span class="p">:</span> <span class="s2">&quot;fetch&quot;</span><span class="p">}</span>
+<a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a>                    <span class="sa">f</span><span class="s2">"Stage 1: </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">/100"</span><span class="p">,</span>
+<a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a>                    <span class="p">{</span><span class="s2">"progress"</span><span class="p">:</span> <span class="n">i</span><span class="p">,</span> <span class="s2">"stage"</span><span class="p">:</span> <span class="s2">"fetch"</span><span class="p">}</span>
 <a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a>                <span class="p">)</span>
 <a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a>
-<a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a>    <span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;stage2&quot;</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">workflow</span><span class="p">)</span> <span class="k">as</span> <span class="n">stage2</span><span class="p">:</span>
-<a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a>        <span class="n">stage2</span><span class="o">.</span><span class="n">on_progress</span><span class="p">(</span><span class="k">lambda</span> <span class="n">oid</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">meta</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;  Stage 2: </span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">))</span>
+<a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a>    <span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"stage2"</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="n">workflow</span><span class="p">)</span> <span class="k">as</span> <span class="n">stage2</span><span class="p">:</span>
+<a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a>        <span class="n">stage2</span><span class="o">.</span><span class="n">on_progress</span><span class="p">(</span><span class="k">lambda</span> <span class="n">oid</span><span class="p">,</span> <span class="n">m</span><span class="p">,</span> <span class="n">meta</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"  Stage 2: </span><span class="si">{</span><span class="n">m</span><span class="si">}</span><span class="s2">"</span><span class="p">))</span>
 <a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a>
 <a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a>        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">200</span><span class="p">):</span>
 <a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a>            <span class="k">await</span> <span class="n">work</span><span class="p">()</span>
 <a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a>            <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">20</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
 <a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a>                <span class="k">await</span> <span class="n">stage2</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span>
-<a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a>                    <span class="sa">f</span><span class="s2">&quot;Stage 2: </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">/200&quot;</span><span class="p">,</span>
-<a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a>                    <span class="p">{</span><span class="s2">&quot;progress&quot;</span><span class="p">:</span> <span class="n">i</span><span class="p">,</span> <span class="s2">&quot;stage&quot;</span><span class="p">:</span> <span class="s2">&quot;process&quot;</span><span class="p">}</span>
+<a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a>                    <span class="sa">f</span><span class="s2">"Stage 2: </span><span class="si">{</span><span class="n">i</span><span class="si">}</span><span class="s2">/200"</span><span class="p">,</span>
+<a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a>                    <span class="p">{</span><span class="s2">"progress"</span><span class="p">:</span> <span class="n">i</span><span class="p">,</span> <span class="s2">"stage"</span><span class="p">:</span> <span class="s2">"process"</span><span class="p">}</span>
 <a id="__codelineno-10-24" name="__codelineno-10-24" href="#__codelineno-10-24"></a>                <span class="p">)</span>
 </code></pre></div>
 <h2 id="custom-combining-patterns">Custom Combining Patterns</h2>
@@ -1172,7 +2387,7 @@
 <a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a><span class="c1"># Combine with AND logic</span>
 <a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a><span class="n">all_of</span> <span class="o">=</span> <span class="n">AllOfSource</span><span class="p">([</span><span class="n">min_time_source</span><span class="p">,</span> <span class="n">target_reached_source</span><span class="p">])</span>  <span class="c1"># (3)!</span>
 <a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a>
-<a id="__codelineno-11-19" name="__codelineno-11-19" href="#__codelineno-11-19"></a><span class="n">cancelable</span> <span class="o">=</span> <span class="n">Cancelable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">&quot;batch_job&quot;</span><span class="p">)</span>
+<a id="__codelineno-11-19" name="__codelineno-11-19" href="#__codelineno-11-19"></a><span class="n">cancelable</span> <span class="o">=</span> <span class="n">Cancelable</span><span class="p">(</span><span class="n">name</span><span class="o">=</span><span class="s2">"batch_job"</span><span class="p">)</span>
 <a id="__codelineno-11-20" name="__codelineno-11-20" href="#__codelineno-11-20"></a><span class="n">cancelable</span><span class="o">.</span><span class="n">add_source</span><span class="p">(</span><span class="n">all_of</span><span class="p">)</span>
 <a id="__codelineno-11-21" name="__codelineno-11-21" href="#__codelineno-11-21"></a>
 <a id="__codelineno-11-22" name="__codelineno-11-22" href="#__codelineno-11-22"></a><span class="k">async</span> <span class="k">with</span> <span class="n">cancelable</span><span class="p">:</span>
@@ -1201,7 +2416,7 @@
 <h4 id="2-resource-ready-and-quota-available">2. Resource-Ready AND Quota-Available</h4>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="c1"># Wait until BOTH disk space available AND API quota refreshed</span>
 <a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a><span class="n">disk_available</span> <span class="o">=</span> <span class="n">ConditionSource</span><span class="p">(</span>
-<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>    <span class="n">condition</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">shutil</span><span class="o">.</span><span class="n">disk_usage</span><span class="p">(</span><span class="s2">&quot;/&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">free</span> <span class="o">&gt;</span> <span class="mi">1_000_000_000</span><span class="p">,</span>  <span class="c1"># 1GB</span>
+<a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>    <span class="n">condition</span><span class="o">=</span><span class="k">lambda</span><span class="p">:</span> <span class="n">shutil</span><span class="o">.</span><span class="n">disk_usage</span><span class="p">(</span><span class="s2">"/"</span><span class="p">)</span><span class="o">.</span><span class="n">free</span> <span class="o">&gt;</span> <span class="mi">1_000_000_000</span><span class="p">,</span>  <span class="c1"># 1GB</span>
 <a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>    <span class="n">check_interval</span><span class="o">=</span><span class="mf">5.0</span>
 <a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a><span class="p">)</span>
 <a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a><span class="n">quota_available</span> <span class="o">=</span> <span class="n">ConditionSource</span><span class="p">(</span>
@@ -1224,7 +2439,7 @@
 <h3 id="thread-safety">Thread Safety</h3>
 <p><code>AllOfSource</code> is thread-safe using <code>anyio.Lock()</code> for tracking triggered sources:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">_monitor_source</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">:</span> <span class="n">CancelationSource</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="kc">None</span><span class="p">:</span>
-<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="w">    </span><span class="sd">&quot;&quot;&quot;Monitor a single source and check if all have triggered.&quot;&quot;&quot;</span>
+<a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a><span class="w">    </span><span class="sd">"""Monitor a single source and check if all have triggered."""</span>
 <a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>    <span class="n">original_trigger</span> <span class="o">=</span> <span class="n">source</span><span class="o">.</span><span class="n">trigger_cancelation</span>
 <a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>
 <a id="__codelineno-15-5" name="__codelineno-15-5" href="#__codelineno-15-5"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">wrapped_trigger</span><span class="p">(</span><span class="n">message</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
@@ -1234,7 +2449,7 @@
 <a id="__codelineno-15-9" name="__codelineno-15-9" href="#__codelineno-15-9"></a>            <span class="c1"># Check if all sources have triggered</span>
 <a id="__codelineno-15-10" name="__codelineno-15-10" href="#__codelineno-15-10"></a>            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">triggered_sources</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">):</span>
 <a id="__codelineno-15-11" name="__codelineno-15-11" href="#__codelineno-15-11"></a>                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">trigger_cancelation</span><span class="p">(</span>
-<a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a>                    <span class="sa">f</span><span class="s2">&quot;All </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">)</span><span class="si">}</span><span class="s2"> sources have triggered&quot;</span>
+<a id="__codelineno-15-12" name="__codelineno-15-12" href="#__codelineno-15-12"></a>                    <span class="sa">f</span><span class="s2">"All </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sources</span><span class="p">)</span><span class="si">}</span><span class="s2"> sources have triggered"</span>
 <a id="__codelineno-15-13" name="__codelineno-15-13" href="#__codelineno-15-13"></a>                <span class="p">)</span>
 </code></pre></div>
 <p>Safe for concurrent source triggering from multiple tasks or threads.</p>
@@ -1331,16 +2546,16 @@
 <p>Each call gets its own timeout:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hother.cancelable</span><span class="w"> </span><span class="kn">import</span> <span class="n">cancelable</span>
 <a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>
-<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="nd">@cancelable</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;process_item&quot;</span><span class="p">)</span>  <span class="c1"># (1)!</span>
+<a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="nd">@cancelable</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"process_item"</span><span class="p">)</span>  <span class="c1"># (1)!</span>
 <a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">process_item</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cancelable</span><span class="p">:</span> <span class="n">Cancelable</span><span class="p">):</span>
-<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>    <span class="k">await</span> <span class="n">cancelable</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processing </span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>    <span class="k">await</span> <span class="n">cancelable</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Processing </span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a>    <span class="k">await</span> <span class="n">do_work</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
-<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Done: </span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&quot;</span>
+<a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>    <span class="k">return</span> <span class="sa">f</span><span class="s2">"Done: </span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">"</span>
 <a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>
 <a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a><span class="c1"># Each call is independent</span>
-<a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a><span class="k">await</span> <span class="n">process_item</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">)</span>  <span class="c1"># ✓ Fresh 5s timeout</span>
-<a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a><span class="k">await</span> <span class="n">process_item</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">)</span>  <span class="c1"># ✓ Fresh 5s timeout</span>
-<a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a><span class="k">await</span> <span class="n">process_item</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">)</span>  <span class="c1"># ✓ Fresh 5s timeout</span>
+<a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a><span class="k">await</span> <span class="n">process_item</span><span class="p">(</span><span class="s2">"A"</span><span class="p">)</span>  <span class="c1"># ✓ Fresh 5s timeout</span>
+<a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a><span class="k">await</span> <span class="n">process_item</span><span class="p">(</span><span class="s2">"B"</span><span class="p">)</span>  <span class="c1"># ✓ Fresh 5s timeout</span>
+<a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a><span class="k">await</span> <span class="n">process_item</span><span class="p">(</span><span class="s2">"C"</span><span class="p">)</span>  <span class="c1"># ✓ Fresh 5s timeout</span>
 <a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a><span class="c1"># Total time can exceed 5 seconds</span>
 </code></pre></div>
 <ol>
@@ -1351,20 +2566,20 @@
 <div class="highlight"><pre><span></span><code><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hother.cancelable</span><span class="w"> </span><span class="kn">import</span> <span class="n">Cancelable</span><span class="p">,</span> <span class="n">with_cancelable</span><span class="p">,</span> <span class="n">current_operation</span>
 <a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>
 <a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a><span class="c1"># Create ONE shared context</span>
-<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="n">batch_cancel</span> <span class="o">=</span> <span class="n">Cancelable</span><span class="o">.</span><span class="n">with_timeout</span><span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;batch&quot;</span><span class="p">)</span>  <span class="c1"># (1)!</span>
+<a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a><span class="n">batch_cancel</span> <span class="o">=</span> <span class="n">Cancelable</span><span class="o">.</span><span class="n">with_timeout</span><span class="p">(</span><span class="mf">5.0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"batch"</span><span class="p">)</span>  <span class="c1"># (1)!</span>
 <a id="__codelineno-18-5" name="__codelineno-18-5" href="#__codelineno-18-5"></a>
 <a id="__codelineno-18-6" name="__codelineno-18-6" href="#__codelineno-18-6"></a><span class="nd">@with_cancelable</span><span class="p">(</span><span class="n">batch_cancel</span><span class="p">)</span>  <span class="c1"># (2)!</span>
 <a id="__codelineno-18-7" name="__codelineno-18-7" href="#__codelineno-18-7"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">process_item</span><span class="p">(</span><span class="n">item</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
 <a id="__codelineno-18-8" name="__codelineno-18-8" href="#__codelineno-18-8"></a>    <span class="n">ctx</span> <span class="o">=</span> <span class="n">current_operation</span><span class="p">()</span>  <span class="c1"># (3)!</span>
-<a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a>    <span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processing </span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-18-9" name="__codelineno-18-9" href="#__codelineno-18-9"></a>    <span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Processing </span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <a id="__codelineno-18-10" name="__codelineno-18-10" href="#__codelineno-18-10"></a>    <span class="k">await</span> <span class="n">do_work</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
-<a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a>    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;Done: </span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">&quot;</span>
+<a id="__codelineno-18-11" name="__codelineno-18-11" href="#__codelineno-18-11"></a>    <span class="k">return</span> <span class="sa">f</span><span class="s2">"Done: </span><span class="si">{</span><span class="n">item</span><span class="si">}</span><span class="s2">"</span>
 <a id="__codelineno-18-12" name="__codelineno-18-12" href="#__codelineno-18-12"></a>
 <a id="__codelineno-18-13" name="__codelineno-18-13" href="#__codelineno-18-13"></a><span class="c1"># All share the same 5-second budget</span>
 <a id="__codelineno-18-14" name="__codelineno-18-14" href="#__codelineno-18-14"></a><span class="k">async</span> <span class="k">with</span> <span class="n">batch_cancel</span><span class="p">:</span>  <span class="c1"># (4)!</span>
-<a id="__codelineno-18-15" name="__codelineno-18-15" href="#__codelineno-18-15"></a>    <span class="k">await</span> <span class="n">process_item</span><span class="p">(</span><span class="s2">&quot;A&quot;</span><span class="p">)</span>
-<a id="__codelineno-18-16" name="__codelineno-18-16" href="#__codelineno-18-16"></a>    <span class="k">await</span> <span class="n">process_item</span><span class="p">(</span><span class="s2">&quot;B&quot;</span><span class="p">)</span>
-<a id="__codelineno-18-17" name="__codelineno-18-17" href="#__codelineno-18-17"></a>    <span class="k">await</span> <span class="n">process_item</span><span class="p">(</span><span class="s2">&quot;C&quot;</span><span class="p">)</span>
+<a id="__codelineno-18-15" name="__codelineno-18-15" href="#__codelineno-18-15"></a>    <span class="k">await</span> <span class="n">process_item</span><span class="p">(</span><span class="s2">"A"</span><span class="p">)</span>
+<a id="__codelineno-18-16" name="__codelineno-18-16" href="#__codelineno-18-16"></a>    <span class="k">await</span> <span class="n">process_item</span><span class="p">(</span><span class="s2">"B"</span><span class="p">)</span>
+<a id="__codelineno-18-17" name="__codelineno-18-17" href="#__codelineno-18-17"></a>    <span class="k">await</span> <span class="n">process_item</span><span class="p">(</span><span class="s2">"C"</span><span class="p">)</span>
 <a id="__codelineno-18-18" name="__codelineno-18-18" href="#__codelineno-18-18"></a>    <span class="c1"># Total time for ALL items must be &lt; 5 seconds</span>
 </code></pre></div>
 <ol>
@@ -1375,20 +2590,20 @@
 </ol>
 <h3 id="all-decorator-variants">All Decorator Variants</h3>
 <p><strong><code>@cancelable</code> - Basic Timeout</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="nd">@cancelable</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mf">30.0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;fetch_data&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-19-1" name="__codelineno-19-1" href="#__codelineno-19-1"></a><span class="nd">@cancelable</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mf">30.0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"fetch_data"</span><span class="p">)</span>
 <a id="__codelineno-19-2" name="__codelineno-19-2" href="#__codelineno-19-2"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">fetch_data</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cancelable</span><span class="p">:</span> <span class="n">Cancelable</span><span class="p">):</span>
 <a id="__codelineno-19-3" name="__codelineno-19-3" href="#__codelineno-19-3"></a>    <span class="k">return</span> <span class="k">await</span> <span class="n">http_client</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
 </code></pre></div>
 <p><strong><code>@cancelable_with_token</code> - Manual Control</strong></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-20-1" name="__codelineno-20-1" href="#__codelineno-20-1"></a><span class="n">token</span> <span class="o">=</span> <span class="n">CancelationToken</span><span class="p">()</span>
 <a id="__codelineno-20-2" name="__codelineno-20-2" href="#__codelineno-20-2"></a>
-<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="nd">@cancelable_with_token</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;worker&quot;</span><span class="p">)</span>
+<a id="__codelineno-20-3" name="__codelineno-20-3" href="#__codelineno-20-3"></a><span class="nd">@cancelable_with_token</span><span class="p">(</span><span class="n">token</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"worker"</span><span class="p">)</span>
 <a id="__codelineno-20-4" name="__codelineno-20-4" href="#__codelineno-20-4"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">background_worker</span><span class="p">(</span><span class="n">data</span><span class="p">:</span> <span class="nb">list</span><span class="p">,</span> <span class="n">cancelable</span><span class="p">:</span> <span class="n">Cancelable</span><span class="p">):</span>
 <a id="__codelineno-20-5" name="__codelineno-20-5" href="#__codelineno-20-5"></a>    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
 <a id="__codelineno-20-6" name="__codelineno-20-6" href="#__codelineno-20-6"></a>        <span class="k">await</span> <span class="n">process_item</span><span class="p">(</span><span class="n">item</span><span class="p">)</span>
 </code></pre></div>
 <p><strong><code>@cancelable_with_signal</code> - Graceful Shutdown</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="nd">@cancelable_with_signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGTERM</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;service&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-21-1" name="__codelineno-21-1" href="#__codelineno-21-1"></a><span class="nd">@cancelable_with_signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGTERM</span><span class="p">,</span> <span class="n">signal</span><span class="o">.</span><span class="n">SIGINT</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"service"</span><span class="p">)</span>
 <a id="__codelineno-21-2" name="__codelineno-21-2" href="#__codelineno-21-2"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">long_running_service</span><span class="p">(</span><span class="n">cancelable</span><span class="p">:</span> <span class="n">Cancelable</span><span class="p">):</span>
 <a id="__codelineno-21-3" name="__codelineno-21-3" href="#__codelineno-21-3"></a>    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
 <a id="__codelineno-21-4" name="__codelineno-21-4" href="#__codelineno-21-4"></a>        <span class="k">await</span> <span class="n">process_batch</span><span class="p">()</span>
@@ -1407,7 +2622,7 @@
 <a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>    <span class="n">Cancelable</span><span class="o">.</span><span class="n">with_timeout</span><span class="p">(</span><span class="mf">300.0</span><span class="p">),</span>
 <a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>    <span class="n">Cancelable</span><span class="o">.</span><span class="n">with_token</span><span class="p">(</span><span class="n">token</span><span class="p">),</span>
 <a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a>    <span class="n">Cancelable</span><span class="o">.</span><span class="n">with_signal</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">SIGTERM</span><span class="p">),</span>
-<a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a>    <span class="n">name</span><span class="o">=</span><span class="s2">&quot;robust_operation&quot;</span>
+<a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a>    <span class="n">name</span><span class="o">=</span><span class="s2">"robust_operation"</span>
 <a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a><span class="p">)</span>
 <a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">download_file</span><span class="p">(</span><span class="n">url</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">cancelable</span><span class="p">:</span> <span class="n">Cancelable</span><span class="p">):</span>
 <a id="__codelineno-23-8" name="__codelineno-23-8" href="#__codelineno-23-8"></a>    <span class="k">return</span> <span class="k">await</span> <span class="n">download</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
@@ -1416,7 +2631,7 @@
 <p>By default, decorators inject the <code>Cancelable</code> instance as a parameter:</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="nd">@cancelable</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mf">30.0</span><span class="p">)</span>
 <a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">my_function</span><span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">,</span> <span class="n">cancelable</span><span class="p">:</span> <span class="n">Cancelable</span><span class="p">):</span>  <span class="c1"># (1)!</span>
-<a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>    <span class="k">await</span> <span class="n">cancelable</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span><span class="s2">&quot;Working...&quot;</span><span class="p">)</span>
+<a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>    <span class="k">await</span> <span class="n">cancelable</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span><span class="s2">"Working..."</span><span class="p">)</span>
 <a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a>    <span class="k">return</span> <span class="k">await</span> <span class="n">do_work</span><span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">)</span>
 </code></pre></div>
 <ol>
@@ -1429,7 +2644,7 @@
 <a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">clean_signature</span><span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">):</span>  <span class="c1"># (2)!</span>
 <a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a>    <span class="n">ctx</span> <span class="o">=</span> <span class="n">current_operation</span><span class="p">()</span>  <span class="c1"># (3)!</span>
 <a id="__codelineno-25-6" name="__codelineno-25-6" href="#__codelineno-25-6"></a>    <span class="k">if</span> <span class="n">ctx</span><span class="p">:</span>
-<a id="__codelineno-25-7" name="__codelineno-25-7" href="#__codelineno-25-7"></a>        <span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span><span class="s2">&quot;Working...&quot;</span><span class="p">)</span>
+<a id="__codelineno-25-7" name="__codelineno-25-7" href="#__codelineno-25-7"></a>        <span class="k">await</span> <span class="n">ctx</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span><span class="s2">"Working..."</span><span class="p">)</span>
 <a id="__codelineno-25-8" name="__codelineno-25-8" href="#__codelineno-25-8"></a>    <span class="k">return</span> <span class="k">await</span> <span class="n">do_work</span><span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">arg2</span><span class="p">)</span>
 </code></pre></div>
 <ol>
@@ -1438,9 +2653,9 @@
 <li>Access context via <code>current_operation()</code> when needed</li>
 </ol>
 <p>You can use a custom parameter name for the injection:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="nd">@cancelable</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mf">30.0</span><span class="p">,</span> <span class="n">inject_param</span><span class="o">=</span><span class="s2">&quot;cancel&quot;</span><span class="p">)</span>
-<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">my_function</span><span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">cancel</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>  <span class="c1"># Uses &#39;cancel&#39; instead</span>
-<a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>    <span class="k">await</span> <span class="n">cancel</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span><span class="s2">&quot;Working...&quot;</span><span class="p">)</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a><span class="nd">@cancelable</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mf">30.0</span><span class="p">,</span> <span class="n">inject_param</span><span class="o">=</span><span class="s2">"cancel"</span><span class="p">)</span>
+<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">my_function</span><span class="p">(</span><span class="n">arg1</span><span class="p">,</span> <span class="n">cancel</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>  <span class="c1"># Uses 'cancel' instead</span>
+<a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>    <span class="k">await</span> <span class="n">cancel</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span><span class="s2">"Working..."</span><span class="p">)</span>
 </code></pre></div>
 <h3 id="decision-guide">Decision Guide</h3>
 <p><strong>Choose <code>@cancelable</code> when:</strong></p>
@@ -1466,8 +2681,8 @@
 <a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a>    <span class="nd">@cancelable_method</span><span class="p">(</span><span class="n">timeout</span><span class="o">=</span><span class="mf">30.0</span><span class="p">)</span>
 <a id="__codelineno-27-5" name="__codelineno-27-5" href="#__codelineno-27-5"></a>    <span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">process</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">cancelable</span><span class="p">:</span> <span class="n">Cancelable</span><span class="p">):</span>
 <a id="__codelineno-27-6" name="__codelineno-27-6" href="#__codelineno-27-6"></a>        <span class="c1"># Operation name automatically includes class name</span>
-<a id="__codelineno-27-7" name="__codelineno-27-7" href="#__codelineno-27-7"></a>        <span class="c1"># e.g., &quot;DataProcessor.process&quot;</span>
-<a id="__codelineno-27-8" name="__codelineno-27-8" href="#__codelineno-27-8"></a>        <span class="k">await</span> <span class="n">cancelable</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span><span class="s2">&quot;Processing...&quot;</span><span class="p">)</span>
+<a id="__codelineno-27-7" name="__codelineno-27-7" href="#__codelineno-27-7"></a>        <span class="c1"># e.g., "DataProcessor.process"</span>
+<a id="__codelineno-27-8" name="__codelineno-27-8" href="#__codelineno-27-8"></a>        <span class="k">await</span> <span class="n">cancelable</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span><span class="s2">"Processing..."</span><span class="p">)</span>
 <a id="__codelineno-27-9" name="__codelineno-27-9" href="#__codelineno-27-9"></a>        <span class="k">return</span> <span class="k">await</span> <span class="n">heavy_computation</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 <a id="__codelineno-27-10" name="__codelineno-27-10" href="#__codelineno-27-10"></a>
 <a id="__codelineno-27-11" name="__codelineno-27-11" href="#__codelineno-27-11"></a><span class="n">processor</span> <span class="o">=</span> <span class="n">DataProcessor</span><span class="p">()</span>
@@ -1486,12 +2701,12 @@
 <a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">helper_function</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">operation</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
 <a id="__codelineno-28-5" name="__codelineno-28-5" href="#__codelineno-28-5"></a>    <span class="c1"># Gets current operation from context</span>
 <a id="__codelineno-28-6" name="__codelineno-28-6" href="#__codelineno-28-6"></a>    <span class="k">if</span> <span class="n">operation</span><span class="p">:</span>
-<a id="__codelineno-28-7" name="__codelineno-28-7" href="#__codelineno-28-7"></a>        <span class="k">await</span> <span class="n">operation</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processing </span><span class="si">{</span><span class="n">data</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-28-7" name="__codelineno-28-7" href="#__codelineno-28-7"></a>        <span class="k">await</span> <span class="n">operation</span><span class="o">.</span><span class="n">report_progress</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Processing </span><span class="si">{</span><span class="n">data</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <a id="__codelineno-28-8" name="__codelineno-28-8" href="#__codelineno-28-8"></a>    <span class="k">return</span> <span class="k">await</span> <span class="n">work</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
 <a id="__codelineno-28-9" name="__codelineno-28-9" href="#__codelineno-28-9"></a>
 <a id="__codelineno-28-10" name="__codelineno-28-10" href="#__codelineno-28-10"></a><span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="o">.</span><span class="n">with_timeout</span><span class="p">(</span><span class="mf">30.0</span><span class="p">)</span> <span class="k">as</span> <span class="n">cancel</span><span class="p">:</span>
 <a id="__codelineno-28-11" name="__codelineno-28-11" href="#__codelineno-28-11"></a>    <span class="c1"># helper_function automatically gets current operation</span>
-<a id="__codelineno-28-12" name="__codelineno-28-12" href="#__codelineno-28-12"></a>    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">helper_function</span><span class="p">(</span><span class="s2">&quot;data&quot;</span><span class="p">)</span>
+<a id="__codelineno-28-12" name="__codelineno-28-12" href="#__codelineno-28-12"></a>    <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">helper_function</span><span class="p">(</span><span class="s2">"data"</span><span class="p">)</span>
 </code></pre></div>
 <p><strong>Use cases</strong>:
 - Utility functions that need operation context
@@ -1501,7 +2716,7 @@
 <p>The <code>wrap()</code> method provides automatic cancelation checking for operations, especially useful in retry loops and batch processing where you want clean cancelation semantics without explicit checks.</p>
 <h3 id="using-wrap">Using <code>wrap()</code></h3>
 <p>Wrap a callable to automatically check for cancelation before each execution:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="o">.</span><span class="n">with_timeout</span><span class="p">(</span><span class="mf">30.0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;retry_operation&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">cancel</span><span class="p">:</span>  <span class="c1"># (1)!</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="o">.</span><span class="n">with_timeout</span><span class="p">(</span><span class="mf">30.0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"retry_operation"</span><span class="p">)</span> <span class="k">as</span> <span class="n">cancel</span><span class="p">:</span>  <span class="c1"># (1)!</span>
 <a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>    <span class="n">wrapped_fetch</span> <span class="o">=</span> <span class="n">cancel</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">fetch_data</span><span class="p">)</span>  <span class="c1"># (2)!</span>
 <a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a>
 <a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a>    <span class="c1"># Retry loop - checks cancelation before each attempt</span>
@@ -1510,7 +2725,7 @@
 <a id="__codelineno-29-7" name="__codelineno-29-7" href="#__codelineno-29-7"></a>            <span class="n">result</span> <span class="o">=</span> <span class="k">await</span> <span class="n">wrapped_fetch</span><span class="p">(</span><span class="n">url</span><span class="p">)</span>
 <a id="__codelineno-29-8" name="__codelineno-29-8" href="#__codelineno-29-8"></a>            <span class="k">break</span>
 <a id="__codelineno-29-9" name="__codelineno-29-9" href="#__codelineno-29-9"></a>        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-<a id="__codelineno-29-10" name="__codelineno-29-10" href="#__codelineno-29-10"></a>            <span class="k">if</span> <span class="n">attempt</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># Don&#39;t sleep on last attempt</span>
+<a id="__codelineno-29-10" name="__codelineno-29-10" href="#__codelineno-29-10"></a>            <span class="k">if</span> <span class="n">attempt</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>  <span class="c1"># Don't sleep on last attempt</span>
 <a id="__codelineno-29-11" name="__codelineno-29-11" href="#__codelineno-29-11"></a>                <span class="k">await</span> <span class="n">anyio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
 </code></pre></div>
 <ol>
@@ -1545,7 +2760,7 @@
 <li><strong>Long-running loops</strong>: Clean cancelation in <code>for</code> or <code>while</code> loops</li>
 </ul>
 <p><strong>Example: Batch Processing</strong></p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="o">.</span><span class="n">with_timeout</span><span class="p">(</span><span class="mf">60.0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;batch&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">cancel</span><span class="p">:</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="o">.</span><span class="n">with_timeout</span><span class="p">(</span><span class="mf">60.0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"batch"</span><span class="p">)</span> <span class="k">as</span> <span class="n">cancel</span><span class="p">:</span>
 <a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a>    <span class="n">wrapped_process</span> <span class="o">=</span> <span class="n">cancel</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">process_item</span><span class="p">)</span>  <span class="c1"># (1)!</span>
 <a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a>
 <a id="__codelineno-31-4" name="__codelineno-31-4" href="#__codelineno-31-4"></a>    <span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">large_dataset</span><span class="p">:</span>  <span class="c1"># (2)!</span>
@@ -1560,7 +2775,7 @@
 <p><strong>Example: Retry with Tenacity</strong></p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-32-1" name="__codelineno-32-1" href="#__codelineno-32-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">tenacity</span><span class="w"> </span><span class="kn">import</span> <span class="n">AsyncRetrying</span><span class="p">,</span> <span class="n">stop_after_attempt</span>
 <a id="__codelineno-32-2" name="__codelineno-32-2" href="#__codelineno-32-2"></a>
-<a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a><span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="o">.</span><span class="n">with_timeout</span><span class="p">(</span><span class="mf">60.0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">&quot;fetch&quot;</span><span class="p">)</span> <span class="k">as</span> <span class="n">cancel</span><span class="p">:</span>
+<a id="__codelineno-32-3" name="__codelineno-32-3" href="#__codelineno-32-3"></a><span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="o">.</span><span class="n">with_timeout</span><span class="p">(</span><span class="mf">60.0</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s2">"fetch"</span><span class="p">)</span> <span class="k">as</span> <span class="n">cancel</span><span class="p">:</span>
 <a id="__codelineno-32-4" name="__codelineno-32-4" href="#__codelineno-32-4"></a>    <span class="n">wrapped_fetch</span> <span class="o">=</span> <span class="n">cancel</span><span class="o">.</span><span class="n">wrap</span><span class="p">(</span><span class="n">fetch_data</span><span class="p">)</span>  <span class="c1"># (1)!</span>
 <a id="__codelineno-32-5" name="__codelineno-32-5" href="#__codelineno-32-5"></a>
 <a id="__codelineno-32-6" name="__codelineno-32-6" href="#__codelineno-32-6"></a>    <span class="k">async</span> <span class="k">for</span> <span class="n">attempt</span> <span class="ow">in</span> <span class="n">AsyncRetrying</span><span class="p">(</span><span class="n">stop</span><span class="o">=</span><span class="n">stop_after_attempt</span><span class="p">(</span><span class="mi">3</span><span class="p">)):</span>  <span class="c1"># (2)!</span>
@@ -1586,11 +2801,11 @@
 <a id="__codelineno-33-9" name="__codelineno-33-9" href="#__codelineno-33-9"></a><span class="n">child_token</span><span class="o">.</span><span class="n">link</span><span class="p">(</span><span class="n">parent_token</span><span class="p">)</span>
 <a id="__codelineno-33-10" name="__codelineno-33-10" href="#__codelineno-33-10"></a>
 <a id="__codelineno-33-11" name="__codelineno-33-11" href="#__codelineno-33-11"></a><span class="c1"># Cancel parent - child is automatically cancelled</span>
-<a id="__codelineno-33-12" name="__codelineno-33-12" href="#__codelineno-33-12"></a><span class="k">await</span> <span class="n">parent_token</span><span class="o">.</span><span class="n">cancel</span><span class="p">(</span><span class="s2">&quot;Parent cancelled&quot;</span><span class="p">)</span>
+<a id="__codelineno-33-12" name="__codelineno-33-12" href="#__codelineno-33-12"></a><span class="k">await</span> <span class="n">parent_token</span><span class="o">.</span><span class="n">cancel</span><span class="p">(</span><span class="s2">"Parent cancelled"</span><span class="p">)</span>
 <a id="__codelineno-33-13" name="__codelineno-33-13" href="#__codelineno-33-13"></a>
-<a id="__codelineno-33-14" name="__codelineno-33-14" href="#__codelineno-33-14"></a><span class="c1"># Check child - it&#39;s cancelled too with reason propagated</span>
+<a id="__codelineno-33-14" name="__codelineno-33-14" href="#__codelineno-33-14"></a><span class="c1"># Check child - it's cancelled too with reason propagated</span>
 <a id="__codelineno-33-15" name="__codelineno-33-15" href="#__codelineno-33-15"></a><span class="k">assert</span> <span class="n">child_token</span><span class="o">.</span><span class="n">is_cancelled</span>
-<a id="__codelineno-33-16" name="__codelineno-33-16" href="#__codelineno-33-16"></a><span class="nb">print</span><span class="p">(</span><span class="n">child_token</span><span class="o">.</span><span class="n">cancel_message</span><span class="p">)</span>  <span class="c1"># &quot;Linked from parent: Parent cancelled&quot;</span>
+<a id="__codelineno-33-16" name="__codelineno-33-16" href="#__codelineno-33-16"></a><span class="nb">print</span><span class="p">(</span><span class="n">child_token</span><span class="o">.</span><span class="n">cancel_message</span><span class="p">)</span>  <span class="c1"># "Linked from parent: Parent cancelled"</span>
 </code></pre></div>
 <p><strong>Use cases</strong>:
 - Building token hierarchies
@@ -1602,14 +2817,14 @@
 <a id="__codelineno-34-2" name="__codelineno-34-2" href="#__codelineno-34-2"></a>
 <a id="__codelineno-34-3" name="__codelineno-34-3" href="#__codelineno-34-3"></a><span class="c1"># Register callback</span>
 <a id="__codelineno-34-4" name="__codelineno-34-4" href="#__codelineno-34-4"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">on_cancel</span><span class="p">(</span><span class="n">message</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
-<a id="__codelineno-34-5" name="__codelineno-34-5" href="#__codelineno-34-5"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cancelled: </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-34-5" name="__codelineno-34-5" href="#__codelineno-34-5"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cancelled: </span><span class="si">{</span><span class="n">message</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <a id="__codelineno-34-6" name="__codelineno-34-6" href="#__codelineno-34-6"></a>    <span class="k">await</span> <span class="n">cleanup_resources</span><span class="p">()</span>
 <a id="__codelineno-34-7" name="__codelineno-34-7" href="#__codelineno-34-7"></a>    <span class="k">await</span> <span class="n">notify_users</span><span class="p">()</span>
 <a id="__codelineno-34-8" name="__codelineno-34-8" href="#__codelineno-34-8"></a>
 <a id="__codelineno-34-9" name="__codelineno-34-9" href="#__codelineno-34-9"></a><span class="n">token</span><span class="o">.</span><span class="n">register_callback</span><span class="p">(</span><span class="n">on_cancel</span><span class="p">)</span>
 <a id="__codelineno-34-10" name="__codelineno-34-10" href="#__codelineno-34-10"></a>
 <a id="__codelineno-34-11" name="__codelineno-34-11" href="#__codelineno-34-11"></a><span class="c1"># Later: cancel triggers callback</span>
-<a id="__codelineno-34-12" name="__codelineno-34-12" href="#__codelineno-34-12"></a><span class="k">await</span> <span class="n">token</span><span class="o">.</span><span class="n">cancel</span><span class="p">(</span><span class="s2">&quot;Timeout reached&quot;</span><span class="p">)</span>  <span class="c1"># Calls on_cancel(&quot;Timeout reached&quot;)</span>
+<a id="__codelineno-34-12" name="__codelineno-34-12" href="#__codelineno-34-12"></a><span class="k">await</span> <span class="n">token</span><span class="o">.</span><span class="n">cancel</span><span class="p">(</span><span class="s2">"Timeout reached"</span><span class="p">)</span>  <span class="c1"># Calls on_cancel("Timeout reached")</span>
 </code></pre></div>
 <p><strong>Use cases</strong>:
 - Custom cleanup logic
@@ -1624,13 +2839,13 @@
 <a id="__codelineno-35-4" name="__codelineno-35-4" href="#__codelineno-35-4"></a><span class="k">try</span><span class="p">:</span>
 <a id="__codelineno-35-5" name="__codelineno-35-5" href="#__codelineno-35-5"></a>    <span class="n">token</span><span class="o">.</span><span class="n">check</span><span class="p">()</span>
 <a id="__codelineno-35-6" name="__codelineno-35-6" href="#__codelineno-35-6"></a><span class="k">except</span> <span class="n">ManualCancelation</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
-<a id="__codelineno-35-7" name="__codelineno-35-7" href="#__codelineno-35-7"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Cancelled: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<a id="__codelineno-35-7" name="__codelineno-35-7" href="#__codelineno-35-7"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Cancelled: </span><span class="si">{</span><span class="n">e</span><span class="o">.</span><span class="n">message</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
 <a id="__codelineno-35-8" name="__codelineno-35-8" href="#__codelineno-35-8"></a>
 <a id="__codelineno-35-9" name="__codelineno-35-9" href="#__codelineno-35-9"></a><span class="c1"># check_async() - raises anyio.CancelledError (anyio exception)</span>
 <a id="__codelineno-35-10" name="__codelineno-35-10" href="#__codelineno-35-10"></a><span class="k">try</span><span class="p">:</span>
 <a id="__codelineno-35-11" name="__codelineno-35-11" href="#__codelineno-35-11"></a>    <span class="k">await</span> <span class="n">token</span><span class="o">.</span><span class="n">check_async</span><span class="p">()</span>
 <a id="__codelineno-35-12" name="__codelineno-35-12" href="#__codelineno-35-12"></a><span class="k">except</span> <span class="n">anyio</span><span class="o">.</span><span class="n">get_cancelled_exc_class</span><span class="p">():</span>
-<a id="__codelineno-35-13" name="__codelineno-35-13" href="#__codelineno-35-13"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Cancelled&quot;</span><span class="p">)</span>
+<a id="__codelineno-35-13" name="__codelineno-35-13" href="#__codelineno-35-13"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">"Cancelled"</span><span class="p">)</span>
 </code></pre></div>
 <p><strong>When to use</strong>:
 - <code>check()</code> - When you want to catch cancelation separately from other async cancelations
@@ -1648,9 +2863,9 @@
 <a id="__codelineno-36-8" name="__codelineno-36-8" href="#__codelineno-36-8"></a>        <span class="c1"># Store partial results periodically</span>
 <a id="__codelineno-36-9" name="__codelineno-36-9" href="#__codelineno-36-9"></a>        <span class="k">if</span> <span class="n">i</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
 <a id="__codelineno-36-10" name="__codelineno-36-10" href="#__codelineno-36-10"></a>            <span class="n">cancel</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">partial_result</span> <span class="o">=</span> <span class="p">{</span>
-<a id="__codelineno-36-11" name="__codelineno-36-11" href="#__codelineno-36-11"></a>                <span class="s2">&quot;processed&quot;</span><span class="p">:</span> <span class="n">i</span><span class="p">,</span>
-<a id="__codelineno-36-12" name="__codelineno-36-12" href="#__codelineno-36-12"></a>                <span class="s2">&quot;results&quot;</span><span class="p">:</span> <span class="n">results</span><span class="p">[:],</span>
-<a id="__codelineno-36-13" name="__codelineno-36-13" href="#__codelineno-36-13"></a>                <span class="s2">&quot;progress&quot;</span><span class="p">:</span> <span class="n">i</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">large_dataset</span><span class="p">)</span>
+<a id="__codelineno-36-11" name="__codelineno-36-11" href="#__codelineno-36-11"></a>                <span class="s2">"processed"</span><span class="p">:</span> <span class="n">i</span><span class="p">,</span>
+<a id="__codelineno-36-12" name="__codelineno-36-12" href="#__codelineno-36-12"></a>                <span class="s2">"results"</span><span class="p">:</span> <span class="n">results</span><span class="p">[:],</span>
+<a id="__codelineno-36-13" name="__codelineno-36-13" href="#__codelineno-36-13"></a>                <span class="s2">"progress"</span><span class="p">:</span> <span class="n">i</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">large_dataset</span><span class="p">)</span>
 <a id="__codelineno-36-14" name="__codelineno-36-14" href="#__codelineno-36-14"></a>            <span class="p">}</span>
 <a id="__codelineno-36-15" name="__codelineno-36-15" href="#__codelineno-36-15"></a>
 <a id="__codelineno-36-16" name="__codelineno-36-16" href="#__codelineno-36-16"></a>    <span class="k">return</span> <span class="n">results</span>
@@ -1661,8 +2876,8 @@
 <a id="__codelineno-36-21" name="__codelineno-36-21" href="#__codelineno-36-21"></a><span class="k">except</span> <span class="n">anyio</span><span class="o">.</span><span class="n">get_cancelled_exc_class</span><span class="p">():</span>
 <a id="__codelineno-36-22" name="__codelineno-36-22" href="#__codelineno-36-22"></a>    <span class="c1"># Get what we processed before cancelation</span>
 <a id="__codelineno-36-23" name="__codelineno-36-23" href="#__codelineno-36-23"></a>    <span class="n">partial</span> <span class="o">=</span> <span class="n">cancel</span><span class="o">.</span><span class="n">context</span><span class="o">.</span><span class="n">partial_result</span>
-<a id="__codelineno-36-24" name="__codelineno-36-24" href="#__codelineno-36-24"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Processed </span><span class="si">{</span><span class="n">partial</span><span class="p">[</span><span class="s1">&#39;processed&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> items before cancel&quot;</span><span class="p">)</span>
-<a id="__codelineno-36-25" name="__codelineno-36-25" href="#__codelineno-36-25"></a>    <span class="k">return</span> <span class="n">partial</span><span class="p">[</span><span class="s1">&#39;results&#39;</span><span class="p">]</span>
+<a id="__codelineno-36-24" name="__codelineno-36-24" href="#__codelineno-36-24"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"Processed </span><span class="si">{</span><span class="n">partial</span><span class="p">[</span><span class="s1">'processed'</span><span class="p">]</span><span class="si">}</span><span class="s2"> items before cancel"</span><span class="p">)</span>
+<a id="__codelineno-36-25" name="__codelineno-36-25" href="#__codelineno-36-25"></a>    <span class="k">return</span> <span class="n">partial</span><span class="p">[</span><span class="s1">'results'</span><span class="p">]</span>
 </code></pre></div>
 <p><strong>Use cases</strong>:
 - Long-running batch jobs
@@ -1675,6 +2890,9 @@
 
 
 
+
+  
+  
 
 
 
@@ -1693,7 +2911,7 @@
         
           <button type="button" class="md-top md-icon" data-md-component="top" hidden>
   
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"></path></svg>
   Back to top
 </button>
         
@@ -1718,7 +2936,7 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "..", "features": ["content.code.annotate", "content.tabs.link", "navigation.instant", "navigation.tracking", "navigation.top", "header.autohide", "navigation.tabs", "navigation.tabs.sticky", "navigation.sections", "navigation.indexes", "toc.follow", "toc.integrate"], "search": "../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "..", "features": ["content.code.annotate", "content.tabs.link", "content.code.annotate", "navigation.instant", "navigation.tracking", "navigation.top", "header.autohide", "navigation.sections", "navigation.indexes", "toc.follow", "search.suggest", "search.highlight", "search.share"], "search": "../assets/javascripts/workers/search.6ce7567c.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"provider": "mike"}}</script>
     
     
       <script src="../assets/javascripts/bundle.88dd0f4e.min.js"></script>
@@ -1733,6 +2951,12 @@
       
         <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
       
+        <script src="../javascripts/mermaid.js"></script>
+      
+        <script src="https://unpkg.com/mermaid@10/dist/mermaid.min.js"></script>
+      
     
-  </body>
-</html>
+  
+<script id="init-glightbox">const lightbox = GLightbox({"touchNavigation": true, "loop": false, "zoomable": true, "draggable": true, "openEffect": "zoom", "closeEffect": "zoom", "slideEffect": "slide"});
+document$.subscribe(()=>{ lightbox.reload(); });
+</script></body></html>

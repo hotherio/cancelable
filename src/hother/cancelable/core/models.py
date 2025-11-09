@@ -26,8 +26,8 @@ class OperationStatus(str, Enum):
     SHIELDED = "shielded"
 
 
-class CancellationReason(str, Enum):
-    """Reason for cancellation."""
+class CancelationReason(str, Enum):
+    """Reason for cancelation."""
 
     TIMEOUT = "timeout"
     MANUAL = "manual"
@@ -63,7 +63,7 @@ class OperationContext(BaseModel):
     status: OperationStatus = OperationStatus.PENDING
     start_time: datetime = Field(default_factory=lambda: datetime.now(UTC))
     end_time: datetime | None = None
-    cancel_reason: CancellationReason | None = None
+    cancel_reason: CancelationReason | None = None
     cancel_message: str | None = None
     error: str | None = None
     partial_result: Any | None = None

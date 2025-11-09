@@ -33,6 +33,14 @@ jobs:
           config: cliff.toml
           args: -o CHANGELOG.md
 
+      - name: Commit changelog updates
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add CHANGELOG.md
+          git commit -m "docs: update CHANGELOG.md for ${{ github.ref_name }}" || true
+          git tag -f ${{ github.ref_name }} HEAD
+
       - name: Setup Python and uv
         uses: ./.github/actions/setup-python-uv
 
@@ -44,7 +52,9 @@ jobs:
         uses: softprops/action-gh-release@6da8fa9354ddfdc4aeace5fc48d7f679b5214090 # v2
         with:
           body: ${{ steps.git-cliff.outputs.content }}
-          files: dist/*
+          files: |
+            dist/*.tar.gz
+            dist/*.whl
           draft: false
           prerelease: ${{ contains(github.ref, 'rc') || contains(github.ref, 'b') || contains(github.ref, 'a') }}
         env:

@@ -4,7 +4,7 @@ This section contains the complete API reference for the cancelable library.
 
 ## Core Classes
 
-::: hother.cancelable.core.cancellable
+::: hother.cancelable.core.cancelable
     options:
       show_root_heading: true
       show_source: false

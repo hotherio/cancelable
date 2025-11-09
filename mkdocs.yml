@@ -111,7 +111,7 @@ extra:
     provider: mike
   generator: false
 watch:
-  - src/cancelable
+  - src/hother/cancelable
 plugins:
   - search:
         lang: en

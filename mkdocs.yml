@@ -5,24 +5,44 @@ edit_uri: ""
 dev_addr: 0.0.0.0:1234
 site_dir: "static/docs"
 nav:
-  - Overview:
-    - Getting Started: 'getting_started.md'
-    - About: 'about.md'
-  - Tutorials:
-    - Patterns: 'patterns.md'
-    - Examples:
-      - Basic Examples: 'examples/basics.md'
-      - Basic Usage: 'examples/basic_usage.md'
-      - Stream Processing: 'examples/stream_processing.md'
-  - Troubleshooting: 'troubleshooting.md'
-  - API Reference: 'reference/index.md'
-  - Integrations:
-    - FastAPI: 'integrations/fastapi.md'
-    - HTTPX: 'integrations/httpx.md'
-    - SQLAlchemy: 'integrations/sqlalchemy.md'
+   - Cancelable: 'index.md'
+   - Installation: 'installation.md'
+   - Getting Started: 'getting_started.md'
+   - Documentation:
+     - Basics: 'basics.md'
+     - Advanced Usage: 'advanced.md'
+     - Streaming Cancellation: 'streaming.md'
+     - Threading & Bridges: 'threading.md'
+     - Operation Registry: 'registry.md'
+     - Common Patterns: 'patterns.md'
+     - Custom Sources: 'custom_sources.md'
+     - Performance: 'performance.md'
+   - Examples:
+     - Setup: 'examples/setup.md'
+     - Overview: 'examples/index.md'
+     - Basic Patterns: 'examples/basic.md'
+     - Stream Processing: 'examples/streams.md'
+     - Web Applications: 'examples/web.md'
+     - Monitoring Dashboard: 'examples/monitoring.md'
+     - LLM Integration: 'examples/llm.md'
+   - Integrations:
+     - Overview: 'integrations/index.md'
+     - FastAPI: 'integrations/fastapi.md'
+     - Tenacity (Retry): 'integrations/tenacity.md'
+   - Reference:
+     - Overview: 'reference/index.md'
+     - Core Components: 'reference/core.md'
+     - Cancellation Sources: 'reference/sources.md'
+     - Integrations: 'reference/integrations.md'
+     - Utilities: 'reference/utilities.md'
+   - Help:
+     - Troubleshooting: 'troubleshooting.md'
+     - Community & Support: 'community.md'
+     - Contributing: 'contributing.md'
 theme:
   name: material
   language: en
+  annotation: material/arrow-right-circle 
   palette:
     - media: "(prefers-color-scheme: light)"
       scheme: default
@@ -41,17 +61,19 @@ theme:
   features:
     - content.code.annotate
     - content.tabs.link
+    - content.code.annotate
     - navigation.instant
     - navigation.tracking
     - navigation.top
     - header.autohide
-    - navigation.tabs
-    - navigation.tabs.sticky
     - navigation.sections
     - navigation.indexes
     - toc.follow
-    - toc.integrate
+    - search.suggest
+    - search.highlight
+    - search.share
   icon:
+    logo: material/timer-off
     admonition:
       note: octicons/tag-16
       abstract: octicons/checklist-16
@@ -76,7 +98,9 @@ markdown_extensions:
   - pymdownx.highlight:
       anchor_linenums: true
   - pymdownx.inlinehilite
-  - pymdownx.snippets
+  - pymdownx.snippets:
+      base_path: ['.', 'examples']
+      check_paths: true
   - pymdownx.critic
   - pymdownx.caret
   - pymdownx.keys
@@ -92,12 +116,13 @@ markdown_extensions:
       custom_fences:
         - name: mermaid
           class: mermaid
-          format: "!!python/name:pymdownx.superfences.fence_code_format"
+          format: !!python/name:pymdownx.superfences.fence_code_format
   - pymdownx.tabbed:
       alternate_style: true
   - pymdownx.arithmatex:
       generic: true
   - tables
+  - sane_lists # this means you can start a list from any number
 extra_css:
   - stylesheets/extra.css
 extra_javascript:
@@ -106,26 +131,56 @@ extra_javascript:
   - javascripts/mathjax.js
   - https://polyfill.io/v3/polyfill.min.js?features=es6
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
+  - javascripts/mermaid.js
+  - https://unpkg.com/mermaid@10/dist/mermaid.min.js
 extra:
   version:
     provider: mike
   generator: false
 watch:
-  - src/hother/cancelable
+  - src/hother
+  - examples
+  - docs
+  - docs/.hooks
+hooks:
+  - docs/.hooks/main.py
+validation:
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn
+  anchors: warn
 plugins:
   - search:
-        lang: en
+      lang: en
   - autorefs
+  - social
+  - glightbox
   - mkdocstrings:
-      #custom_templates: templates
       default_handler: python
       handlers:
         python:
+          options:
+            show_root_heading: true
+            show_source: true
+            show_bases: true
+            show_inheritance: true
+            show_docstring_attributes: true
+            show_docstring_functions: true
+            show_docstring_classes: true
+            show_docstring_modules: true
+            show_if_no_docstring: true
+            separate_signature: true
+            show_signature_annotations: true
+            signature_crossrefs: true
+            filters: ["!^_"]
           selection:
             filters: ["!^_", "!^__"]
           import:
           - https://docs.python.org/3/objects.inv
           - http://pandas.pydata.org/pandas-docs/stable/objects.inv
+          - https://docs.pydantic.dev/latest/objects.inv
+          - https://anyio.readthedocs.io/en/stable/objects.inv
+          - https://fastapi.tiangolo.com/objects.inv
           setup_commands:
             - import sys
             - sys.path.append('../src')

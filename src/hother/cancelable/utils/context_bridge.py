@@ -7,10 +7,11 @@ async tasks and OS threads, solving the context variable thread safety issue.
 
 import asyncio
 import contextvars
+from collections.abc import Callable
 from concurrent.futures import ThreadPoolExecutor
-from typing import Any, Callable, TypeVar
+from typing import Any, TypeVar
 
-T = TypeVar('T')
+T = TypeVar("T")
 
 
 class ContextBridge:
@@ -23,7 +24,7 @@ class ContextBridge:
     """
 
     @staticmethod
-    def copy_context() -> dict[contextvars.ContextVar, Any]:
+    def copy_context() -> dict[contextvars.ContextVar[Any], Any]:
         """
         Copy current context variables to a dict for thread transport.
 
@@ -34,7 +35,7 @@ class ContextBridge:
         return dict(ctx)
 
     @staticmethod
-    def restore_context(context_dict: dict[contextvars.ContextVar, Any]) -> None:
+    def restore_context(context_dict: dict[contextvars.ContextVar[Any], Any]) -> None:
         """
         Restore context variables from a dictionary.
 
@@ -46,10 +47,7 @@ class ContextBridge:
 
     @staticmethod
     async def run_in_thread_with_context(
-        func: Callable[..., T],
-        *args,
-        executor: ThreadPoolExecutor | None = None,
-        **kwargs
+        func: Callable[..., T], *args: Any, executor: ThreadPoolExecutor | None = None, **kwargs: Any
     ) -> T:
         """
         Run function in thread with context variables propagated.

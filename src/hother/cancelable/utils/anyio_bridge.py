@@ -7,10 +7,13 @@ providing an equivalent to asyncio's loop.call_soon_threadsafe().
 
 from __future__ import annotations
 
-import anyio
 import threading
-from typing import Callable, Self
 from collections import deque
+from collections.abc import Callable
+from typing import Any, Self
+
+import anyio
+from anyio.lowlevel import checkpoint
 
 from .logging import get_logger
 
@@ -61,7 +64,7 @@ class AnyioBridge:
         self._started: bool = False
 
         # Fallback queue for callbacks received before bridge starts
-        self._pending_callbacks: deque[Callable] = deque()
+        self._pending_callbacks: deque[Callable[[], Any]] = deque()
         self._pending_lock = threading.Lock()
 
     @classmethod
@@ -102,8 +105,7 @@ class AnyioBridge:
         logger.debug("Starting anyio bridge")
 
         # Create communication streams
-        self._send_stream, self._receive_stream = \
-            anyio.create_memory_object_stream(self._buffer_size)
+        self._send_stream, self._receive_stream = anyio.create_memory_object_stream(self._buffer_size)
 
         # Process any pending callbacks that arrived before bridge started
         with self._pending_lock:
@@ -144,32 +146,26 @@ class AnyioBridge:
                     logger.debug(f"Callback result: {result}")
 
                     # If it's a coroutine, await it
-                    if hasattr(result, '__await__'):
+                    if hasattr(result, "__await__"):
                         logger.debug("Callback is coroutine, awaiting...")
                         await result
                         logger.debug("Coroutine completed")
                     else:
                         logger.debug("Callback completed (sync)")
                 except Exception as e:
-                    logger.error(
-                        f"Bridge callback error: {e}",
-                        exc_info=True
-                    )
+                    logger.error(f"Bridge callback error: {e}", exc_info=True)
 
                 # Explicitly yield control to anyio scheduler
-                await anyio.sleep(0)
+                await checkpoint()
 
         except anyio.EndOfStream:
             logger.info("Bridge stream closed, worker ending normally")
         except Exception as e:
-            logger.error(
-                f"Bridge worker error: {e}",
-                exc_info=True
-            )
+            logger.error(f"Bridge worker error: {e}", exc_info=True)
 
         logger.warning("Bridge worker loop ended")
 
-    def call_soon_threadsafe(self, callback: Callable) -> None:
+    def call_soon_threadsafe(self, callback: Callable[[], Any]) -> None:
         """
         Schedule callback to run in anyio context from any thread.
 
@@ -187,10 +183,7 @@ class AnyioBridge:
             # Queue for later processing
             with self._pending_lock:
                 self._pending_callbacks.append(callback)
-                logger.debug(
-                    f"Bridge not started, queuing callback "
-                    f"(queue size: {len(self._pending_callbacks)})"
-                )
+                logger.debug(f"Bridge not started, queuing callback " f"(queue size: {len(self._pending_callbacks)})")
             return
 
         logger.debug(f"Queueing callback to bridge: {callback}")
@@ -205,6 +198,46 @@ class AnyioBridge:
         except Exception as e:
             logger.error(f"Failed to schedule callback: {e}", exc_info=True)
 
+    async def stop(self) -> None:
+        """
+        Stop the bridge and clean up resources.
+
+        Properly closes the send and receive streams to avoid
+        resource leak warnings during garbage collection.
+
+        Should be called before cancelling the task group running the bridge.
+
+        Example:
+            ```python
+            async with anyio.create_task_group() as tg:
+                tg.start_soon(bridge.start)
+                # ... use bridge ...
+                await bridge.stop()
+                tg.cancel_scope.cancel()
+            ```
+        """
+        logger.debug("Stopping anyio bridge")
+
+        # Close streams if they exist
+        if self._send_stream is not None:
+            try:
+                await self._send_stream.aclose()
+                logger.debug("Send stream closed")
+            except Exception as e:
+                logger.warning(f"Error closing send stream: {e}")
+
+        if self._receive_stream is not None:
+            try:
+                await self._receive_stream.aclose()
+                logger.debug("Receive stream closed")
+            except Exception as e:
+                logger.warning(f"Error closing receive stream: {e}")
+
+        self._started = False
+        self._send_stream = None
+        self._receive_stream = None
+        logger.info("Anyio bridge stopped and cleaned up")
+
     @property
     def is_started(self) -> bool:
         """Check if bridge is started and ready."""
@@ -212,7 +245,7 @@ class AnyioBridge:
 
 
 # Global convenience function
-def call_soon_threadsafe(callback: Callable) -> None:
+def call_soon_threadsafe(callback: Callable[[], Any]) -> None:
     """
     Convenience function for thread-safe anyio scheduling.
 

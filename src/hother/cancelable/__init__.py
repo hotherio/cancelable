@@ -1,31 +1,46 @@
 """
-Cancelable - Async Cancellation System for Python Streams
+Cancelable - Async Cancelation System for Python Streams
 
-A comprehensive, production-ready cancellation system for async operations
-with support for timeouts, signals, conditions, and manual cancellation.
+A comprehensive, production-ready cancelation system for async operations
+with support for timeouts, signals, conditions, and manual cancelation.
 """
 
-from .core.cancellable import Cancellable, current_operation
+from .core.cancelable import Cancelable, current_operation
 from .core.exceptions import (
-    CancellationError,
-    ConditionCancellation,
-    ManualCancellation,
-    ParentCancellation,
-    SignalCancellation,
-    TimeoutCancellation,
+    CancelationError,
+    ConditionCancelation,
+    ManualCancelation,
+    ParentCancelation,
+    SignalCancelation,
+    TimeoutCancelation,
 )
-from .core.models import CancellationReason, OperationContext, OperationStatus
+from .core.models import CancelationReason, OperationContext, OperationStatus
 from .core.registry import OperationRegistry
-from .core.token import CancellationToken
+from .core.token import CancelationToken
+from .types import (
+    ErrorCallback,
+    ErrorCallbackType,
+    ProgressCallback,
+    ProgressCallbackType,
+    StatusCallback,
+    StatusCallbackType,
+    ensure_cancelable,
+)
 from .utils.anyio_bridge import AnyioBridge, call_soon_threadsafe
+from .utils.threading_bridge import ThreadSafeRegistry
 import importlib.metadata
 
-from .utils.decorators import cancellable, with_timeout
-from .utils.logging import configure_logging
-from .utils.streams import cancellable_stream
-
-# Configure logging on import
-configure_logging()
+from .utils.decorators import (
+    cancelable,
+    cancelable_combine,
+    cancelable_with_condition,
+    cancelable_with_signal,
+    cancelable_with_token,
+    with_cancelable,
+    with_timeout,
+)
+from .utils.streams import cancelable_stream
+from .sources.composite import AllOfSource, AnyOfSource, CompositeSource
 
 try:
     __version__ = importlib.metadata.version("hother-cancelable")
@@ -35,24 +50,42 @@ except importlib.metadata.PackageNotFoundError:
 __all__ = [
     # Models
     "OperationStatus",
-    "CancellationReason",
+    "CancelationReason",
     "OperationContext",
-    "CancellationToken",
+    "CancelationToken",
     # Core
-    "Cancellable",
+    "Cancelable",
     "OperationRegistry",
-    "current_operation",  # Add this
+    "ThreadSafeRegistry",
+    "current_operation",
     # Exceptions
-    "CancellationError",
-    "TimeoutCancellation",
-    "ManualCancellation",
-    "SignalCancellation",
-    "ConditionCancellation",
-    "ParentCancellation",
+    "CancelationError",
+    "TimeoutCancelation",
+    "ManualCancelation",
+    "SignalCancelation",
+    "ConditionCancelation",
+    "ParentCancelation",
+    # Sources
+    "CompositeSource",
+    "AnyOfSource",
+    "AllOfSource",
+    # Types
+    "ProgressCallback",
+    "ProgressCallbackType",
+    "StatusCallback",
+    "StatusCallbackType",
+    "ErrorCallback",
+    "ErrorCallbackType",
+    "ensure_cancelable",
     # Utilities
-    "cancellable",
+    "cancelable",
+    "cancelable_with_token",
+    "cancelable_with_signal",
+    "cancelable_with_condition",
+    "cancelable_combine",
+    "with_cancelable",
     "with_timeout",
-    "cancellable_stream",
+    "cancelable_stream",
     "AnyioBridge",
     "call_soon_threadsafe",
 ]

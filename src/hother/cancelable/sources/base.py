@@ -88,9 +88,7 @@ class CancelationSource(ABC):
                         await result
                 except Exception as e:
                     logger.error(
-                        "Error in cancellation callback",
-                        source=self.name,
-                        error=str(e),
+                        f"Error in cancellation callback: source={self.name}, error={e}",
                         exc_info=True,
                     )
 

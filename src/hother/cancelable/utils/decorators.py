@@ -92,7 +92,7 @@ def cancelable(
             return result
 
         # Add attribute to access decorator parameters (dynamic attribute, no type annotation needed)
-        wrapper._cancellable_params = {  # type: ignore[attr-defined]
+        wrapper._cancelable_params = {  # type: ignore[attr-defined]
             "timeout": timeout,
             "operation_id": operation_id,
             "name": name or func.__name__,
@@ -238,6 +238,13 @@ def cancelable_method(
                 result = await func(self, *args, **kwargs)
             return result
 
+        # Add attribute to access decorator parameters
+        wrapper._cancelable_params = {  # type: ignore[attr-defined]
+            "timeout": timeout,
+            "name": name,
+            "register_globally": register_globally,
+        }
+
         return wrapper
 
     return decorator
@@ -300,6 +307,15 @@ def cancelable_with_token(
                 result = await func(*args, **kwargs)
             return result
 
+        # Add attribute to access decorator parameters
+        wrapper._cancelable_params = {  # type: ignore[attr-defined]
+            "token": token,
+            "operation_id": operation_id,
+            "name": name,
+            "register_globally": register_globally,
+            "inject_param": inject_param,
+        }
+
         return wrapper
 
     return decorator
@@ -359,6 +375,15 @@ def cancelable_with_signal(
 
                 result = await func(*args, **kwargs)
             return result  # type: ignore[possibly-unbound]
+
+        # Add attribute to access decorator parameters
+        wrapper._cancelable_params = {  # type: ignore[attr-defined]
+            "signals": signals,
+            "operation_id": operation_id,
+            "name": name,
+            "register_globally": register_globally,
+            "inject_param": inject_param,
+        }
 
         return wrapper
 
@@ -428,6 +453,17 @@ def cancelable_with_condition(
 
                 result = await func(*args, **kwargs)
             return result  # type: ignore[possibly-unbound]
+
+        # Add attribute to access decorator parameters
+        wrapper._cancelable_params = {  # type: ignore[attr-defined]
+            "condition": condition,
+            "check_interval": check_interval,
+            "condition_name": condition_name,
+            "operation_id": operation_id,
+            "name": name,
+            "register_globally": register_globally,
+            "inject_param": inject_param,
+        }
 
         return wrapper
 

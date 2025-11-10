@@ -8,6 +8,7 @@ from datetime import UTC, datetime
 from typing import Any, TypeVar
 
 import anyio
+from pydantic import Field, PrivateAttr
 
 from hother.cancelable.core.cancelable import Cancelable
 from hother.cancelable.core.models import CancelationReason, OperationContext, OperationStatus
@@ -26,9 +27,15 @@ class MockCancelationToken(CancelationToken):
     Provides additional testing capabilities like scheduled cancellation.
     """
 
+    # Public field for cancel history (used by tests)
+    cancel_history: list[dict[str, Any]] = Field(default_factory=list)
+
+    # Private attribute for internal state
+    _scheduled_cancellation: Any = PrivateAttr(default=None)
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.cancel_history: list[dict[str, Any]] = []
+        # cancel_history is initialized by Field default_factory
         self._scheduled_cancellation = None
 
     async def cancel(
@@ -101,18 +108,18 @@ class OperationRecorder:
                 }
             )
 
-    def attach_to_cancellable(self, cancellable: Cancelable) -> Cancelable:
+    def attach_to_cancelable(self, cancelable: Cancelable) -> Cancelable:
         """
-        Attach recorder to a cancellable to track its events.
+        Attach recorder to a cancelable to track its events.
 
         Args:
-            cancellable: Cancelable to track
+            cancelable: Cancelable to track
 
         Returns:
-            The cancellable (for chaining)
+            The cancelable (for chaining)
         """
-        op_id = cancellable.context.id
-        self.operations[op_id] = cancellable.context
+        op_id = cancelable.context.id
+        self.operations[op_id] = cancelable.context
 
         # Record all events
         async def record_progress(op_id: str, msg: str, meta: dict[str, Any]):
@@ -124,7 +131,7 @@ class OperationRecorder:
         async def record_error(ctx: OperationContext, error: Exception):
             await self.record_event(ctx.id, "error", {"error_type": type(error).__name__, "error_message": str(error)})
 
-        return cancellable.on_progress(record_progress).on_start(record_status).on_complete(record_status).on_cancel(record_status).on_error(record_error)
+        return cancelable.on_progress(record_progress).on_start(record_status).on_complete(record_status).on_cancel(record_status).on_error(record_error)
 
     def get_events_for_operation(self, operation_id: str) -> list[dict[str, Any]]:
         """Get all events for a specific operation."""
@@ -187,7 +194,7 @@ class OperationRecorder:
 async def create_slow_stream(
     items: list[T],
     delay: float = 0.1,
-    cancellable: Cancelable | None = None,
+    cancelable: Cancelable | None = None,
 ) -> AsyncIterator[T]:
     """
     Create a slow async stream for testing cancellation.
@@ -195,7 +202,7 @@ async def create_slow_stream(
     Args:
         items: Items to yield
         delay: Delay between items (seconds)
-        cancellable: Optional cancellable to check
+        cancelable: Optional cancelable to check
 
     Yields:
         Items with delays
@@ -204,8 +211,8 @@ async def create_slow_stream(
         if i > 0:  # No delay before first item
             await anyio.sleep(delay)
 
-        if cancellable:
-            await cancellable._token.check_async()
+        if cancelable:
+            await cancelable._token.check_async()
 
         yield item
 
@@ -351,9 +358,9 @@ class CancelationScenario:
         recorder = OperationRecorder()
         token = MockCancelationToken()
 
-        # Create cancellable
-        cancellable = Cancelable.with_token(token, name=f"scenario_{self.name}")
-        recorder.attach_to_cancellable(cancellable)
+        # Create cancelable
+        cancelable = Cancelable.with_token(token, name=f"scenario_{self.name}")
+        recorder.attach_to_cancelable(cancelable)
 
         # Schedule steps
         async def run_steps():
@@ -367,8 +374,8 @@ class CancelationScenario:
         async with anyio.create_task_group() as tg:
             tg.start_soon(run_steps)
 
-            # Run operation with cancellable
-            async with cancellable:
+            # Run operation with cancelable
+            async with cancelable:
                 try:
                     await operation(*args, **kwargs)
                 except anyio.get_cancelled_exc_class():
@@ -382,7 +389,7 @@ class CancelationScenario:
                 if assertion["message"] not in messages:
                     raise AssertionError(f"Expected progress message '{assertion['message']}' not found")
             elif assertion["type"] == "status":
-                recorder.assert_final_status(cancellable.context.id, assertion["status"])
+                recorder.assert_final_status(cancelable.context.id, assertion["status"])
 
         return recorder
 
@@ -390,20 +397,20 @@ class CancelationScenario:
 # Test fixtures
 async def sample_async_operation(
     duration: float = 1.0,
-    cancellable: Cancelable | None = None,
+    cancelable: Cancelable | None = None,
 ) -> str:
     """Sample async operation for testing."""
-    if cancellable:
-        await cancellable.report_progress("Operation started")
+    if cancelable:
+        await cancelable.report_progress("Operation started")
 
     await anyio.sleep(duration / 2)
 
-    if cancellable:
-        await cancellable.report_progress("Operation 50% complete")
+    if cancelable:
+        await cancelable.report_progress("Operation 50% complete")
 
     await anyio.sleep(duration / 2)
 
-    if cancellable:
-        await cancellable.report_progress("Operation completed")
+    if cancelable:
+        await cancelable.report_progress("Operation completed")
 
     return "success"

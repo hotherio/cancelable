@@ -2,6 +2,7 @@
 Global operation registry for tracking and managing operations.
 """
 
+import threading
 from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING, Any, Optional
 
@@ -42,6 +43,7 @@ class OperationRegistry:
         self._history: list[OperationContext] = []
         self._history_limit = 1000
         self._lock: anyio.Lock = anyio.Lock()
+        self._sync_lock: threading.Lock = threading.Lock()  # For synchronous access
         self._initialized = True
 
         logger.info("Operation registry initialized")
@@ -342,6 +344,168 @@ class OperationRegistry:
                 "average_duration_seconds": avg_duration,
                 "total_completed": completed_count,
             }
+
+    # Synchronous methods for thread-safe access
+
+    def get_operation_sync(self, operation_id: str) -> Optional["Cancelable"]:
+        """
+        Get operation by ID (synchronous, thread-safe).
+
+        Args:
+            operation_id: Operation ID to look up
+
+        Returns:
+            Cancelable operation or None if not found
+        """
+        with self._sync_lock:
+            return self._operations.get(operation_id)
+
+    def list_operations_sync(
+        self,
+        status: OperationStatus | None = None,
+        parent_id: str | None = None,
+        name_pattern: str | None = None,
+    ) -> list[OperationContext]:
+        """
+        List operations with optional filtering (synchronous, thread-safe).
+
+        Args:
+            status: Filter by operation status
+            parent_id: Filter by parent operation ID
+            name_pattern: Filter by name (substring match)
+
+        Returns:
+            List of matching operation contexts
+        """
+        with self._sync_lock:
+            operations = [op.context for op in self._operations.values()]
+
+            # Apply filters
+            if status:
+                operations = [op for op in operations if op.status == status]
+
+            if parent_id:
+                operations = [op for op in operations if op.parent_id == parent_id]
+
+            if name_pattern:
+                operations = [op for op in operations if op.name and name_pattern.lower() in op.name.lower()]
+
+            return operations
+
+    def get_statistics_sync(self) -> dict[str, Any]:
+        """
+        Get registry statistics (synchronous, thread-safe).
+
+        Returns:
+            Dictionary with operation statistics
+        """
+        with self._sync_lock:
+            active_by_status = {}
+            for operation in self._operations.values():
+                status = operation.context.status.value
+                active_by_status[status] = active_by_status.get(status, 0) + 1
+
+            history_by_status = {}
+            total_duration = 0.0
+            completed_count = 0
+
+            for context in self._history:
+                status = context.status.value
+                history_by_status[status] = history_by_status.get(status, 0) + 1
+
+                if context.duration_seconds and context.is_success:
+                    total_duration += context.duration_seconds
+                    completed_count += 1
+
+            avg_duration = total_duration / completed_count if completed_count > 0 else 0
+
+            return {
+                "active_operations": len(self._operations),
+                "active_by_status": active_by_status,
+                "history_size": len(self._history),
+                "history_by_status": history_by_status,
+                "average_duration_seconds": avg_duration,
+                "total_completed": completed_count,
+            }
+
+    def get_history_sync(
+        self,
+        limit: int | None = None,
+        status: OperationStatus | None = None,
+        since: datetime | None = None,
+    ) -> list[OperationContext]:
+        """
+        Get operation history (synchronous, thread-safe).
+
+        Args:
+            limit: Maximum number of operations to return
+            status: Filter by final status
+            since: Only return operations completed after this time
+
+        Returns:
+            List of historical operation contexts
+        """
+        with self._sync_lock:
+            history = self._history.copy()
+
+            # Apply filters
+            if status:
+                history = [op for op in history if op.status == status]
+
+            if since:
+                history = [op for op in history if op.end_time and op.end_time >= since]
+
+            # Apply limit
+            if limit:
+                history = history[-limit:]
+
+            return history
+
+    def cancel_operation_sync(
+        self,
+        operation_id: str,
+        reason: CancelationReason = CancelationReason.MANUAL,
+        message: str | None = None,
+    ) -> None:
+        """
+        Cancel a specific operation (synchronous, schedules async work).
+
+        Schedules the cancelation to be executed asynchronously and returns immediately.
+
+        Args:
+            operation_id: ID of operation to cancel
+            reason: Reason for cancelation
+            message: Optional cancelation message
+        """
+        from hother.cancelable.utils.anyio_bridge import AnyioBridge
+
+        bridge = AnyioBridge.get_instance()
+        bridge.call_soon_threadsafe(
+            self.cancel_operation(operation_id, reason, message)
+        )
+
+    def cancel_all_sync(
+        self,
+        status: OperationStatus | None = None,
+        reason: CancelationReason = CancelationReason.MANUAL,
+        message: str | None = None,
+    ) -> None:
+        """
+        Cancel all operations with optional status filter (synchronous, schedules async work).
+
+        Schedules the cancelation to be executed asynchronously and returns immediately.
+
+        Args:
+            status: Only cancel operations with this status
+            reason: Reason for cancelation
+            message: Optional cancelation message
+        """
+        from hother.cancelable.utils.anyio_bridge import AnyioBridge
+
+        bridge = AnyioBridge.get_instance()
+        bridge.call_soon_threadsafe(
+            self.cancel_all(status, reason, message)
+        )
 
     async def clear_all(self) -> None:
         """Clear all operations and history (for testing)."""

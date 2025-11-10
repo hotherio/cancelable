@@ -6,6 +6,9 @@ import logging
 import sys
 from typing import Optional
 
+# Add NullHandler to prevent "No handlers could be found" warning
+logging.getLogger('hother.cancelable').addHandler(logging.NullHandler())
+
 
 def get_logger(name: Optional[str] = None) -> logging.Logger:
     """

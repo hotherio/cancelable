@@ -36,9 +36,9 @@ class RequestCancelationMiddleware:
     async def __call__(self, scope, receive, send):
         """ASGI middleware implementation."""
         if scope["type"] == "http":
-            # Create cancellation token for this request
+            # Create cancelation token for this request
             token = CancelationToken()
-            scope["cancellation_token"] = token
+            scope["cancelation_token"] = token
 
             # Monitor for client disconnect
             async def monitor_disconnect():
@@ -58,7 +58,7 @@ class RequestCancelationMiddleware:
 
 def get_request_token(request: Request) -> CancelationToken:
     """
-    Get cancellation token from request.
+    Get cancelation token from request.
 
     Args:
         request: FastAPI request
@@ -66,12 +66,12 @@ def get_request_token(request: Request) -> CancelationToken:
     Returns:
         Cancelation token for this request
     """
-    if hasattr(request, "scope") and "cancellation_token" in request.scope:
-        return request.scope["cancellation_token"]
+    if "cancelation_token" in request.scope:
+        return request.scope["cancelation_token"]
 
     # Create new token if middleware not installed
     token = CancelationToken()
-    request.scope["cancellation_token"] = token
+    request.scope["cancelation_token"] = token
     return token
 
 

@@ -88,9 +88,7 @@ class CompositeSource(CancelationSource):
                 await source.stop_monitoring()
             except Exception as e:
                 logger.error(
-                    "Error stopping source",
-                    source=str(source),
-                    error=str(e),
+                    f"Error stopping source: {source}, error: {e}",
                     exc_info=True,
                 )
 
@@ -108,7 +106,7 @@ class CompositeSource(CancelationSource):
             source: Source to monitor
         """
         # Override the source's trigger method to capture which source triggered
-        original_trigger = source.trigger_cancellation
+        original_trigger = source.trigger_cancelation
 
         async def wrapped_trigger(message: str | None = None):
             self.triggered_source = source
@@ -119,17 +117,14 @@ class CompositeSource(CancelationSource):
             if self.scope and not self.scope.cancel_called:
                 await self.trigger_cancelation(f"Composite source triggered by {source.name}: {message}")
 
-        source.trigger_cancellation = wrapped_trigger
+        source.trigger_cancelation = wrapped_trigger
 
         try:
             # Start the source
             await source.start_monitoring(anyio.CancelScope())
         except Exception as e:
             logger.error(
-                "Error in component source",
-                composite_source=self.name,
-                component_source=str(source),
-                error=str(e),
+                f"Error in component source: composite_source={self.name}, component_source={source}, error={e}",
                 exc_info=True,
             )
 
@@ -197,16 +192,14 @@ class AllOfSource(CancelationSource):
                 await source.stop_monitoring()
             except Exception as e:
                 logger.error(
-                    "Error stopping source",
-                    source=str(source),
-                    error=str(e),
+                    f"Error stopping source: {source}, error: {e}",
                     exc_info=True,
                 )
 
     async def _monitor_source(self, source: CancelationSource) -> None:
         """Monitor a single source and check if all have triggered."""
         # Override the source's trigger method
-        original_trigger = source.trigger_cancellation
+        original_trigger = source.trigger_cancelation
 
         async def wrapped_trigger(message: str | None = None):
             async with self._lock:
@@ -220,16 +213,13 @@ class AllOfSource(CancelationSource):
             # Still call original trigger for logging
             await original_trigger(message)
 
-        source.trigger_cancellation = wrapped_trigger
+        source.trigger_cancelation = wrapped_trigger
 
         try:
             # Start the source with a dummy scope
             await source.start_monitoring(anyio.CancelScope())
         except Exception as e:
             logger.error(
-                "Error in component source",
-                all_of_source=self.name,
-                component_source=str(source),
-                error=str(e),
+                f"Error in component source: all_of_source={self.name}, component_source={source}, error={e}",
                 exc_info=True,
             )

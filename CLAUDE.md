@@ -94,7 +94,7 @@ uv run mkdocs build
 uv run mkdocs serve --dev-addr 0.0.0.0:1234
 
 # Deploy with versioning
-uv run mike deploy --update-aliases 0.1 latest
+uv run mike deploy --update-aliases v0.1 latest
 
 # Set default version
 uv run mike set-default latest
@@ -423,5 +423,5 @@ The project uses GitHub Actions for CI/CD:
 5. **Test package locally**: `uv pip install dist/hother_cancelable-*.whl`
 6. **Publish to PyPI**: `uv publish`
 7. **Tag release**: `git tag v0.1.0 && git push --tags`
-8. **Deploy docs**: `uv run mike deploy --update-aliases 0.1 latest`
+8. **Deploy docs**: `uv run mike deploy --update-aliases v0.1 latest`
 9. **Create GitHub release** with changelog

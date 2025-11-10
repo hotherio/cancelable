@@ -1,7 +1,7 @@
 # Cancelable
 
-[![PyPI version](https://img.shields.io/pypi/v/cancelable)](https://pypi.org/project/cancelable/)
-[![Python Versions](https://img.shields.io/pypi/pyversions/cancelable)](https://pypi.org/project/cancelable/)
+[![PyPI version](https://img.shields.io/pypi/v/hother-cancelable)](https://pypi.org/project/hother-cancelable/)
+[![Python Versions](https://img.shields.io/badge/python-3.12%20%7C%203.13%20%7C%203.14-blue)](https://pypi.org/project/hother-cancelable/)
 [![License](https://img.shields.io/github/license/hotherio/cancelable)](https://github.com/hotherio/cancelable/blob/main/LICENSE)
 [![CI](https://github.com/hotherio/cancelable/actions/workflows/pull_request.yaml/badge.svg)](https://github.com/hotherio/cancelable/actions)
 
@@ -35,7 +35,7 @@ A comprehensive, production-ready async cancellation system for Python 3.12+ usi
 The core library includes only essential dependencies (`anyio` and `pydantic`):
 
 ```bash
-uv add cancelable
+uv add hother-cancelable
 ```
 
 ### Optional Extras
@@ -53,17 +53,17 @@ Cancelable provides optional extras for various integrations and use cases:
 
 **FastAPI integration:**
 ```bash
-uv add "cancelable[fastapi]"
+uv add "hother-cancelable[fastapi]"
 ```
 
 **Examples:**
 ```bash
-uv add "cancelable[examples]"
+uv add "hother-cancelable[examples]"
 ```
 
 **All extras:**
 ```bash
-uv add "cancelable[fastapi,examples]"
+uv add "hother-cancelable[fastapi,examples]"
 ```
 
 ## Quick Start

@@ -74,7 +74,7 @@ class MockCancelationToken(CancelationToken):
         return len(self.cancel_history)
 
 
-class TestOperationRecorder:
+class OperationRecorder:
     """
     Records operation events for testing assertions.
     """
@@ -240,7 +240,7 @@ async def run_with_timeout_test(
 
 
 @asynccontextmanager
-async def assert_cancellation_within(
+async def assert_cancelation_within(
     min_time: float,
     max_time: float,
 ) -> AsyncIterator[MockCancelationToken]:
@@ -336,7 +336,7 @@ class CancelationScenario:
         operation: Callable[..., Any],
         *args,
         **kwargs,
-    ) -> TestOperationRecorder:
+    ) -> OperationRecorder:
         """
         Run the scenario.
 
@@ -348,7 +348,7 @@ class CancelationScenario:
         Returns:
             Operation recorder with results
         """
-        recorder = TestOperationRecorder()
+        recorder = OperationRecorder()
         token = MockCancelationToken()
 
         # Create cancellable

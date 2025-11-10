@@ -1,16 +1,5 @@
 """Stream processing utilities for async operations."""
 
-# Import from blocks submodule
-from .blocks import (
-    BlockExtractionMetadata,
-    BlockExtractionState,
-    BlockExtractionStatus,
-    BlockParser,
-    BlockRegistry,
-    ExtractedBlock,
-    process_stream_with_blocks,
-)
-
 # Import from processor
 from .processor import (
     BlockMetadata,
@@ -32,14 +21,6 @@ __all__ = [
     "StreamMetadata",
     "BlockMetadata",
     "create_llm_metadata_extractor",
-    # Block extraction exports
-    "ExtractedBlock",
-    "BlockExtractionState",
-    "BlockExtractionStatus",
-    "BlockExtractionMetadata",
-    "BlockRegistry",
-    "BlockParser",
-    "process_stream_with_blocks",
     # Config
     "StreamConfig",
 ]

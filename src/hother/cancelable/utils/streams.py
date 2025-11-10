@@ -195,7 +195,7 @@ class CancelableAsyncIterator(AsyncIterator[T]):
             await self._iterator.aclose()
 
 
-async def chunked_cancellable_stream(
+async def chunked_cancelable_stream(
     stream: AsyncIterator[T],
     chunk_size: int,
     cancelable: Cancelable,

@@ -75,7 +75,7 @@ def get_request_token(request: Request) -> CancelationToken:
     return token
 
 
-async def cancellable_dependency(
+async def cancelable_dependency(
     request: Request,
     timeout: float | None = None,
 ) -> Cancelable:
@@ -121,7 +121,7 @@ async def cancellable_dependency(
     return base_cancellable
 
 
-def with_cancellation(
+def with_cancelation(
     timeout: float | None = None,
     raise_on_cancel: bool = True,
 ) -> Callable:
@@ -166,7 +166,7 @@ def with_cancellation(
     return decorator
 
 
-async def cancellable_streaming_response(
+async def cancelable_streaming_response(
     generator: AsyncIterator[Any],
     cancellable: Cancelable,
     media_type: str = "text/plain",

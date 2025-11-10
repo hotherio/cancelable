@@ -92,7 +92,7 @@ async def cancelable_dependency(
     Example:
         @app.get("/data")
         async def get_data(
-            cancel: Cancelable = Depends(cancellable_dependency)
+            cancel: Cancelable = Depends(cancelable_dependency)
         ):
             async with cancel:
                 return await fetch_data()
@@ -146,7 +146,7 @@ def with_cancelation(
 
     def decorator(func: Callable) -> Callable:
         async def wrapper(request: Request, *args, **kwargs):
-            cancellable = await cancellable_dependency(request, timeout)
+            cancellable = await cancelable_dependency(request, timeout)
 
             try:
                 async with cancellable:
@@ -186,13 +186,13 @@ async def cancelable_streaming_response(
 
     Example:
         @app.get("/stream")
-        async def stream_data(cancel: Cancelable = Depends(cancellable_dependency)):
+        async def stream_data(cancel: Cancelable = Depends(cancelable_dependency)):
             async def generate():
                 for i in range(1000):
                     await anyio.sleep(0.1)
                     yield f"data: {i}\n\n"
 
-            return await cancellable_streaming_response(
+            return await cancelable_streaming_response(
                 generate(),
                 cancel,
                 media_type="text/event-stream"

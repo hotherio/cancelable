@@ -212,7 +212,7 @@ async def chunked_cancelable_stream(
         Lists of items (chunks)
 
     Example:
-        async for chunk in chunked_cancellable_stream(items, 100, cancel):
+        async for chunk in chunked_cancelable_stream(items, 100, cancel):
             await process_batch(chunk)
     """
     chunk: list[T] = []

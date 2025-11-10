@@ -39,7 +39,6 @@ jobs:
             chore
             revert
           requireScope: false
-          subjectPattern: ^[A-Z].+[^.]$   # must start uppercase, no period
           validateSingleCommit: true       # also check lone commit if PR has only one
 
   validate:

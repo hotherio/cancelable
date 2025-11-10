@@ -288,7 +288,7 @@ class CancelationScenario:
         self.steps.append({"type": "delay", "duration": duration})
         return self
 
-    def add_cancellation(
+    def add_cancelation(
         self,
         reason: CancelationReason = CancelationReason.MANUAL,
         message: str | None = None,

@@ -63,7 +63,7 @@ class CancelationSource(ABC):
         """
         self._cancel_callback = callback
 
-    async def trigger_cancellation(self, message: str | None = None) -> None:
+    async def trigger_cancelation(self, message: str | None = None) -> None:
         """
         Trigger cancellation with the configured reason.
 

@@ -48,7 +48,7 @@ class CancelableAsyncSession:
         self.check_interval = check_interval
         self._operation_count = 0
 
-    async def _check_cancellation(self) -> None:
+    async def _check_cancelation(self) -> None:
         """Check for cancellation periodically."""
         if self.cancellable:
             self._operation_count += 1
@@ -58,34 +58,34 @@ class CancelableAsyncSession:
 
     async def execute(self, statement, params=None, execution_options=None, **kw) -> Any:
         """Execute statement with cancellation check."""
-        await self._check_cancellation()
+        await self._check_cancelation()
         return await self.session.execute(statement, params, execution_options=execution_options, **kw)  # type: ignore
 
     async def scalar(self, statement, params=None, execution_options=None, **kw) -> Any:
         """Execute and return scalar with cancellation check."""
-        await self._check_cancellation()
+        await self._check_cancelation()
         return await self.session.scalar(statement, params, execution_options=execution_options, **kw)  # type: ignore
 
     async def scalars(self, statement, params=None, execution_options=None, **kw) -> Any:
         """Execute and return scalars with cancellation check."""
-        await self._check_cancellation()
+        await self._check_cancelation()
         result = await self.session.scalars(statement, params, execution_options=execution_options, **kw)  # type: ignore
         return result  # Return directly for now, wrapping might cause issues
 
     async def get(self, entity, ident, **kw):
         """Get entity by identity with cancellation check."""
-        await self._check_cancellation()
+        await self._check_cancelation()
         return await self.session.get(entity, ident, **kw)
 
     async def stream(self, statement, params=None, execution_options=None, **kw):
         """Stream results with cancellation support."""
-        await self._check_cancellation()
+        await self._check_cancelation()
         result = await self.session.stream(statement, params, execution_options=execution_options, **kw)  # type: ignore
         return CancelableAsyncResult(result, self.cancellable)
 
     async def stream_scalars(self, statement, params=None, execution_options=None, **kw):
         """Stream scalars with cancellation support."""
-        await self._check_cancellation()
+        await self._check_cancelation()
         result = await self.session.stream_scalars(statement, params, execution_options=execution_options, **kw)  # type: ignore
         return CancelableAsyncScalarResult(result, self.cancellable)
 
@@ -99,12 +99,12 @@ class CancelableAsyncSession:
 
     async def flush(self, objects=None):
         """Flush pending changes with cancellation check."""
-        await self._check_cancellation()
+        await self._check_cancelation()
         await self.session.flush(objects)
 
     async def commit(self):
         """Commit transaction with cancellation check."""
-        await self._check_cancellation()
+        await self._check_cancelation()
         if self.cancellable:
             await self.cancellable.report_progress("Committing transaction")
         await self.session.commit()
@@ -129,12 +129,12 @@ class CancelableAsyncSession:
 
     async def refresh(self, instance, attribute_names=None, with_for_update=None):
         """Refresh instance with cancellation check."""
-        await self._check_cancellation()
+        await self._check_cancelation()
         await self.session.refresh(instance, attribute_names, with_for_update)
 
     async def merge(self, instance, load=True, options=None):
         """Merge instance with cancellation check."""
-        await self._check_cancellation()
+        await self._check_cancelation()
         return await self.session.merge(instance, load=load, options=options)
 
     # Bulk operations with progress reporting
@@ -151,7 +151,7 @@ class CancelableAsyncSession:
 
         batch_size = 1000
         for i in range(0, len(mappings), batch_size):
-            await self._check_cancellation()
+            await self._check_cancelation()
             batch = mappings[i : i + batch_size]
 
             await self.session.bulk_insert_mappings(mapper, batch, return_defaults, render_nulls)  # type: ignore
@@ -166,7 +166,7 @@ class CancelableAsyncSession:
 
         batch_size = 1000
         for i in range(0, len(mappings), batch_size):
-            await self._check_cancellation()
+            await self._check_cancelation()
             batch = mappings[i : i + batch_size]
 
             await self.session.bulk_update_mappings(mapper, batch)  # type: ignore

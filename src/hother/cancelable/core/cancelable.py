@@ -464,7 +464,7 @@ class Cancelable:
                     exc_info=True,
                 )
 
-    async def check_cancellation(self) -> None:
+    async def check_cancelation(self) -> None:
         """
         Check if operation is cancelled and raise if so.
 

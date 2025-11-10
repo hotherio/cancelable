@@ -172,10 +172,10 @@ class SignalSource(CancelationSource):
             if self.scope:
                 message = f"Received signal {signal_name} ({signum})"
 
-                async def schedule_cancellation() -> None:
+                async def schedule_cancelation() -> None:
                     """Async wrapper to call trigger_cancellation."""
                     try:
-                        await self.trigger_cancellation(message)
+                        await self.trigger_cancelation(message)
                     except Exception as e:
                         logger.error(
                             "Failed to trigger cancellation from signal",

@@ -115,11 +115,11 @@ class TestCancelationToken:
         """Test non-throwing cancellation check."""
         token = CancelationToken()
 
-        assert not token.is_cancellation_requested()
+        assert not token.is_cancelation_requested()
 
         await token.cancel()
 
-        assert token.is_cancellation_requested()
+        assert token.is_cancelation_requested()
 
     @pytest.mark.anyio
     async def test_callbacks(self):

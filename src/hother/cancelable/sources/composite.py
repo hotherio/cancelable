@@ -117,7 +117,7 @@ class CompositeSource(CancelationSource):
 
             # Trigger our own cancellation
             if self.scope and not self.scope.cancel_called:
-                await self.trigger_cancellation(f"Composite source triggered by {source.name}: {message}")
+                await self.trigger_cancelation(f"Composite source triggered by {source.name}: {message}")
 
         source.trigger_cancellation = wrapped_trigger
 
@@ -215,7 +215,7 @@ class AllOfSource(CancelationSource):
                 # Check if all sources have triggered
                 if len(self.triggered_sources) == len(self.sources):
                     # All sources triggered, cancel
-                    await self.trigger_cancellation(f"All {len(self.sources)} sources have triggered")
+                    await self.trigger_cancelation(f"All {len(self.sources)} sources have triggered")
 
             # Still call original trigger for logging
             await original_trigger(message)

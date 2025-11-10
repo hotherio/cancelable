@@ -1,9 +1,9 @@
 # Cancelable
 
-[![PyPI version](https://badge.fury.io/py/cancelable.svg)](https://pypi.org/project/cancelable/)
-[![Python Versions](https://img.shields.io/pypi/pyversions/cancelable)](https://pypi.org/project/cancelable/)
-[![License](https://img.shields.io/github/license/hother/cancelable)](https://github.com/hother/cancelable/blob/main/LICENSE)
-[![CI](https://github.com/hother/cancelable/actions/workflows/ci.yml/badge.svg)](https://github.com/hother/cancelable/actions)
+[![PyPI version](https://badge.fury.io/py/hother-cancelable.svg)](https://pypi.org/project/hother-cancelable/)
+[![Python Versions](https://img.shields.io/pypi/pyversions/hother-cancelable)](https://pypi.org/project/hother-cancelable/)
+[![License](https://img.shields.io/github/license/hotherio/cancelable)](https://github.com/hotherio/cancelable/blob/main/LICENSE)
+[![CI](https://github.com/hotherio/cancelable/actions/workflows/pull_request.yaml/badge.svg)](https://github.com/hotherio/cancelable/actions)
 
 A comprehensive, production-ready async cancellation system for Python 3.12+ using anyio.
 

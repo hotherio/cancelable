@@ -24,13 +24,13 @@ Install Tenacity alongside Cancelable:
 === "uv"
     ```bash
     uv add tenacity
-    uv add cancelable
+    uv add hother-cancelable
     ```
 
 === "pip"
     ```bash
     pip install tenacity
-    pip install cancelable
+    pip install hother-cancelable
     ```
 
 ## Quick Start

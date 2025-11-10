@@ -6,12 +6,12 @@ Cancelable requires **Python 3.12+**.
 
 === "uv"
     ```bash
-    uv add cancelable
+    uv add hother-cancelable
     ```
 
 === "pip"
     ```bash
-    pip install cancelable
+    pip install hother-cancelable
     ```
 
 ## With Integrations
@@ -21,13 +21,13 @@ Install with optional integration groups:
 === "uv"
     ```bash
     # Web framework
-    uv add "cancelable[fastapi]"
+    uv add "hother-cancelable[fastapi]"
     ```
 
 === "pip"
     ```bash
     # Web framework
-    pip install "cancelable[fastapi]"
+    pip install "hother-cancelable[fastapi]"
     ```
 
 ## With Examples
@@ -36,12 +36,12 @@ To run the example scripts from the repository:
 
 === "uv"
     ```bash
-    uv add "cancelable[examples]"
+    uv add "hother-cancelable[examples]"
     ```
 
 === "pip"
     ```bash
-    pip install "cancelable[examples]"
+    pip install "hother-cancelable[examples]"
     ```
 
 Includes:

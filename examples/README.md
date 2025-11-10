@@ -206,7 +206,7 @@ async with Cancelable.with_timeout(30.0) as cancel:
 
 1. **"CancelScope not properly closed"**: Ensure proper async context manager usage
 2. **Signal handlers not working**: Check signal availability on your platform
-3. **Import errors**: Ensure `cancelable` is installed: `uv add cancelable`
+3. **Import errors**: Ensure `hother-cancelable` is installed: `uv add hother-cancelable`
 
 ### Platform Notes
 

@@ -35,7 +35,7 @@ A comprehensive, production-ready async cancellation system for Python 3.12+ usi
 The core library includes only essential dependencies (`anyio` and `pydantic`):
 
 ```bash
-uv add cancelable
+uv add hother-cancelable
 ```
 
 ### Optional Extras
@@ -63,25 +63,25 @@ Cancelable provides optional extras for various integrations and use cases:
 **Single extra:**
 ```bash
 # HTTP client support
-uv add "cancelable[httpx]"
+uv add "hother-cancelable[httpx]"
 
 # Database support
-uv add "cancelable[sqlalchemy]"
+uv add "hother-cancelable[sqlalchemy]"
 
 # FastAPI integration
-uv add "cancelable[fastapi]"
+uv add "hother-cancelable[fastapi]"
 ```
 
 **Multiple extras:**
 ```bash
 # Install multiple integrations at once
-uv add "cancelable[httpx,sqlalchemy,fastapi]"
+uv add "hother-cancelable[httpx,sqlalchemy,fastapi]"
 ```
 
 **All extras:**
 ```bash
 # Install all optional extras (useful for development)
-uv add "cancelable[httpx,sqlalchemy,fastapi,aiofiles,asyncer,examples]"
+uv add "hother-cancelable[httpx,sqlalchemy,fastapi,aiofiles,asyncer,examples]"
 ```
 
 ## Quick Start

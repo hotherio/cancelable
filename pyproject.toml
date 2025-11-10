@@ -1,5 +1,5 @@
 [project]
-name = "cancelable"
+name = "hother-cancelable"
 dynamic = ["version"]
 description = "A comprehensive async cancellation system for Python streams"
 readme = "README.md"

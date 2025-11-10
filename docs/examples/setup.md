@@ -8,12 +8,12 @@ Install Cancelable with the examples dependencies:
 
 === "uv"
     ```bash
-    uv add "cancelable[examples]"
+    uv add "hother-cancelable[examples]"
     ```
 
 === "pip"
     ```bash
-    pip install "cancelable[examples]"
+    pip install "hother-cancelable[examples]"
     ```
 
 This installs the core library plus dependencies for running all examples:
@@ -71,12 +71,12 @@ For FastAPI examples:
 
 === "uv"
     ```bash
-    uv add "cancelable[fastapi]"
+    uv add "hother-cancelable[fastapi]"
     ```
 
 === "pip"
     ```bash
-    pip install "cancelable[fastapi]"
+    pip install "hother-cancelable[fastapi]"
     ```
 
 **Examples requiring this:**
@@ -88,12 +88,12 @@ Install everything at once:
 
 === "uv"
     ```bash
-    uv add "cancelable[fastapi,examples]"
+    uv add "hother-cancelable[fastapi,examples]"
     ```
 
 === "pip"
     ```bash
-    pip install "cancelable[fastapi,examples]"
+    pip install "hother-cancelable[fastapi,examples]"
     ```
 
 ## Environment Variables

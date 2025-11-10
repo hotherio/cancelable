@@ -11,7 +11,7 @@
 Cancelable provides **streaming cancelation** and **thread-safe cancelation** for async Python. Cancel async streams at any point, bridge between threading and async contexts, and compose multiple cancelation sources (timeout + manual + signals + conditions) with built-in progress tracking and monitoring. It is built on top of **[anyio](https://github.com/agronholm/anyio)** and support `asyncio` backend.
 
 ```bash
-pip install cancelable
+pip install hother-cancelable
 ```
 
 ## Quick Example

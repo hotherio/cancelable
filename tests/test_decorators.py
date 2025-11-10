@@ -132,8 +132,8 @@ class TestCancelableDecorator:
         assert documented_function.__doc__ == "This function has documentation."
 
         # Check decorator parameters are accessible
-        assert hasattr(documented_function, "_cancellable_params")
-        params = documented_function._cancellable_params
+        assert hasattr(documented_function, "_cancelable_params")
+        params = documented_function._cancelable_params
         assert params["timeout"] == 5.0
         assert params["name"] == "documented_function"
 

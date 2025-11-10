@@ -242,22 +242,22 @@ class CancelableWebSocket:
 
     async def send_text(self, data: str):
         """Send text with cancelation check."""
-        await self.cancelable.check_cancellation()
+        await self.cancelable.check_cancelation()
         await self.websocket.send_text(data)
 
     async def send_json(self, data: Any):
         """Send JSON with cancelation check."""
-        await self.cancelable.check_cancellation()
+        await self.cancelable.check_cancelation()
         await self.websocket.send_json(data)
 
     async def receive_text(self) -> str:
         """Receive text with cancelation check."""
-        await self.cancelable.check_cancellation()
+        await self.cancelable.check_cancelation()
         return await self.websocket.receive_text()
 
     async def receive_json(self) -> Any:
         """Receive JSON with cancelation check."""
-        await self.cancelable.check_cancellation()
+        await self.cancelable.check_cancelation()
         return await self.websocket.receive_json()
 
     async def close(self, code: int = 1000, reason: str = ""):

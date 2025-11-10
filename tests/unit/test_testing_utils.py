@@ -127,13 +127,13 @@ class TestOperationRecorder:
         assert len(start_events) == 2
 
     @pytest.mark.anyio
-    async def test_attach_to_cancelable(self):
+    async def test_attach_to_cancellable(self):
         """Test attaching recorder to cancelable."""
         recorder = OperationRecorder()
         cancelable_ref = None
 
         async with Cancelable(name="test_op") as cancel:
-            cancelable_ref = recorder.attach_to_cancelable(cancel)
+            cancelable_ref = recorder.attach_to_cancellable(cancel)
 
             # Trigger some events
             await cancelable_ref.report_progress("Working")
@@ -180,14 +180,14 @@ class TestOperationRecorder:
             recorder.assert_final_status("op1", OperationStatus.CANCELLED)
 
     @pytest.mark.anyio
-    async def test_attach_to_cancelable_records_error(self):
+    async def test_attach_to_cancellable_records_error(self):
         """Test that recorder captures error events."""
         recorder = OperationRecorder()
 
         # Create a cancelable that will raise an error
         try:
             async with Cancelable(name="error_op") as cancelable:
-                recorder.attach_to_cancelable(cancelable)
+                recorder.attach_to_cancellable(cancelable)
 
                 # Raise an error to trigger error callback
                 raise RuntimeError("Test error")

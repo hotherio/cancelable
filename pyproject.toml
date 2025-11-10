@@ -75,7 +75,8 @@ dev = [
     "lefthook==1.13.0",
     "pyyaml==6.0.2",
     "git-cliff==2.7.0",
-    "detect-secrets==1.5.0"
+    "detect-secrets==1.5.0",
+    "twine==6.0.1"
 ]
 doc = [
     "mkdocs==1.6.1",

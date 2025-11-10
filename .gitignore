@@ -140,6 +140,7 @@ cython_debug/
 # Project specific
 VERSION
 src/hother/_version.py
+.pypirc
 
 # Lefthook
 .lefthook-local.yml

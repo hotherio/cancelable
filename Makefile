@@ -26,7 +26,14 @@ coverage:
 package: clean # Runs the project setup
 	hatch build
 
+check-dist: package  # Check distribution packages for PyPI compatibility
+	uv run twine check dist/*
 
+publish-test: package  # Build and publish to TestPyPI
+	uv run twine upload --repository testpypi dist/*
+
+publish: package  # Build and publish to PyPI
+	uv run twine upload dist/*
 
 clean: clean-build clean-pyc ### Removes environment and artifacts
 

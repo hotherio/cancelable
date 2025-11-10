@@ -1,7 +1,7 @@
 # Cancelable
 
-[![PyPI version](https://badge.fury.io/py/hother-cancelable.svg)](https://pypi.org/project/hother-cancelable/)
-[![Python Versions](https://img.shields.io/pypi/pyversions/hother-cancelable)](https://pypi.org/project/hother-cancelable/)
+[![PyPI version](https://img.shields.io/pypi/v/cancelable)](https://pypi.org/project/cancelable/)
+[![Python Versions](https://img.shields.io/pypi/pyversions/cancelable)](https://pypi.org/project/cancelable/)
 [![License](https://img.shields.io/github/license/hotherio/cancelable)](https://github.com/hotherio/cancelable/blob/main/LICENSE)
 [![CI](https://github.com/hotherio/cancelable/actions/workflows/pull_request.yaml/badge.svg)](https://github.com/hotherio/cancelable/actions)
 
@@ -24,7 +24,7 @@ A comprehensive, production-ready async cancellation system for Python 3.12+ usi
 - **Composable Design**: Combine multiple cancellation sources easily
 - **Stream Processing**: Built-in support for cancelable async iterators
 - **Operation Tracking**: Full lifecycle tracking with status and progress reporting
-- **Library Integrations**: Ready-to-use integrations for httpx, FastAPI, and SQLAlchemy
+- **Library Integrations**: Ready-to-use FastAPI integration for request cancellation
 - **Type Safe**: Full type hints and runtime validation with Pydantic
 - **Production Ready**: Comprehensive error handling, logging, and performance optimized
 
@@ -35,53 +35,35 @@ A comprehensive, production-ready async cancellation system for Python 3.12+ usi
 The core library includes only essential dependencies (`anyio` and `pydantic`):
 
 ```bash
-uv add hother-cancelable
+uv add cancelable
 ```
 
 ### Optional Extras
 
 Cancelable provides optional extras for various integrations and use cases:
 
-#### Integration Extras
+#### Available Extras
 
 | Extra | Dependencies | Purpose |
 |-------|-------------|---------|
-| `httpx` | httpx | HTTP client integration for cancelable requests |
-| `sqlalchemy` | sqlalchemy, aiosqlite | Database integration for cancelable queries |
 | `fastapi` | fastapi | FastAPI middleware for request cancellation |
-| `aiofiles` | aiofiles | Async file I/O operations |
-| `asyncer` | asyncer | Additional async utilities |
-
-#### Development Extras
-
-| Extra | Dependencies | Purpose |
-|-------|-------------|---------|
 | `examples` | google-genai, pynput, psutil | Run example scripts and demonstrations |
 
 ### Installing with Extras
 
-**Single extra:**
+**FastAPI integration:**
 ```bash
-# HTTP client support
-uv add "hother-cancelable[httpx]"
-
-# Database support
-uv add "hother-cancelable[sqlalchemy]"
-
-# FastAPI integration
-uv add "hother-cancelable[fastapi]"
+uv add "cancelable[fastapi]"
 ```
 
-**Multiple extras:**
+**Examples:**
 ```bash
-# Install multiple integrations at once
-uv add "hother-cancelable[httpx,sqlalchemy,fastapi]"
+uv add "cancelable[examples]"
 ```
 
 **All extras:**
 ```bash
-# Install all optional extras (useful for development)
-uv add "hother-cancelable[httpx,sqlalchemy,fastapi,aiofiles,asyncer,examples]"
+uv add "cancelable[fastapi,examples]"
 ```
 
 ## Quick Start
@@ -128,11 +110,9 @@ async def process_data(data: list, cancelable: Cancelable = None):
 
 ## Integrations
 
-Cancelable provides seamless integrations with popular async libraries. See the [integrations documentation](docs/integrations/) for detailed guides and examples.
+Cancelable provides seamless integration with FastAPI. See the [integrations documentation](docs/integrations/) for detailed guides and examples.
 
-- **HTTPX**: Cancel HTTP requests with timeout and manual cancellation
-- **FastAPI**: Add cancellation middleware to FastAPI applications
-- **SQLAlchemy**: Cancel database operations and transactions
+- **FastAPI**: Add cancellation middleware to FastAPI applications with automatic request-scoped cancellation
 
 ## Documentation
 
@@ -173,19 +153,19 @@ lefthook install
 
 This creates a virtual environment, installs all development dependencies, and installs the library in editable mode. It also sets up Lefthook git hooks.
 
-**Full development setup with integrations:**
+**Full development setup with extras:**
 
-Some tests require optional integration extras. To run the full test suite:
+Some tests and examples require optional extras. To run the full test suite:
 
 ```bash
-# Install dev tools + all integration extras
+# Install dev tools + all extras
 uv sync --group dev --all-extras
 ```
 
 **Selective installation:**
 ```bash
-# Install only specific integrations
-uv sync --group dev --extra httpx --extra sqlalchemy
+# Install with specific extras
+uv sync --group dev --extra fastapi --extra examples
 
 # Install documentation tools
 uv sync --group doc
@@ -194,11 +174,7 @@ uv sync --group doc
 ### Quick Reference
 
 **Available extras:**
-- `httpx` - HTTP client integration
-- `sqlalchemy` - Database integration
 - `fastapi` - FastAPI middleware
-- `aiofiles` - Async file I/O
-- `asyncer` - Async utilities
 - `examples` - Example scripts
 
 **Available groups:**
@@ -222,7 +198,7 @@ lefthook run pre-commit
 uv run pytest
 ```
 
-Integration tests that require optional dependencies (httpx, sqlalchemy, fastapi) will be automatically skipped if the extras are not installed.
+Integration tests that require optional dependencies (fastapi) will be automatically skipped if the extras are not installed.
 
 **Run all tests including integrations:**
 ```bash

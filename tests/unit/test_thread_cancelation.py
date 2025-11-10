@@ -1,7 +1,7 @@
 """
-Tests for thread-safe cancellation with anyio bridge.
+Tests for thread-safe cancelation with anyio bridge.
 
-This module tests the thread-safe cancellation features including:
+This module tests the thread-safe cancelation features including:
 - AnyioBridge thread-to-async communication
 - CancelationToken.cancel_sync() method
 - Signal handler integration via bridge
@@ -38,7 +38,8 @@ async def bridge():
 
         yield bridge_instance
 
-        # Cleanup: cancel task group
+        # Cleanup: stop bridge properly before cancelling
+        await bridge_instance.stop()
         tg.cancel_scope.cancel()
 
 
@@ -133,7 +134,7 @@ class TestTokenCancelSync:
         thread.start()
         thread.join()
 
-        # Wait for cancellation to propagate
+        # Wait for cancelation to propagate
         await anyio.sleep(0.3)
 
         # Verify token is cancelled
@@ -145,7 +146,7 @@ class TestTokenCancelSync:
         """Test that cancel_sync() sets the anyio event via bridge."""
         token = CancelationToken()
 
-        # Start task waiting for cancellation
+        # Start task waiting for cancelation
         async def waiter():
             await token.wait_for_cancel()
 
@@ -289,8 +290,8 @@ class TestPynputScenario:
         assert token.reason == CancelationReason.MANUAL
         assert "SPACE" in token.message
 
-    async def test_streaming_with_keyboard_cancellation(self, bridge):
-        """Test LLM-like streaming with keyboard cancellation."""
+    async def test_streaming_with_keyboard_cancelation(self, bridge):
+        """Test LLM-like streaming with keyboard cancelation."""
         token = CancelationToken()
         chunks_processed = []
 

@@ -1,5 +1,5 @@
 """
-Performance tests for async cancellation system.
+Performance tests for async cancelation system.
 """
 
 import gc
@@ -26,7 +26,7 @@ class TestCancelablePerformance:
             return 42
 
         # With cancelable
-        async def with_cancelable():
+        async def with_cancellable():
             async with Cancelable():
                 await anyio.sleep(0)
                 return 42
@@ -39,21 +39,21 @@ class TestCancelablePerformance:
             baseline_times.append(time.perf_counter() - start)
 
         # Measure with cancelable
-        cancelable_times = []
+        cancellable_times = []
         for _ in range(iterations):
             start = time.perf_counter()
-            await with_cancelable()
-            cancelable_times.append(time.perf_counter() - start)
+            await with_cancellable()
+            cancellable_times.append(time.perf_counter() - start)
 
         # Calculate statistics
         baseline_avg = mean(baseline_times) * 1000  # Convert to ms
-        cancelable_avg = mean(cancelable_times) * 1000
-        overhead = cancelable_avg - baseline_avg
+        cancellable_avg = mean(cancellable_times) * 1000
+        overhead = cancellable_avg - baseline_avg
         overhead_percent = (overhead / baseline_avg) * 100
 
         print("\nContext Manager Overhead:")
         print(f"  Baseline: {baseline_avg:.3f}ms")
-        print(f"  With Cancelable: {cancelable_avg:.3f}ms")
+        print(f"  With Cancelable: {cancellable_avg:.3f}ms")
         print(f"  Overhead: {overhead:.3f}ms ({overhead_percent:.1f}%)")
 
         # Check absolute overhead is reasonable (less than 0.5ms)
@@ -68,8 +68,8 @@ class TestCancelablePerformance:
             assert overhead_percent < 200, f"Percentage overhead too high: {overhead_percent:.1f}%"
 
     @pytest.mark.anyio
-    async def test_cancellation_check_performance(self):
-        """Test performance of cancellation checking."""
+    async def test_cancelation_check_performance(self):
+        """Test performance of cancelation checking."""
         iterations = 10000
 
         token = CancelationToken()
@@ -93,7 +93,7 @@ class TestCancelablePerformance:
                 cancelled_count += 1
         cancelled_time = time.perf_counter() - start
 
-        print(f"\nCancellation Check Performance ({iterations} iterations):")
+        print(f"\nCancelation Check Performance ({iterations} iterations):")
         print(f"  Not cancelled: {not_cancelled_time * 1000:.2f}ms ({not_cancelled_time / iterations * 1e6:.2f}μs per check)")
         print(f"  Cancelled: {cancelled_time * 1000:.2f}ms ({cancelled_time / iterations * 1e6:.2f}μs per check)")
 
@@ -102,7 +102,7 @@ class TestCancelablePerformance:
 
     @pytest.mark.anyio
     async def test_stream_processing_overhead(self):
-        """Test overhead of stream processing with cancellation."""
+        """Test overhead of stream processing with cancelation."""
         item_count = 1000
 
         async def generate_items():
@@ -118,31 +118,31 @@ class TestCancelablePerformance:
 
         # With cancelable stream (no progress reporting)
         start = time.perf_counter()
-        cancelable_sum = 0
+        cancellable_sum = 0
         async with Cancelable() as cancel:
             async for item in cancel.stream(generate_items(), buffer_partial=False):
-                cancelable_sum += item
-        cancelable_time = time.perf_counter() - start
+                cancellable_sum += item
+        cancellable_time = time.perf_counter() - start
 
-        assert baseline_sum == cancelable_sum
+        assert baseline_sum == cancellable_sum
 
-        overhead = cancelable_time - baseline_time
+        overhead = cancellable_time - baseline_time
         overhead_percent = (overhead / baseline_time) * 100 if baseline_time > 0 else 0
 
         # Calculate throughput
         baseline_throughput = item_count / baseline_time if baseline_time > 0 else 0
-        cancelable_throughput = item_count / cancelable_time if cancelable_time > 0 else 0
+        cancellable_throughput = item_count / cancellable_time if cancellable_time > 0 else 0
 
         print(f"\nStream Processing Performance ({item_count} items):")
         print(f"  Baseline: {baseline_time * 1000:.2f}ms ({baseline_throughput:.0f} items/sec)")
-        print(f"  With Cancelable: {cancelable_time * 1000:.2f}ms ({cancelable_throughput:.0f} items/sec)")
+        print(f"  With Cancelable: {cancellable_time * 1000:.2f}ms ({cancellable_throughput:.0f} items/sec)")
         print(f"  Overhead: {overhead * 1000:.2f}ms ({overhead_percent:.1f}%)")
 
         # Check throughput instead of percentage overhead
-        # Should be able to process at least 10,000 items per second even with cancellation
-        assert cancelable_throughput > 10000, f"Throughput too low: {cancelable_throughput:.0f} items/sec"
+        # Should be able to process at least 10,000 items per second even with cancelation
+        assert cancellable_throughput > 10000, f"Throughput too low: {cancellable_throughput:.0f} items/sec"
 
-        # Also test with less frequent cancellation checks
+        # Also test with less frequent cancelation checks
         print("\n  Testing with report_interval=100 (less frequent checks):")
         start = time.perf_counter()
         optimized_sum = 0
@@ -194,7 +194,7 @@ class TestCancelablePerformance:
 
     @pytest.mark.anyio
     async def test_memory_usage(self):
-        """Test memory usage of cancellation system."""
+        """Test memory usage of cancelation system."""
         import sys
 
         # Create many operations
@@ -320,9 +320,9 @@ class TestCancelablePerformance:
 
 @pytest.mark.anyio
 class TestScalability:
-    """Test scalability of the cancellation system."""
+    """Test scalability of the cancelation system."""
 
-    async def test_nested_cancelables(self):
+    async def test_nested_cancellables(self):
         """Test deeply nested cancelable contexts."""
         max_depth = 100
 
@@ -346,7 +346,7 @@ class TestScalability:
         # Should handle deep nesting efficiently
         assert duration < 1.0  # Less than 1 second for 100 levels
 
-    async def test_large_stream_cancellation(self):
+    async def test_large_stream_cancelation(self):
         """Test cancelling large streams efficiently."""
         item_count = 100000
 
@@ -356,7 +356,7 @@ class TestScalability:
                 if i % 1000 == 0:
                     await anyio.sleep(0)  # Yield control
 
-        # Test cancellation at different points
+        # Test cancelation at different points
         cancel_points = [1000, 10000, 50000]
 
         for cancel_at in cancel_points:
@@ -380,7 +380,7 @@ class TestScalability:
             duration = time.perf_counter() - start
             items_per_second = processed / duration
 
-            print(f"\nStream cancellation at {cancel_at} items:")
+            print(f"\nStream cancelation at {cancel_at} items:")
             print(f"  Duration: {duration:.3f}s")
             print(f"  Items/second: {items_per_second:.0f}")
 

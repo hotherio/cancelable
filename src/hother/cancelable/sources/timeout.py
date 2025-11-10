@@ -1,5 +1,5 @@
 """
-Timeout-based cancellation source implementation.
+Timeout-based cancelation source implementation.
 """
 
 from datetime import timedelta
@@ -51,9 +51,11 @@ class TimeoutSource(CancelationSource):
 
         logger.debug(
             "Timeout source activated",
-            source=self.name,
-            timeout_seconds=self.timeout,
-            deadline=scope.deadline,
+            extra={
+                "source": self.name,
+                "timeout_seconds": self.timeout,
+                "deadline": scope.deadline,
+            },
         )
 
     async def stop_monitoring(self) -> None:
@@ -64,6 +66,8 @@ class TimeoutSource(CancelationSource):
 
         logger.debug(
             "Timeout source stopped",
-            source=self.name,
-            triggered=self.triggered,
+            extra={
+                "source": self.name,
+                "triggered": self.triggered,
+            },
         )

@@ -33,8 +33,8 @@ async def assert_cancelled_within(timeout: float, tolerance: float = 0.5):
     except asyncio.CancelledError:
         # This is expected
         elapsed = time.time() - start_time
-        assert elapsed < timeout + tolerance, f"Cancellation took {elapsed:.2f}s, expected < {timeout + tolerance}s"
-        assert elapsed > timeout - tolerance, f"Cancellation took {elapsed:.2f}s, expected > {timeout - tolerance}s"
+        assert elapsed < timeout + tolerance, f"Cancelation took {elapsed:.2f}s, expected < {timeout + tolerance}s"
+        assert elapsed > timeout - tolerance, f"Cancelation took {elapsed:.2f}s, expected > {timeout - tolerance}s"
         raise  # Re-raise to maintain expected behavior
     else:
         pytest.fail(f"Expected CancelledError within {timeout}s, but none was raised")

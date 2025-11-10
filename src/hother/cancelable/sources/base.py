@@ -1,10 +1,9 @@
 """
-Base class for cancellation sources.
+Base class for cancelation sources.
 """
 
 from abc import ABC, abstractmethod
-from collections.abc import Callable
-from typing import Any
+from collections.abc import Awaitable, Callable
 
 import anyio
 
@@ -16,31 +15,31 @@ logger = get_logger(__name__)
 
 class CancelationSource(ABC):
     """
-    Abstract base class for cancellation sources.
+    Abstract base class for cancelation sources.
 
-    A cancellation source monitors for a specific condition and triggers
-    cancellation when that condition is met.
+    A cancelation source monitors for a specific condition and triggers
+    cancelation when that condition is met.
     """
 
     def __init__(self, reason: CancelationReason, name: str | None = None):
         """
-        Initialize cancellation source.
+        Initialize cancelation source.
 
         Args:
-            reason: The cancellation reason this source will use
+            reason: The cancelation reason this source will use
             name: Optional name for the source
         """
         self.reason = reason
         self.name = name or self.__class__.__name__
         self.scope: anyio.CancelScope | None = None
-        self._cancel_callback: Callable | None = None
+        self._cancel_callback: Callable[[CancelationReason, str], None | Awaitable[None]] | None = None
         self._monitoring_task: anyio.CancelScope | None = None
         self.triggered: bool = False
 
     @abstractmethod
     async def start_monitoring(self, scope: anyio.CancelScope) -> None:
         """
-        Start monitoring for cancellation condition.
+        Start monitoring for cancelation condition.
 
         Args:
             scope: The cancel scope to trigger when condition is met
@@ -54,21 +53,21 @@ class CancelationSource(ABC):
             self._monitoring_task.cancel()
             self._monitoring_task = None
 
-    def set_cancel_callback(self, callback: Callable[[CancelationReason, str], Any]) -> None:
+    def set_cancel_callback(self, callback: Callable[[CancelationReason, str], None | Awaitable[None]]) -> None:
         """
-        Set callback to be called when cancellation is triggered.
+        Set callback to be called when cancelation is triggered.
 
         Args:
-            callback: Callback function that accepts reason and message
+            callback: Callback function that accepts reason and message (can be sync or async)
         """
         self._cancel_callback = callback
 
     async def trigger_cancelation(self, message: str | None = None) -> None:
         """
-        Trigger cancellation with the configured reason.
+        Trigger cancelation with the configured reason.
 
         Args:
-            message: Optional cancellation message
+            message: Optional cancelation message
         """
         if self.scope and not self.scope.cancel_called:
             logger.info(
@@ -84,11 +83,16 @@ class CancelationSource(ABC):
             if self._cancel_callback:
                 try:
                     result = self._cancel_callback(self.reason, message or "")
-                    if hasattr(result, "__await__"):
+                    # If result is an Awaitable, await it
+                    if result is not None:
                         await result
                 except Exception as e:
                     logger.error(
-                        f"Error in cancellation callback: source={self.name}, error={e}",
+                        "Error in cancelation callback",
+                        extra={
+                            "source": self.name,
+                            "error": str(e),
+                        },
                         exc_info=True,
                     )
 

@@ -31,7 +31,7 @@ The library previously had critical bugs where it mixed asyncio and anyio primit
 - `asyncio.create_task()` calls in `timeout.py:70`, `condition.py:66`, and `composite.py:57`
 - `asyncio.CancelledError` catches in exception handlers
 
-These bugs caused crashes when using `Cancellable.with_timeout()`, `Cancellable.with_condition()`,
+These bugs caused crashes when using `Cancelable.with_timeout()`, `Cancelable.with_condition()`,
 or composite cancellation sources in pure anyio applications.
 
 All 209 tests pass, including new anyio-specific validation tests.

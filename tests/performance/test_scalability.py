@@ -10,7 +10,7 @@ from hother.cancelable import Cancelable, OperationRegistry
 
 
 class TestScalability:
-    """Test scalability of the cancellation system."""
+    """Test scalability of the cancelation system."""
 
     @pytest.mark.anyio
     async def test_concurrent_operations_scaling(self):
@@ -50,7 +50,7 @@ class TestScalability:
             assert ratio < ops_ratio * 1.5  # Allow 50% overhead for scaling
 
     @pytest.mark.anyio
-    async def test_nested_cancelables(self):
+    async def test_nested_cancellables(self):
         """Test deeply nested cancelable contexts."""
         max_depth = 100
 
@@ -75,7 +75,7 @@ class TestScalability:
         assert duration < 1.0  # Less than 1 second for 100 levels
 
     @pytest.mark.anyio
-    async def test_large_stream_cancellation(self):
+    async def test_large_stream_cancelation(self):
         """Test cancelling large streams efficiently."""
         item_count = 100000
 
@@ -85,7 +85,7 @@ class TestScalability:
                 if i % 1000 == 0:
                     await anyio.sleep(0)  # Yield control
 
-        # Test cancellation at different points
+        # Test cancelation at different points
         cancel_points = [1000, 10000, 50000]
 
         for cancel_at in cancel_points:
@@ -109,7 +109,7 @@ class TestScalability:
             duration = time.perf_counter() - start
             items_per_second = processed / duration
 
-            print(f"\nStream cancellation at {cancel_at} items:")
+            print(f"\nStream cancelation at {cancel_at} items:")
             print(f"  Duration: {duration:.3f}s")
             print(f"  Items/second: {items_per_second:.0f}")
 

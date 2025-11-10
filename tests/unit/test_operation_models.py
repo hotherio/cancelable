@@ -1,5 +1,5 @@
 """
-Tests for async cancellation models.
+Tests for async cancelation models.
 """
 
 from datetime import timedelta

@@ -1,4 +1,4 @@
-"""Integration tests for composing cancellation sources."""
+"""Integration tests for composing cancelation sources."""
 
 import anyio
 import pytest
@@ -7,11 +7,11 @@ from hother.cancelable import Cancelable, CancelationReason, CancelationToken
 
 
 class TestCancelableComposition:
-    """Test composing multiple cancellation sources."""
+    """Test composing multiple cancelation sources."""
 
     @pytest.mark.anyio
     async def test_combine_timeout_and_token(self):
-        """Test combining timeout and token cancellation."""
+        """Test combining timeout and token cancelation."""
         token = CancelationToken()
 
         combined = Cancelable.with_timeout(1.0).combine(Cancelable.with_token(token))
@@ -33,7 +33,7 @@ class TestCancelableComposition:
 
     @pytest.mark.anyio
     async def test_combine_multiple_sources(self):
-        """Test combining multiple cancellation sources."""
+        """Test combining multiple cancelation sources."""
         token1 = CancelationToken()
         token2 = CancelationToken()
 

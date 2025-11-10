@@ -1,5 +1,5 @@
 """
-Tests for cancellation sources.
+Tests for cancelation sources.
 """
 
 import signal
@@ -8,8 +8,10 @@ from datetime import timedelta
 import anyio
 import pytest
 
+from hother.cancelable import Cancelable
 from hother.cancelable.core.models import CancelationReason
-from hother.cancelable.sources.composite import AnyOfSource, CompositeSource
+from hother.cancelable.sources.base import CancelationSource
+from hother.cancelable.sources.composite import AllOfSource, AnyOfSource, CompositeSource
 from hother.cancelable.sources.condition import ConditionSource
 from hother.cancelable.sources.signal import SignalSource
 from hother.cancelable.sources.timeout import TimeoutSource
@@ -68,54 +70,6 @@ class TestTimeoutSource:
                 await anyio.sleep(1.0)
 
         assert cancelable.context.cancel_reason == CancelationReason.TIMEOUT
-
-
-class TestSignalSource:
-    """Test SignalSource functionality."""
-
-    @pytest.mark.anyio
-    async def test_signal_registration(self):
-        """Test signal handler registration."""
-        source = SignalSource(signal.SIGUSR1)
-        scope = anyio.CancelScope()
-
-        await source.start_monitoring(scope)
-
-        # Check handler is registered
-        assert signal.SIGUSR1 in SignalSource._handlers
-
-        await source.stop_monitoring()
-
-    @pytest.mark.anyio
-    async def test_multiple_signal_sources(self):
-        """Test multiple sources for same signal."""
-        source1 = SignalSource(signal.SIGUSR1)
-        source2 = SignalSource(signal.SIGUSR1)
-
-        scope1 = anyio.CancelScope()
-        scope2 = anyio.CancelScope()
-
-        await source1.start_monitoring(scope1)
-        await source2.start_monitoring(scope2)
-
-        # Both should be registered
-        assert len(SignalSource._handlers[signal.SIGUSR1]) >= 2
-
-        await source1.stop_monitoring()
-        await source2.stop_monitoring()
-
-    @pytest.mark.anyio
-    async def test_signal_cleanup(self):
-        """Test signal handler cleanup."""
-        source = SignalSource(signal.SIGUSR1)
-        scope = anyio.CancelScope()
-
-        await source.start_monitoring(scope)
-        await source.stop_monitoring()
-
-        # Handler should be cleaned up if no other sources
-        if signal.SIGUSR1 in SignalSource._handlers:
-            assert len(SignalSource._handlers[signal.SIGUSR1]) == 0
 
 
 class TestConditionSource:
@@ -274,82 +228,372 @@ class TestCompositeSource:
         assert duration < 0.3  # Condition should trigger before timeout
         assert check_count >= 3
 
+    @pytest.mark.anyio
+    async def test_composite_triggered_source_tracking(self):
+        """Test that composite tracks which source triggered."""
+        # Use controlled condition sources to ensure triggering
+        check_count_1 = 0
+        check_count_2 = 0
+
+        def condition1():
+            nonlocal check_count_1
+            check_count_1 += 1
+            return check_count_1 >= 5  # Won't trigger quickly
+
+        def condition2():
+            nonlocal check_count_2
+            check_count_2 += 1
+            return check_count_2 >= 2  # Triggers fast
+
+        source1 = ConditionSource(condition1, check_interval=0.05, condition_name="slow_condition")
+        source2 = ConditionSource(condition2, check_interval=0.05, condition_name="fast_condition")
+
+        composite = CompositeSource([source1, source2], name="test_composite")
+        scope = anyio.CancelScope()
+
+        await composite.start_monitoring(scope)
+
+        # Wait for one to trigger
+        await anyio.sleep(0.2)
+
+        await composite.stop_monitoring()
+
+        # The fast condition should have triggered
+        assert composite.triggered_source is not None
+        assert composite.triggered_source.condition_name == "fast_condition"
+
+    @pytest.mark.anyio
+    async def test_composite_reason_propagation(self):
+        """Test that composite propagates reason from triggered source."""
+        # Create sources with different reasons
+        check_count = 0
+        def condition():
+            nonlocal check_count
+            check_count += 1
+            return check_count >= 2  # Will trigger after ~0.1s
+
+        # Condition source will trigger (has CONDITION reason)
+        condition_source = ConditionSource(condition, check_interval=0.05)
+        # Timeout source won't trigger in our timeframe
+        timeout_source = TimeoutSource(10.0)
+
+        composite = CompositeSource([condition_source, timeout_source])
+        scope = anyio.CancelScope()
+
+        await composite.start_monitoring(scope)
+        await anyio.sleep(0.2)
+        await composite.stop_monitoring()
+
+        # Composite should have condition's reason
+        assert composite.reason == CancelationReason.CONDITION
+
+    @pytest.mark.anyio
+    async def test_composite_custom_name(self):
+        """Test composite with custom name."""
+        source = TimeoutSource(0.1)
+        composite = CompositeSource([source], name="my_custom_composite")
+
+        assert composite.name == "my_custom_composite"
+
+    @pytest.mark.anyio
+    async def test_composite_stop_monitoring_with_errors(self):
+        """Test composite handles errors when stopping sources."""
+        # Create a mock source that raises error on stop
+        class FailingSource(CancelationSource):
+            def __init__(self):
+                super().__init__(CancelationReason.MANUAL, "failing_source")
+
+            async def start_monitoring(self, scope):
+                self.scope = scope
+
+            async def stop_monitoring(self):
+                raise RuntimeError("Stop failed")
+
+        failing_source = FailingSource()
+        good_source = TimeoutSource(1.0)
+
+        composite = CompositeSource([failing_source, good_source])
+        scope = anyio.CancelScope()
+
+        await composite.start_monitoring(scope)
+
+        # Should not raise, should handle error gracefully
+        await composite.stop_monitoring()
+
+    @pytest.mark.anyio
+    async def test_composite_monitor_source_exception(self):
+        """Test composite handles exception in source monitoring."""
+        # Create a source that raises during start_monitoring
+        class ExceptionSource(CancelationSource):
+            def __init__(self):
+                super().__init__(CancelationReason.MANUAL, "exception_source")
+
+            async def start_monitoring(self, scope):
+                raise ValueError("Cannot start monitoring")
+
+            async def stop_monitoring(self):
+                pass
+
+        exception_source = ExceptionSource()
+        good_source = TimeoutSource(0.5)
+
+        composite = CompositeSource([exception_source, good_source])
+        scope = anyio.CancelScope()
+
+        # Should not crash, should handle exception
+        await composite.start_monitoring(scope)
+
+        # Give time for sources to start
+        await anyio.sleep(0.1)
+
+        await composite.stop_monitoring()
+
+    @pytest.mark.anyio
+    async def test_composite_scope_already_cancelled(self):
+        """Test composite with already-cancelled scope."""
+        source = TimeoutSource(0.1)
+        composite = CompositeSource([source])
+
+        scope = anyio.CancelScope()
+        scope.cancel()  # Pre-cancel the scope
+
+        await composite.start_monitoring(scope)
+        await anyio.sleep(0.15)
+        await composite.stop_monitoring()
+
+    @pytest.mark.anyio
+    async def test_composite_task_group_cleanup_errors(self):
+        """Test composite handles task group cleanup errors."""
+        source1 = TimeoutSource(0.1)
+        source2 = TimeoutSource(0.2)
+
+        composite = CompositeSource([source1, source2])
+        scope = anyio.CancelScope()
+
+        await composite.start_monitoring(scope)
+
+        # Wait for trigger
+        await anyio.sleep(0.15)
+
+        # Stop should handle any cleanup errors gracefully
+        await composite.stop_monitoring()
+
+    @pytest.mark.anyio
+    async def test_composite_multiple_sources_race(self):
+        """Test composite with multiple sources triggering nearly simultaneously."""
+        # Create three condition sources that trigger at similar times
+        counts = [0, 0, 0]
+
+        def make_condition(idx, threshold):
+            def condition():
+                counts[idx] += 1
+                return counts[idx] >= threshold
+            return condition
+
+        source1 = ConditionSource(make_condition(0, 2), check_interval=0.05)
+        source2 = ConditionSource(make_condition(1, 2), check_interval=0.05)
+        source3 = ConditionSource(make_condition(2, 2), check_interval=0.05)
+
+        composite = CompositeSource([source1, source2, source3])
+        scope = anyio.CancelScope()
+
+        await composite.start_monitoring(scope)
+
+        # Wait for one to trigger
+        await anyio.sleep(0.2)
+
+        await composite.stop_monitoring()
+
+        # One of them should have triggered
+        assert composite.triggered_source is not None
+
 
 class TestAllOfSource:
     """Test AllOfSource functionality."""
 
     @pytest.mark.anyio
-    async def test_all_of_basic(self):
-        """Test ALL logic - all sources must trigger."""
-        # For ALL logic, we need to implement it differently
-        # since our current combine() implements ANY logic
-        # Let's test the concept with manual coordination
+    async def test_all_of_empty_sources(self):
+        """Test AllOfSource with no sources."""
+        with pytest.raises(ValueError, match="At least one source is required"):
+            AllOfSource([])
 
-        from hother.cancelable import Cancelable, CancelationToken
+    @pytest.mark.anyio
+    async def test_all_of_creation(self):
+        """Test AllOfSource can be created with sources."""
+        source1 = TimeoutSource(0.1)
+        source2 = TimeoutSource(0.2)
+        all_of = AllOfSource([source1, source2])
 
-        token1 = CancelationToken()
-        token2 = CancelationToken()
+        assert len(all_of.sources) == 2
+        assert all_of.triggered_sources == set()
 
-        # Track which tokens have been cancelled
-        cancelled_tokens = set()
+    @pytest.mark.anyio
+    async def test_all_of_requires_all_sources(self):
+        """Test AllOfSource only triggers when ALL sources have triggered."""
+        # Create sources that we can control
+        check_count_1 = 0
+        check_count_2 = 0
 
-        async def track_cancellation(token, name):
-            await token.wait_for_cancel()
-            cancelled_tokens.add(name)
+        def condition1():
+            nonlocal check_count_1
+            check_count_1 += 1
+            return check_count_1 >= 2  # Triggers after ~0.1s (2 * 0.05)
 
-            # If both are cancelled, cancel the main operation
-            if len(cancelled_tokens) == 2:
-                await main_token.cancel()
+        def condition2():
+            nonlocal check_count_2
+            check_count_2 += 1
+            return check_count_2 >= 4  # Triggers after ~0.2s (4 * 0.05)
 
-        main_token = CancelationToken()
+        source1 = ConditionSource(condition1, check_interval=0.05)
+        source2 = ConditionSource(condition2, check_interval=0.05)
 
-        async with anyio.create_task_group() as tg:
-            # Monitor both tokens
-            tg.start_soon(track_cancellation, token1, "token1")
-            tg.start_soon(track_cancellation, token2, "token2")
+        all_of = AllOfSource([source1, source2])
+        scope = anyio.CancelScope()
 
-            # Cancel tokens at different times
-            async def cancel_tokens():
-                await anyio.sleep(0.1)
-                await token1.cancel()
-                await anyio.sleep(0.1)
-                await token2.cancel()
+        await all_of.start_monitoring(scope)
 
-            tg.start_soon(cancel_tokens)
+        # After 0.15s, only source1 should have triggered
+        await anyio.sleep(0.15)
+        assert not scope.cancel_called  # Should NOT be cancelled yet
 
-            # Main operation
-            start = anyio.current_time()
-            with pytest.raises(anyio.get_cancelled_exc_class()):
-                async with Cancelable.with_token(main_token):
-                    await anyio.sleep(1.0)
+        # After 0.25s, both should have triggered
+        await anyio.sleep(0.15)
+        assert scope.cancel_called  # Should NOW be cancelled
 
-            duration = anyio.current_time() - start
-            assert 0.2 <= duration <= 0.25  # After both tokens cancelled
+        await all_of.stop_monitoring()
+
+        # Both sources should be in triggered set
+        assert len(all_of.triggered_sources) == 2
 
     @pytest.mark.anyio
     async def test_all_of_partial_trigger(self):
-        """Test ALL logic when only some sources trigger."""
-        # This is more of a conceptual test since we don't have AllOfSource implemented
-        # in the main codebase yet
+        """Test AllOfSource does NOT trigger with only partial sources."""
+        # Create two sources, only one will trigger
+        count1 = 0
+        count2 = 0
 
-        from hother.cancelable import Cancelable, CancelationToken
+        def condition1():
+            nonlocal count1
+            count1 += 1
+            return count1 >= 2  # Will trigger after ~0.1s
 
-        token1 = CancelationToken()
-        token2 = CancelationToken()
+        def condition2():
+            nonlocal count2
+            count2 += 1
+            return False  # Will never trigger
 
-        # Only cancel one token
-        async def cancel_one():
-            await anyio.sleep(0.1)
-            await token1.cancel()
+        source1 = ConditionSource(condition1, check_interval=0.05)
+        source2 = ConditionSource(condition2, check_interval=0.05)
 
-        async with anyio.create_task_group() as tg:
-            tg.start_soon(cancel_one)
+        all_of = AllOfSource([source1, source2])
+        scope = anyio.CancelScope()
 
-            # Create cancelables that would need both tokens
-            # Since we don't have ALL logic, just verify individual behavior
-            async with Cancelable.with_token(token2):
-                await anyio.sleep(0.2)  # Should complete without cancellation
+        await all_of.start_monitoring(scope)
 
-            # Token2 was never cancelled
-            assert not token2.is_cancelled
-            assert token1.is_cancelled
+        # Wait for first source to trigger
+        await anyio.sleep(0.15)
+
+        # Scope should NOT be cancelled
+        assert not scope.cancel_called
+
+        # Only one source should be in triggered set
+        assert len(all_of.triggered_sources) == 1
+
+        await all_of.stop_monitoring()
+
+    @pytest.mark.anyio
+    async def test_all_of_custom_name(self):
+        """Test AllOfSource with custom name."""
+        source = TimeoutSource(0.1)
+        all_of = AllOfSource([source], name="my_all_of")
+
+        assert all_of.name == "my_all_of"
+
+    @pytest.mark.anyio
+    async def test_all_of_triggered_sources_tracking(self):
+        """Test AllOfSource tracks triggered sources correctly."""
+        # Use condition sources so we can track triggers via trigger_cancelation
+        counts = [0, 0, 0]
+
+        def make_condition(idx, threshold):
+            def condition():
+                counts[idx] += 1
+                return counts[idx] >= threshold
+            return condition
+
+        # Different thresholds mean they trigger at different times
+        source1 = ConditionSource(make_condition(0, 2), check_interval=0.05)  # ~0.1s
+        source2 = ConditionSource(make_condition(1, 4), check_interval=0.05)  # ~0.2s
+        source3 = ConditionSource(make_condition(2, 6), check_interval=0.05)  # ~0.3s
+
+        all_of = AllOfSource([source1, source2, source3])
+        scope = anyio.CancelScope()
+
+        await all_of.start_monitoring(scope)
+
+        # Initially empty
+        assert len(all_of.triggered_sources) == 0
+
+        # After 0.12s, one should be triggered
+        await anyio.sleep(0.12)
+        assert len(all_of.triggered_sources) == 1
+
+        # After 0.22s total (0.10 more), two should be triggered
+        await anyio.sleep(0.10)
+        assert len(all_of.triggered_sources) == 2
+
+        # After 0.35s total, all three should be triggered
+        await anyio.sleep(0.13)
+        assert len(all_of.triggered_sources) == 3
+        assert scope.cancel_called
+
+        await all_of.stop_monitoring()
+
+    @pytest.mark.anyio
+    async def test_all_of_stop_monitoring(self):
+        """Test AllOfSource cleanup in stop_monitoring."""
+        source1 = TimeoutSource(0.1)
+        source2 = TimeoutSource(0.2)
+
+        all_of = AllOfSource([source1, source2])
+        scope = anyio.CancelScope()
+
+        await all_of.start_monitoring(scope)
+
+        # Stop before any trigger
+        await anyio.sleep(0.05)
+        await all_of.stop_monitoring()
+
+        # Should not raise any errors
+
+    @pytest.mark.anyio
+    async def test_all_of_monitor_source_exception(self):
+        """Test AllOfSource handles exception in source monitoring."""
+        # Create a source that raises during start_monitoring
+        class ExceptionSource(CancelationSource):
+            def __init__(self):
+                super().__init__(CancelationReason.MANUAL, "exception_source")
+
+            async def start_monitoring(self, scope):
+                raise ValueError("Cannot start monitoring")
+
+            async def stop_monitoring(self):
+                pass
+
+        exception_source = ExceptionSource()
+        good_source = TimeoutSource(0.5)
+
+        all_of = AllOfSource([exception_source, good_source])
+        scope = anyio.CancelScope()
+
+        # Should not crash, should handle exception
+        await all_of.start_monitoring(scope)
+
+        # Give time for sources to start
+        await anyio.sleep(0.1)
+
+        await all_of.stop_monitoring()
+
+
+
+

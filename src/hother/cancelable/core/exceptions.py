@@ -1,5 +1,5 @@
 """
-Custom exceptions for the async cancellation system.
+Custom exceptions for the async cancelation system.
 """
 
 
@@ -8,11 +8,11 @@ from hother.cancelable.core.models import CancelationReason, OperationContext
 
 class CancelationError(Exception):
     """
-    Base exception for cancellation-related errors.
+    Base exception for cancelation-related errors.
 
     Attributes:
-        reason: The reason for cancellation
-        message: Optional cancellation message
+        reason: The reason for cancelation
+        message: Optional cancelation message
         context: Optional operation context
     """
 

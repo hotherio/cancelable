@@ -1,5 +1,5 @@
 """
-Composite cancellation source for combining multiple sources.
+Composite cancelation source for combining multiple sources.
 """
 
 
@@ -28,7 +28,7 @@ class CompositeSource(CancelationSource):
         Initialize composite source.
 
         Args:
-            sources: List of cancellation sources to combine
+            sources: List of cancelation sources to combine
             name: Optional name for the source
         """
         # Use MANUAL as default reason (will be overridden by actual source)
@@ -58,10 +58,10 @@ class CompositeSource(CancelationSource):
             self._task_group.start_soon(self._monitor_source, source)
 
         logger.debug(
-            "Composite source activated",
-            source=self.name,
-            source_count=len(self.sources),
-            source_types=[type(s).__name__ for s in self.sources],
+            "Composite source activated: %s with %d sources (%s)",
+            self.name,
+            len(self.sources),
+            [type(s).__name__ for s in self.sources],
         )
 
     async def stop_monitoring(self) -> None:
@@ -70,7 +70,7 @@ class CompositeSource(CancelationSource):
         if hasattr(self, "_task_group") and self._task_group:
             self._task_group.cancel_scope.cancel()
 
-            # Try to properly exit the task group, but shield from cancellation
+            # Try to properly exit the task group, but shield from cancelation
             # and handle errors if we're in a different context
             try:
                 with anyio.CancelScope(shield=True):
@@ -88,19 +88,21 @@ class CompositeSource(CancelationSource):
                 await source.stop_monitoring()
             except Exception as e:
                 logger.error(
-                    f"Error stopping source: {source}, error: {e}",
+                    "Error stopping source %s: %s",
+                    str(source),
+                    str(e),
                     exc_info=True,
                 )
 
         logger.debug(
-            "Composite source stopped",
-            source=self.name,
-            triggered_source=str(self.triggered_source) if self.triggered_source else None,
+            "Composite source stopped: %s (triggered by %s)",
+            self.name,
+            str(self.triggered_source) if self.triggered_source else None,
         )
 
     async def _monitor_source(self, source: CancelationSource) -> None:
         """
-        Monitor a single source and propagate its cancellation.
+        Monitor a single source and propagate its cancelation.
 
         Args:
             source: Source to monitor
@@ -113,7 +115,7 @@ class CompositeSource(CancelationSource):
             self.reason = source.reason  # Use the source's reason
             await original_trigger(message)
 
-            # Trigger our own cancellation
+            # Trigger our own cancelation
             if self.scope and not self.scope.cancel_called:
                 await self.trigger_cancelation(f"Composite source triggered by {source.name}: {message}")
 
@@ -124,7 +126,10 @@ class CompositeSource(CancelationSource):
             await source.start_monitoring(anyio.CancelScope())
         except Exception as e:
             logger.error(
-                f"Error in component source: composite_source={self.name}, component_source={source}, error={e}",
+                "Error in component source %s of composite %s: %s",
+                str(source),
+                self.name,
+                str(e),
                 exc_info=True,
             )
 
@@ -149,7 +154,7 @@ class AllOfSource(CancelationSource):
         Initialize all-of source.
 
         Args:
-            sources: List of cancellation sources that must all trigger
+            sources: List of cancelation sources that must all trigger
             name: Optional name for the source
         """
         super().__init__(CancelationReason.MANUAL, name or "all_of")
@@ -174,9 +179,9 @@ class AllOfSource(CancelationSource):
             self._task_group.start_soon(self._monitor_source, source)
 
         logger.debug(
-            "All-of source activated",
-            source=self.name,
-            source_count=len(self.sources),
+            "All-of source activated: %s with %d sources",
+            self.name,
+            len(self.sources),
         )
 
     async def stop_monitoring(self) -> None:
@@ -192,7 +197,9 @@ class AllOfSource(CancelationSource):
                 await source.stop_monitoring()
             except Exception as e:
                 logger.error(
-                    f"Error stopping source: {source}, error: {e}",
+                    "Error stopping source %s: %s",
+                    str(source),
+                    str(e),
                     exc_info=True,
                 )
 
@@ -220,6 +227,9 @@ class AllOfSource(CancelationSource):
             await source.start_monitoring(anyio.CancelScope())
         except Exception as e:
             logger.error(
-                f"Error in component source: all_of_source={self.name}, component_source={source}, error={e}",
+                "Error in component source %s of all-of %s: %s",
+                str(source),
+                self.name,
+                str(e),
                 exc_info=True,
             )

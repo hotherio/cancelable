@@ -1,5 +1,5 @@
 """
-Tests for cancellation token.
+Tests for cancelation token.
 """
 
 from datetime import datetime
@@ -27,16 +27,16 @@ class TestCancelationToken:
 
     @pytest.mark.anyio
     async def test_cancel(self):
-        """Test token cancellation."""
+        """Test token cancelation."""
         token = CancelationToken()
 
         # Cancel token
-        result = await token.cancel(reason=CancelationReason.MANUAL, message="Test cancellation")
+        result = await token.cancel(reason=CancelationReason.MANUAL, message="Test cancelation")
 
         assert result is True
         assert token.is_cancelled
         assert token.reason == CancelationReason.MANUAL
-        assert token.message == "Test cancellation"
+        assert token.message == "Test cancelation"
         assert token.cancelled_at is not None
         assert isinstance(token.cancelled_at, datetime)
 
@@ -53,13 +53,13 @@ class TestCancelationToken:
         result2 = await token.cancel(CancelationReason.TIMEOUT, "Second")
         assert result2 is False
 
-        # Original cancellation info preserved
+        # Original cancelation info preserved
         assert token.reason == CancelationReason.MANUAL
         assert token.message == "First"
 
     @pytest.mark.anyio
     async def test_wait_for_cancel(self):
-        """Test waiting for cancellation."""
+        """Test waiting for cancelation."""
         token = CancelationToken()
 
         async def cancel_after_delay():
@@ -78,7 +78,7 @@ class TestCancelationToken:
 
     @pytest.mark.anyio
     async def test_check_sync(self):
-        """Test synchronous cancellation check."""
+        """Test synchronous cancelation check."""
         token = CancelationToken()
 
         # Should not raise when not cancelled
@@ -95,7 +95,7 @@ class TestCancelationToken:
 
     @pytest.mark.anyio
     async def test_check_async(self):
-        """Test asynchronous cancellation check."""
+        """Test asynchronous cancelation check."""
         token = CancelationToken()
 
         # Should not raise when not cancelled
@@ -111,8 +111,8 @@ class TestCancelationToken:
         assert "Custom message" in str(exc_info.value)
 
     @pytest.mark.anyio
-    async def test_is_cancellation_requested(self):
-        """Test non-throwing cancellation check."""
+    async def test_is_cancelation_requested(self):
+        """Test non-throwing cancelation check."""
         token = CancelationToken()
 
         assert not token.is_cancelation_requested()
@@ -123,7 +123,7 @@ class TestCancelationToken:
 
     @pytest.mark.anyio
     async def test_callbacks(self):
-        """Test cancellation callbacks."""
+        """Test cancelation callbacks."""
         token = CancelationToken()
         callback_called = False
         callback_token = None
@@ -163,7 +163,7 @@ class TestCancelationToken:
 
     @pytest.mark.anyio
     async def test_callback_error_handling(self):
-        """Test that callback errors don't break cancellation."""
+        """Test that callback errors don't break cancelation."""
         token = CancelationToken()
 
         async def bad_callback(t):
@@ -208,12 +208,72 @@ class TestCancelationToken:
         assert "is_cancelled=True" in repr_str
         assert "reason=CancelationReason.TIMEOUT" in repr_str
 
+    def test_token_equality(self):
+        """Test token equality based on ID."""
+        token1 = CancelationToken()
+        token2 = CancelationToken()
+
+        # Tokens with different IDs should not be equal
+        assert token1 != token2
+
+        # Token should equal itself
+        assert token1 == token1
+
+        assert token1 != "not a token"
+        assert token1 != 123
+        assert token1 != None
+
+    def test_token_hashable(self):
+        """Test that tokens are hashable and can be used in sets/dicts."""
+        token1 = CancelationToken()
+        token2 = CancelationToken()
+
+        token_dict = {token1: "value1", token2: "value2"}
+        assert token_dict[token1] == "value1"
+        assert token_dict[token2] == "value2"
+
+        # Should be able to use in set
+        token_set = {token1, token2}
+        assert len(token_set) == 2
+        assert token1 in token_set
+        assert token2 in token_set
+
+    @pytest.mark.anyio
+    async def test_callback_exception_on_already_cancelled(self):
+        """Test callback exception when registering on already-cancelled token."""
+        token = CancelationToken()
+
+        # Cancel the token first
+        await token.cancel()
+
+        # Register a callback that raises an exception
+        callback_called = [False]
+        exception_raised = [False]
+
+        async def faulty_callback(t):
+            callback_called[0] = True
+            exception_raised[0] = True
+            raise RuntimeError("Callback error")
+
+        # Register callback on already-cancelled token
+        # Should call immediately and handle exception gracefully
+        await token.register_callback(faulty_callback)
+
+        # Give async callback time to execute
+        await anyio.sleep(0.1)
+
+        # Callback should have been called despite exception
+        assert callback_called[0]
+        assert exception_raised[0]
+        # Token should still be cancelled
+        assert token.is_cancelation_requested
+
 
 class TestLinkedCancelationToken:
     """Test LinkedCancelationToken functionality."""
 
     @pytest.mark.anyio
-    async def test_linked_cancellation(self):
+    async def test_linked_cancelation(self):
         """Test that linked tokens cancel together."""
         token1 = LinkedCancelationToken()
         token2 = LinkedCancelationToken()

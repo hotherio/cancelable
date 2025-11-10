@@ -1,66 +1,61 @@
-# Getting Started with Async Cancellation
+# Getting Started with Async Cancelation
 
-## Installation
-
-Install the package via pip or uv:
-
-```bash
-pip install hother-cancelable
-# or
-uv add hother-cancelable
-```
+!!! info "Installation"
+    See the [Installation](installation.md) guide for complete installation instructions, including optional integrations and examples.
 
 ## Basic Concepts
 
-### Cancellable Operations
+### Cancelable Operations
 
-A `Cancellable` provides a context for managing async operations that can be cancelled from various sources:
+A `Cancelable` provides a context for managing async operations that can be cancelled from various sources:
 
 ```python
-from hother.cancelable import Cancellable
+from hother.cancelable import Cancelable
 
-async with Cancellable() as cancel:
+async with Cancelable() as cancel:
     # Your async operation here
     result = await some_async_operation()
 ```
 
-### Cancellation Sources
+### Cancelation Sources
 
 Operations can be cancelled from multiple sources:
 
 1. **Timeout**: Cancel after a specified duration
-2. **Token**: Manual cancellation via a token
+2. **Token**: Manual cancelation via a token
 3. **Signal**: OS signal handling (SIGINT, etc.)
-4. **Condition**: Custom condition checking
+4. **Condition**\*: Custom condition checking
+
+*: we provide `ResourceConditionSource` to cancel on system resource using `psutil` - particularly suitable for IoT applications.
 
 ## Quick Examples
 
-### Timeout Cancellation
+### Timeout Cancelation
 
 ```python
-from hother.cancelable import Cancellable
+from hother.cancelable import Cancelable
 from datetime import timedelta
 
 # Using seconds
-async with Cancellable.with_timeout(30.0) as cancel:
+async with Cancelable.with_timeout(30.0) as cancel:
     result = await long_running_operation()
 
 # Using timedelta
-async with Cancellable.with_timeout(timedelta(minutes=5)) as cancel:
+async with Cancelable.with_timeout(timedelta(minutes=5)) as cancel:
     result = await very_long_operation()
 ```
 
-### Manual Cancellation
+### Manual Cancelation
 
 ```python
-from hother.cancelable import Cancellable, CancellationToken
+from hother.cancelable import Cancelable, CancelationToken
 
 # Create a token
-token = CancellationToken()
+token = CancelationToken()
 
 # In your async operation
 async def my_operation():
-    async with Cancellable.with_token(token) as cancel:
+    async with Cancelable.with_token(token) as cancel:
         # This will be cancelled when token.cancel() is called
         await some_work()
 
@@ -71,7 +66,7 @@ await token.cancel()
 ### Progress Reporting
 
 ```python
-async with Cancellable() as cancel:
+async with Cancelable() as cancel:
     # Register progress callback
     cancel.on_progress(lambda op_id, msg, meta: print(f"Progress: {msg}"))
 
@@ -87,8 +82,8 @@ async with Cancellable() as cancel:
 ### Stream Processing
 
 ```python
-async with Cancellable.with_timeout(60) as cancel:
-    # Process async stream with automatic cancellation
+async with Cancelable.with_timeout(60) as cancel:
+    # Process async stream with automatic cancelation
     async for item in cancel.stream(async_data_source()):
         await process_item(item)
 ```
@@ -97,7 +92,7 @@ async with Cancellable.with_timeout(60) as cancel:
 
 1. **Always use context managers**: Ensures proper cleanup
    ```python
-   async with Cancellable() as cancel:
+   async with Cancelable() as cancel:
        # Your code here
    ```
 
@@ -106,24 +101,19 @@ async with Cancellable.with_timeout(60) as cancel:
    await cancel.report_progress("Processing batch", {"size": len(batch)})
    ```
 
-3. **Handle cancellation gracefully**: Save partial results
+3. **Handle cancelation gracefully**: Save partial results
    ```python
    try:
-       async with Cancellable.with_timeout(30) as cancel:
+       async with Cancelable.with_timeout(30) as cancel:
            result = await process_all()
    except Exception:
        # Save partial results from cancel.context.partial_result
        pass
    ```
 
-4. **Use appropriate cancellation sources**: Choose based on your needs
-   - Timeout: For operations with known maximum duration
-   - Token: For user-initiated cancellation
-   - Signal: For system-level interruption
-   - Condition: For resource-based cancellation
-
 ## Next Steps
 
-- Read the [API Reference](api_reference.md) for detailed documentation
+- See the [Core Concepts](basics.md) to learn more about the concepts
+- Read the [API Reference](reference/index.md) for detailed documentation
 - Check out [Common Patterns](patterns.md) for advanced usage
-- See the `examples/` directory for complete examples
+- Explore the [Examples](examples/index.md) for complete examples

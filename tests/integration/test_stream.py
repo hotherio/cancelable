@@ -77,7 +77,7 @@ class TestCancelableStream:
 
     @pytest.mark.anyio
     async def test_stream_with_token(self):
-        """Test stream with cancellation token."""
+        """Test stream with cancelation token."""
         token = CancelationToken()
 
         async def infinite_stream():
@@ -125,7 +125,7 @@ class TestCancelableStream:
         assert progress_reports[1] == (20, 19)  # 20th item
 
     @pytest.mark.anyio
-    async def test_stream_combined_cancellation(self):
+    async def test_stream_combined_cancelation(self):
         """Test stream with both timeout and token."""
         token = CancelationToken()
 
@@ -177,8 +177,8 @@ class TestCancelableAsyncIterator:
         assert items == [0, 1, 2, 3, 4]
 
     @pytest.mark.anyio
-    async def test_iterator_cancellation(self):
-        """Test iterator cancellation."""
+    async def test_iterator_cancelation(self):
+        """Test iterator cancelation."""
 
         async def infinite():
             i = 0
@@ -322,8 +322,8 @@ class TestChunkedCancelableStream:
         assert all(len(chunk) == 3 for chunk in chunks)
 
     @pytest.mark.anyio
-    async def test_chunked_cancellation(self):
-        """Test chunked stream with cancellation."""
+    async def test_chunked_cancelation(self):
+        """Test chunked stream with cancelation."""
 
         async def infinite_source():
             i = 0

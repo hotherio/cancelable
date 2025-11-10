@@ -1,5 +1,5 @@
 """
-FastAPI integration for request-scoped cancellation.
+FastAPI integration for request-scoped cancelation.
 """
 
 from collections.abc import AsyncIterator, Callable
@@ -8,6 +8,7 @@ from typing import Any
 import anyio
 from fastapi import HTTPException, Request
 from fastapi.responses import StreamingResponse
+from starlette.types import ASGIApp, Receive, Scope, Send
 
 from hother.cancelable.core.cancelable import Cancelable
 from hother.cancelable.core.models import CancelationReason
@@ -19,21 +20,21 @@ logger = get_logger(__name__)
 
 class RequestCancelationMiddleware:
     """
-    FastAPI middleware that provides request-scoped cancellation.
+    FastAPI middleware that provides request-scoped cancelation.
     """
 
-    def __init__(self, app, default_timeout: float | None = None):
+    def __init__(self, app: ASGIApp, default_timeout: float | None = None):
         """
         Initialize middleware.
 
         Args:
-            app: FastAPI application
+            app: ASGI application
             default_timeout: Default timeout for all requests
         """
         self.app = app
         self.default_timeout = default_timeout
 
-    async def __call__(self, scope, receive, send):
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
         """ASGI middleware implementation."""
         if scope["type"] == "http":
             # Create cancelation token for this request
@@ -66,7 +67,7 @@ def get_request_token(request: Request) -> CancelationToken:
     Returns:
         Cancelation token for this request
     """
-    if "cancelation_token" in request.scope:
+    if hasattr(request, "scope") and "cancelation_token" in request.scope:
         return request.scope["cancelation_token"]
 
     # Create new token if middleware not installed
@@ -80,7 +81,7 @@ async def cancelable_dependency(
     timeout: float | None = None,
 ) -> Cancelable:
     """
-    FastAPI dependency that provides a cancellable for the request.
+    FastAPI dependency that provides a cancelable for the request.
 
     Args:
         request: FastAPI request
@@ -99,9 +100,9 @@ async def cancelable_dependency(
     """
     token = get_request_token(request)
 
-    # Create base cancellable with token
+    # Create base cancelable with token
     name = f"{request.method} {request.url.path}"
-    metadata = {
+    metadata: dict[str, str | None] = {
         "method": request.method,
         "path": request.url.path,
         "client": request.client.host if request.client else None,
@@ -124,41 +125,43 @@ async def cancelable_dependency(
 def with_cancelation(
     timeout: float | None = None,
     raise_on_cancel: bool = True,
-) -> Callable:
+) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
     """
-    Decorator for FastAPI endpoints with automatic cancellation.
+    Decorator for FastAPI endpoints with automatic cancelation.
 
     Args:
         timeout: Optional timeout for the endpoint
-        raise_on_cancel: Whether to raise HTTPException on cancellation
+        raise_on_cancel: Whether to raise HTTPException on cancelation
 
     Returns:
         Decorator function
 
     Example:
         @app.get("/slow")
-        @with_cancellation(timeout=30.0)
+        @with_cancelation(timeout=30.0)
         async def slow_endpoint(request: Request):
             # Cancelable is automatically injected
-            cancellable = current_operation()
+            cancelable = current_operation()
             await long_operation()
     """
 
-    def decorator(func: Callable) -> Callable:
-        async def wrapper(request: Request, *args, **kwargs):
-            cancellable = await cancelable_dependency(request, timeout)
+    def decorator(func: Callable[..., Any]) -> Callable[..., Any]:
+        async def wrapper(request: Request, *args: Any, **kwargs: Any):
+            cancelable = await cancelable_dependency(request, timeout)
 
             try:
-                async with cancellable:
+                async with cancelable:
                     return await func(request, *args, **kwargs)
 
             except anyio.get_cancelled_exc_class():
                 if raise_on_cancel:
-                    if cancellable.context.cancel_reason == CancelationReason.TIMEOUT:
+                    if cancelable.context.cancel_reason == CancelationReason.TIMEOUT:
                         raise HTTPException(status_code=504, detail="Request timeout")
-                    if cancellable.context.cancel_reason == CancelationReason.SIGNAL:
+                    if cancelable.context.cancel_reason == CancelationReason.SIGNAL:
                         raise HTTPException(status_code=499, detail="Client closed connection")
-                    raise HTTPException(status_code=503, detail=f"Request cancelled: {cancellable.context.cancel_message}")
+                    raise HTTPException(
+                        status_code=503, detail=f"Request cancelled: {cancelable.context.cancel_message}"
+                    )
                 raise
 
         return wrapper
@@ -168,16 +171,16 @@ def with_cancelation(
 
 async def cancelable_streaming_response(
     generator: AsyncIterator[Any],
-    cancellable: Cancelable,
+    cancelable: Cancelable,
     media_type: str = "text/plain",
     chunk_size: int | None = None,
 ) -> StreamingResponse:
     """
-    Create a streaming response with cancellation support.
+    Create a streaming response with cancelation support.
 
     Args:
         generator: Async generator producing response chunks
-        cancellable: Cancelable instance
+        cancelable: Cancelable instance
         media_type: Response media type
         chunk_size: Optional chunk size hint
 
@@ -201,14 +204,16 @@ async def cancelable_streaming_response(
 
     async def wrapped_generator():
         try:
-            async for chunk in cancellable.stream(generator):
+            async for chunk in cancelable.stream(generator):
                 yield chunk
         except anyio.get_cancelled_exc_class():
-            # Handle cancellation gracefully
+            # Handle cancelation gracefully
             logger.info(
                 "Streaming response cancelled",
-                operation_id=cancellable.context.id,
-                cancel_reason=cancellable.context.cancel_reason,
+                extra={
+                    "operation_id": cancelable.context.id,
+                    "cancel_reason": cancelable.context.cancel_reason,
+                },
             )
             # Optionally yield a final message
             if media_type == "text/event-stream":
@@ -223,39 +228,39 @@ async def cancelable_streaming_response(
 # WebSocket support
 class CancelableWebSocket:
     """
-    WebSocket wrapper with cancellation support.
+    WebSocket wrapper with cancelation support.
     """
 
-    def __init__(self, websocket, cancellable: Cancelable):
+    def __init__(self, websocket: Any, cancelable: Cancelable):
         self.websocket = websocket
-        self.cancellable = cancellable
+        self.cancelable = cancelable
 
-    async def accept(self, **kwargs):
+    async def accept(self, **kwargs: Any):
         """Accept WebSocket connection."""
         await self.websocket.accept(**kwargs)
-        await self.cancellable.report_progress("WebSocket connected")
+        await self.cancelable.report_progress("WebSocket connected")
 
     async def send_text(self, data: str):
-        """Send text with cancellation check."""
-        await self.cancellable._token.check_async()
+        """Send text with cancelation check."""
+        await self.cancelable.check_cancellation()
         await self.websocket.send_text(data)
 
     async def send_json(self, data: Any):
-        """Send JSON with cancellation check."""
-        await self.cancellable._token.check_async()
+        """Send JSON with cancelation check."""
+        await self.cancelable.check_cancellation()
         await self.websocket.send_json(data)
 
     async def receive_text(self) -> str:
-        """Receive text with cancellation check."""
-        await self.cancellable._token.check_async()
+        """Receive text with cancelation check."""
+        await self.cancelable.check_cancellation()
         return await self.websocket.receive_text()
 
     async def receive_json(self) -> Any:
-        """Receive JSON with cancellation check."""
-        await self.cancellable._token.check_async()
+        """Receive JSON with cancelation check."""
+        await self.cancelable.check_cancellation()
         return await self.websocket.receive_json()
 
     async def close(self, code: int = 1000, reason: str = ""):
         """Close WebSocket connection."""
         await self.websocket.close(code, reason)
-        await self.cancellable.report_progress("WebSocket closed")
+        await self.cancelable.report_progress("WebSocket closed")

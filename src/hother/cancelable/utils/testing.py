@@ -1,5 +1,5 @@
 """
-Testing utilities for async cancellation.
+Testing utilities for async cancelation.
 """
 
 from collections.abc import AsyncIterator, Callable
@@ -8,7 +8,7 @@ from datetime import UTC, datetime
 from typing import Any, TypeVar
 
 import anyio
-from pydantic import Field, PrivateAttr
+from pydantic import PrivateAttr
 
 from hother.cancelable.core.cancelable import Cancelable
 from hother.cancelable.core.models import CancelationReason, OperationContext, OperationStatus
@@ -22,21 +22,14 @@ T = TypeVar("T")
 
 class MockCancelationToken(CancelationToken):
     """
-    Mock cancellation token for testing.
+    Mock cancelation token for testing.
 
-    Provides additional testing capabilities like scheduled cancellation.
+    Provides additional testing capabilities like scheduled cancelation.
     """
 
-    # Public field for cancel history (used by tests)
-    cancel_history: list[dict[str, Any]] = Field(default_factory=list)
-
-    # Private attribute for internal state
-    _scheduled_cancellation: Any = PrivateAttr(default=None)
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        # cancel_history is initialized by Field default_factory
-        self._scheduled_cancellation = None
+    # Additional fields for testing
+    cancel_history: list[dict[str, Any]] = []
+    _scheduled_cancelation: Any = PrivateAttr(default=None)
 
     async def cancel(
         self,
@@ -60,10 +53,10 @@ class MockCancelationToken(CancelationToken):
         message: str | None = None,
     ) -> None:
         """
-        Schedule cancellation after a delay.
+        Schedule cancelation after a delay.
 
         Args:
-            delay: Delay in seconds before cancellation
+            delay: Delay in seconds before cancelation
             reason: Cancelation reason
             message: Cancelation message
         """
@@ -72,9 +65,9 @@ class MockCancelationToken(CancelationToken):
             await anyio.sleep(delay)
             await self.cancel(reason, message)
 
-        self._scheduled_cancellation = anyio.create_task_group()
-        await self._scheduled_cancellation.__aenter__()
-        self._scheduled_cancellation.start_soon(delayed_cancel)
+        self._scheduled_cancelation = anyio.create_task_group()
+        await self._scheduled_cancelation.__aenter__()
+        self._scheduled_cancelation.start_soon(delayed_cancel)
 
     def get_cancel_count(self) -> int:
         """Get number of times cancel was called."""
@@ -108,7 +101,7 @@ class OperationRecorder:
                 }
             )
 
-    def attach_to_cancelable(self, cancelable: Cancelable) -> Cancelable:
+    def attach_to_cancellable(self, cancelable: Cancelable) -> Cancelable:
         """
         Attach recorder to a cancelable to track its events.
 
@@ -122,7 +115,7 @@ class OperationRecorder:
         self.operations[op_id] = cancelable.context
 
         # Record all events
-        async def record_progress(op_id: str, msg: str, meta: dict[str, Any]):
+        async def record_progress(op_id: str, msg: str, meta: dict[str, Any] | None):
             await self.record_event(op_id, "progress", {"message": msg, "meta": meta})
 
         async def record_status(ctx: OperationContext):
@@ -131,7 +124,13 @@ class OperationRecorder:
         async def record_error(ctx: OperationContext, error: Exception):
             await self.record_event(ctx.id, "error", {"error_type": type(error).__name__, "error_message": str(error)})
 
-        return cancelable.on_progress(record_progress).on_start(record_status).on_complete(record_status).on_cancel(record_status).on_error(record_error)
+        return (
+            cancelable.on_progress(record_progress)
+            .on_start(record_status)
+            .on_complete(record_status)
+            .on_cancel(record_status)
+            .on_error(record_error)
+        )
 
     def get_events_for_operation(self, operation_id: str) -> list[dict[str, Any]]:
         """Get all events for a specific operation."""
@@ -197,7 +196,7 @@ async def create_slow_stream(
     cancelable: Cancelable | None = None,
 ) -> AsyncIterator[T]:
     """
-    Create a slow async stream for testing cancellation.
+    Create a slow async stream for testing cancelation.
 
     Args:
         items: Items to yield
@@ -212,13 +211,13 @@ async def create_slow_stream(
             await anyio.sleep(delay)
 
         if cancelable:
-            await cancelable._token.check_async()
+            await cancelable.token.check_async()
 
         yield item
 
 
 async def run_with_timeout_test(
-    coro,
+    coro: Any,
     expected_timeout: float,
     tolerance: float = 0.1,
 ) -> None:
@@ -239,11 +238,13 @@ async def run_with_timeout_test(
         await coro
         raise AssertionError("Expected timeout but operation completed")
     except (anyio.get_cancelled_exc_class(), TimeoutError):
-        # Expected cancellation
+        # Expected cancelation
         duration = anyio.current_time() - start_time
 
         if abs(duration - expected_timeout) > tolerance:
-            raise AssertionError(f"Timeout occurred after {duration:.2f}s, expected {expected_timeout:.2f}s ± {tolerance:.2f}s")
+            raise AssertionError(
+                f"Timeout occurred after {duration:.2f}s, expected {expected_timeout:.2f}s ± {tolerance:.2f}s"
+            )
 
 
 @asynccontextmanager
@@ -252,17 +253,17 @@ async def assert_cancelation_within(
     max_time: float,
 ) -> AsyncIterator[MockCancelationToken]:
     """
-    Context manager that asserts cancellation occurs within a time range.
+    Context manager that asserts cancelation occurs within a time range.
 
     Args:
-        min_time: Minimum time before cancellation
-        max_time: Maximum time before cancellation
+        min_time: Minimum time before cancelation
+        max_time: Maximum time before cancelation
 
     Yields:
-        Mock cancellation token
+        Mock cancelation token
 
     Raises:
-        AssertionError: If cancellation timing is wrong
+        AssertionError: If cancelation timing is wrong
     """
     token = MockCancelationToken()
     start_time = anyio.current_time()
@@ -277,18 +278,18 @@ async def assert_cancelation_within(
             if duration > max_time:
                 raise AssertionError(f"Cancelation occurred too late: {duration:.2f}s > {max_time:.2f}s")
         else:
-            raise AssertionError("Expected cancellation but none occurred")
+            raise AssertionError("Expected cancelation but none occurred")
 
 
 class CancelationScenario:
     """
-    Test scenario builder for cancellation testing.
+    Test scenario builder for cancelation testing.
     """
 
     def __init__(self, name: str):
         self.name = name
         self.steps: list[dict[str, Any]] = []
-        self.assertions: list[Callable] = []
+        self.assertions: list[dict[str, Any]] = []
 
     def add_delay(self, duration: float) -> "CancelationScenario":
         """Add a delay step."""
@@ -300,7 +301,7 @@ class CancelationScenario:
         reason: CancelationReason = CancelationReason.MANUAL,
         message: str | None = None,
     ) -> "CancelationScenario":
-        """Add a cancellation step."""
+        """Add a cancelation step."""
         self.steps.append(
             {
                 "type": "cancel",
@@ -341,8 +342,8 @@ class CancelationScenario:
     async def run(
         self,
         operation: Callable[..., Any],
-        *args,
-        **kwargs,
+        *args: Any,
+        **kwargs: Any,
     ) -> OperationRecorder:
         """
         Run the scenario.
@@ -360,7 +361,7 @@ class CancelationScenario:
 
         # Create cancelable
         cancelable = Cancelable.with_token(token, name=f"scenario_{self.name}")
-        recorder.attach_to_cancelable(cancelable)
+        recorder.attach_to_cancellable(cancelable)
 
         # Schedule steps
         async def run_steps():

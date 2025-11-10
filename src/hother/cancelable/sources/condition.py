@@ -1,11 +1,12 @@
 """
-Condition-based cancellation source implementation.
+Condition-based cancelation source implementation.
 """
 
 import inspect
 from collections.abc import Awaitable, Callable
 
 import anyio
+import anyio.abc
 
 from hother.cancelable.core.models import CancelationReason
 from hother.cancelable.sources.base import CancelationSource
@@ -32,7 +33,7 @@ class ConditionSource(CancelationSource):
         Initialize condition source.
 
         Args:
-            condition: Function that returns True when cancellation should occur
+            condition: Function that returns True when cancelation should occur
             check_interval: How often to check condition (seconds)
             condition_name: Name for the condition (for logging)
             name: Optional name for the source
@@ -44,6 +45,7 @@ class ConditionSource(CancelationSource):
         self.condition_name = condition_name or getattr(condition, "__name__", "condition")
         self.triggered = False
         self._task_group: anyio.abc.TaskGroup | None = None
+        self._stop_event: anyio.Event | None = None
 
         # Validate check interval
         if check_interval <= 0:
@@ -60,6 +62,9 @@ class ConditionSource(CancelationSource):
             scope: Cancel scope to trigger when condition is met
         """
         self.scope = scope
+
+        # Create stop event for graceful shutdown
+        self._stop_event = anyio.Event()
 
         # Create task group for background monitoring
         self._task_group = anyio.create_task_group()
@@ -79,21 +84,18 @@ class ConditionSource(CancelationSource):
 
     async def stop_monitoring(self) -> None:
         """Stop monitoring the condition."""
-        if self._task_group:
-            # Cancel all tasks in the group
-            self._task_group.cancel_scope.cancel()
+        if self._task_group and self._stop_event:
+            # Signal the monitoring task to stop gracefully
+            self._stop_event.set()
 
-            # Try to properly exit the task group, but shield from cancellation
-            # and handle errors if we're in a different context
+            # Exit the task group normally (monitoring task will complete)
             try:
-                with anyio.CancelScope(shield=True):
-                    await self._task_group.__aexit__(None, None, None)
-            except (anyio.get_cancelled_exc_class(), RuntimeError, Exception) as e:
-                # Task group exit failed, likely due to context mismatch
-                # This is acceptable as the cancel scope was already cancelled
-                logger.debug(f"Task group cleanup skipped: {type(e).__name__}")
+                await self._task_group.__aexit__(None, None, None)
+            except Exception as e:
+                logger.debug(f"Task group exit error: {type(e).__name__}: {e}")
             finally:
                 self._task_group = None
+                self._stop_event = None
 
         logger.debug(
             "Condition source stopped",
@@ -106,20 +108,24 @@ class ConditionSource(CancelationSource):
 
     async def _monitor_condition(self) -> None:
         """Monitor the condition in a loop."""
+        # Ensure stop event is set (should be guaranteed by start_monitoring)
+        assert self._stop_event is not None, "stop_event must be set before monitoring"
+
         check_count = 0
 
         try:
-            while not self.triggered:
+            while not self.triggered and not self._stop_event.is_set():
                 check_count += 1
                 logger.debug(f"Condition check #{check_count} for {self.condition_name}")
 
                 # Check condition
                 try:
+                    result: bool
                     if self._is_async:
-                        result = await self.condition()
+                        result = await self.condition()  # type: ignore[misc]
                     else:
                         # Run sync condition in thread pool
-                        result = await anyio.to_thread.run_sync(self.condition)
+                        result = await anyio.to_thread.run_sync(self.condition)  # type: ignore[arg-type]
 
                     logger.debug(f"Condition check #{check_count} returned: {result}")
 
@@ -127,8 +133,10 @@ class ConditionSource(CancelationSource):
                         self.triggered = True
                         logger.debug(f"Condition '{self.condition_name}' met after {check_count} checks")
 
-                        # Trigger cancellation through the base class method
-                        await self.trigger_cancelation(f"Condition '{self.condition_name}' met after {check_count} checks")
+                        # Trigger cancelation through the base class method
+                        await self.trigger_cancelation(
+                            f"Condition '{self.condition_name}' met after {check_count} checks"
+                        )
                         break
 
                 except Exception as e:
@@ -143,8 +151,9 @@ class ConditionSource(CancelationSource):
                     )
                     # Continue monitoring despite errors
 
-                # Wait before next check
-                await anyio.sleep(self.check_interval)
+                # Wait before next check, but break early if stop event is set
+                with anyio.move_on_after(self.check_interval):
+                    await self._stop_event.wait()
 
         except anyio.get_cancelled_exc_class():
             # Task was cancelled
@@ -191,7 +200,7 @@ class ResourceConditionSource(ConditionSource):
         self.disk_threshold = disk_threshold
 
         # Build condition name
-        conditions = []
+        conditions: list[str] = []
         if memory_threshold:
             conditions.append(f"memory>{memory_threshold}%")
         if cpu_threshold:

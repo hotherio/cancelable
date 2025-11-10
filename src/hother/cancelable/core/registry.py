@@ -19,7 +19,7 @@ logger = get_logger(__name__)
 
 class OperationRegistry:
     """
-    Singleton registry for tracking all cancellable operations.
+    Singleton registry for tracking all cancelable operations.
 
     Provides centralized management and monitoring of operations across
     the application.
@@ -39,11 +39,11 @@ class OperationRegistry:
         if self._initialized:
             return
 
-        self._operations: dict[str, "Cancelable"] = {}
+        self._operations: dict[str, Cancelable] = {}
         self._history: list[OperationContext] = []
         self._history_limit = 1000
         self._lock: anyio.Lock = anyio.Lock()
-        self._sync_lock: threading.Lock = threading.Lock()  # For synchronous access
+        self._data_lock = threading.Lock()  # Thread-safe lock for data access
         self._initialized = True
 
         logger.info("Operation registry initialized")
@@ -68,13 +68,17 @@ class OperationRegistry:
             operation: Cancelable operation to register
         """
         async with self._lock:
-            self._operations[operation.context.id] = operation
+            with self._data_lock:
+                self._operations[operation.context.id] = operation
+                total = len(self._operations)
 
             logger.info(
                 "Operation registered",
-                operation_id=operation.context.id,
-                operation_name=operation.context.name,
-                total_operations=len(self._operations),
+                extra={
+                    "operation_id": operation.context.id,
+                    "operation_name": operation.context.name,
+                    "total_operations": total,
+                },
             )
 
     async def unregister(self, operation_id: str) -> None:
@@ -85,19 +89,24 @@ class OperationRegistry:
             operation_id: ID of operation to unregister
         """
         async with self._lock:
-            if operation := self._operations.pop(operation_id, None):
-                # Add to history
-                self._history.append(operation.context.model_copy(deep=True))
+            with self._data_lock:
+                operation = self._operations.pop(operation_id, None)
+                if operation:
+                    # Add to history
+                    self._history.append(operation.context.model_copy(deep=True))
 
-                # Maintain history limit
-                if len(self._history) > self._history_limit:
-                    self._history = self._history[-self._history_limit :]
+                    # Maintain history limit
+                    if len(self._history) > self._history_limit:
+                        self._history = self._history[-self._history_limit :]
 
+            if operation:
                 logger.debug(
                     "Operation unregistered",
-                    operation_id=operation_id,
-                    final_status=operation.context.status.value,
-                    duration=operation.context.duration_seconds,
+                    extra={
+                        "operation_id": operation_id,
+                        "final_status": operation.context.status.value,
+                        "duration": operation.context.duration_seconds,
+                    },
                 )
 
     async def get_operation(self, operation_id: str) -> Optional["Cancelable"]:
@@ -111,7 +120,8 @@ class OperationRegistry:
             Cancelable operation or None if not found
         """
         async with self._lock:
-            return self._operations.get(operation_id)
+            with self._data_lock:
+                return self._operations.get(operation_id)
 
     async def list_operations(
         self,
@@ -131,9 +141,10 @@ class OperationRegistry:
             List of matching operation contexts
         """
         async with self._lock:
-            operations = [op.context for op in self._operations.values()]
+            with self._data_lock:
+                operations = [op.context for op in self._operations.values()]
 
-            # Apply filters
+            # Apply filters (outside lock - operating on copied list)
             if status:
                 operations = [op for op in operations if op.status == status]
 
@@ -156,8 +167,8 @@ class OperationRegistry:
 
         Args:
             operation_id: ID of operation to cancel
-            reason: Reason for cancellation
-            message: Optional cancellation message
+            reason: Reason for cancelation
+            message: Optional cancelation message
 
         Returns:
             True if operation was cancelled, False if not found
@@ -168,7 +179,7 @@ class OperationRegistry:
 
         logger.warning(
             "Attempted to cancel non-existent operation",
-            operation_id=operation_id,
+            extra={"operation_id": operation_id},
         )
         return False
 
@@ -183,14 +194,15 @@ class OperationRegistry:
 
         Args:
             status: Only cancel operations with this status
-            reason: Reason for cancellation
-            message: Optional cancellation message
+            reason: Reason for cancelation
+            message: Optional cancelation message
 
         Returns:
             Number of operations cancelled
         """
         async with self._lock:
-            to_cancel = list(self._operations.values())
+            with self._data_lock:
+                to_cancel = list(self._operations.values())
 
             if status:
                 to_cancel = [op for op in to_cancel if op.context.status == status]
@@ -199,18 +211,20 @@ class OperationRegistry:
         count = 0
         for operation in to_cancel:
             try:
-                await operation.cancel(reason, message or "Bulk cancellation")
+                await operation.cancel(reason, message or "Bulk cancelation")
                 count += 1
             except Exception as e:
                 logger.error(
                     "Error cancelling operation",
-                    operation_id=operation.context.id,
-                    error=str(e),
+                    extra={
+                        "operation_id": operation.context.id,
+                        "error": str(e),
+                    },
                     exc_info=True,
                 )
 
         logger.info(
-            "Bulk cancellation completed",
+            "Bulk cancelation completed",
             extra={
                 "cancelled_count": count,
                 "filter_status": status.value if status else None,
@@ -237,9 +251,10 @@ class OperationRegistry:
             List of historical operation contexts
         """
         async with self._lock:
-            history = self._history.copy()
+            with self._data_lock:
+                history = self._history.copy()
 
-            # Apply filters
+            # Apply filters (outside lock - operating on copied list)
             if status:
                 history = [op for op in history if op.status == status]
 
@@ -268,36 +283,37 @@ class OperationRegistry:
             Number of operations cleaned up
         """
         async with self._lock:
-            now = datetime.now(UTC)
-            to_remove = []
+            with self._data_lock:
+                now = datetime.now(UTC)
+                to_remove: list[str] = []
 
-            for op_id, operation in self._operations.items():
-                context = operation.context
+                for op_id, operation in self._operations.items():
+                    context = operation.context
 
-                # Skip non-terminal operations
-                if not context.is_terminal:
-                    continue
-
-                # Skip failed operations if requested
-                if keep_failed and context.status == OperationStatus.FAILED:
-                    continue
-
-                # Check age if specified
-                if older_than and context.end_time:
-                    age = now - context.end_time
-                    if age < older_than:
+                    # Skip non-terminal operations
+                    if not context.is_terminal:
                         continue
 
-                to_remove.append(op_id)
+                    # Skip failed operations if requested
+                    if keep_failed and context.status == OperationStatus.FAILED:
+                        continue
 
-            # Remove operations
-            for op_id in to_remove:
-                if operation := self._operations.pop(op_id, None):
-                    self._history.append(operation.context.model_copy(deep=True))
+                    # Check age if specified
+                    if older_than and context.end_time:
+                        age = now - context.end_time
+                        if age < older_than:
+                            continue
 
-            # Maintain history limit
-            if len(self._history) > self._history_limit:
-                self._history = self._history[-self._history_limit :]
+                    to_remove.append(op_id)
+
+                # Remove operations
+                for op_id in to_remove:
+                    if operation := self._operations.pop(op_id, None):
+                        self._history.append(operation.context.model_copy(deep=True))
+
+                # Maintain history limit
+                if len(self._history) > self._history_limit:
+                    self._history = self._history[-self._history_limit :]
 
         logger.info(
             "Cleaned up completed operations",
@@ -317,39 +333,50 @@ class OperationRegistry:
             Dictionary with operation statistics
         """
         async with self._lock:
-            active_by_status = {}
-            for operation in self._operations.values():
-                status = operation.context.status.value
-                active_by_status[status] = active_by_status.get(status, 0) + 1
+            with self._data_lock:
+                active_by_status = {}
+                for operation in self._operations.values():
+                    status = operation.context.status.value
+                    active_by_status[status] = active_by_status.get(status, 0) + 1
 
-            history_by_status = {}
-            total_duration = 0.0
-            completed_count = 0
+                history_by_status = {}
+                total_duration = 0.0
+                completed_count = 0
 
-            for context in self._history:
-                status = context.status.value
-                history_by_status[status] = history_by_status.get(status, 0) + 1
+                for context in self._history:
+                    status = context.status.value
+                    history_by_status[status] = history_by_status.get(status, 0) + 1
 
-                if context.duration_seconds and context.is_success:
-                    total_duration += context.duration_seconds
-                    completed_count += 1
+                    if context.duration_seconds and context.is_success:
+                        total_duration += context.duration_seconds
+                        completed_count += 1
 
-            avg_duration = total_duration / completed_count if completed_count > 0 else 0
+                avg_duration = total_duration / completed_count if completed_count > 0 else 0
 
-            return {
-                "active_operations": len(self._operations),
-                "active_by_status": active_by_status,
-                "history_size": len(self._history),
-                "history_by_status": history_by_status,
-                "average_duration_seconds": avg_duration,
-                "total_completed": completed_count,
-            }
+                return {
+                    "active_operations": len(self._operations),
+                    "active_by_status": active_by_status,
+                    "history_size": len(self._history),
+                    "history_by_status": history_by_status,
+                    "average_duration_seconds": avg_duration,
+                    "total_completed": completed_count,
+                }
 
-    # Synchronous methods for thread-safe access
+    async def clear_all(self) -> None:
+        """Clear all operations and history (for testing)."""
+        async with self._lock:
+            with self._data_lock:
+                self._operations.clear()
+                self._history.clear()
+            logger.warning("Registry cleared - all operations removed")
+
+    # Thread-safe synchronous methods
 
     def get_operation_sync(self, operation_id: str) -> Optional["Cancelable"]:
         """
-        Get operation by ID (synchronous, thread-safe).
+        Get operation by ID (thread-safe, synchronous).
+
+        This method can be called from any thread.
 
         Args:
             operation_id: Operation ID to look up
@@ -357,7 +384,7 @@ class OperationRegistry:
         Returns:
             Cancelable operation or None if not found
         """
-        with self._sync_lock:
+        with self._data_lock:
             return self._operations.get(operation_id)
 
     def list_operations_sync(
@@ -367,7 +394,9 @@ class OperationRegistry:
         name_pattern: str | None = None,
     ) -> list[OperationContext]:
         """
-        List operations with optional filtering (synchronous, thread-safe).
+        List operations with optional filtering (thread-safe, synchronous).
+
+        This method can be called from any thread.
 
         Args:
             status: Filter by operation status
@@ -377,29 +406,32 @@ class OperationRegistry:
         Returns:
             List of matching operation contexts
         """
-        with self._sync_lock:
-            operations = [op.context for op in self._operations.values()]
+        with self._data_lock:
+            # Create copies to avoid holding lock during filtering
+            operations = [op.context.model_copy() for op in self._operations.values()]
 
-            # Apply filters
-            if status:
-                operations = [op for op in operations if op.status == status]
+        # Apply filters outside lock
+        if status:
+            operations = [op for op in operations if op.status == status]
 
-            if parent_id:
-                operations = [op for op in operations if op.parent_id == parent_id]
+        if parent_id:
+            operations = [op for op in operations if op.parent_id == parent_id]
 
-            if name_pattern:
-                operations = [op for op in operations if op.name and name_pattern.lower() in op.name.lower()]
+        if name_pattern:
+            operations = [op for op in operations if op.name and name_pattern.lower() in op.name.lower()]
 
-            return operations
+        return operations
 
     def get_statistics_sync(self) -> dict[str, Any]:
         """
-        Get registry statistics (synchronous, thread-safe).
+        Get registry statistics (thread-safe, synchronous).
+
+        This method can be called from any thread.
 
         Returns:
             Dictionary with operation statistics
         """
-        with self._sync_lock:
+        with self._data_lock:
             active_by_status = {}
             for operation in self._operations.values():
                 status = operation.context.status.value
@@ -435,7 +467,9 @@ class OperationRegistry:
         since: datetime | None = None,
     ) -> list[OperationContext]:
         """
-        Get operation history (synchronous, thread-safe).
+        Get operation history (thread-safe, synchronous).
+
+        This method can be called from any thread.
 
         Args:
             limit: Maximum number of operations to return
@@ -445,21 +479,21 @@ class OperationRegistry:
         Returns:
             List of historical operation contexts
         """
-        with self._sync_lock:
+        with self._data_lock:
             history = self._history.copy()
 
-            # Apply filters
-            if status:
-                history = [op for op in history if op.status == status]
+        # Apply filters outside lock
+        if status:
+            history = [op for op in history if op.status == status]
 
-            if since:
-                history = [op for op in history if op.end_time and op.end_time >= since]
+        if since:
+            history = [op for op in history if op.end_time and op.end_time >= since]
 
-            # Apply limit
-            if limit:
-                history = history[-limit:]
+        # Apply limit
+        if limit:
+            history = history[-limit:]
 
-            return history
+        return history
 
     def cancel_operation_sync(
         self,
@@ -468,21 +502,26 @@ class OperationRegistry:
         message: str | None = None,
     ) -> None:
         """
-        Cancel a specific operation (synchronous, schedules async work).
+        Cancel a specific operation (thread-safe, asynchronous execution).
 
-        Schedules the cancelation to be executed asynchronously and returns immediately.
+        This method can be called from any thread. It schedules the cancelation
+        to be executed asynchronously and returns immediately.
 
         Args:
             operation_id: ID of operation to cancel
             reason: Reason for cancelation
             message: Optional cancelation message
-        """
-        from hother.cancelable.utils.anyio_bridge import AnyioBridge
 
-        bridge = AnyioBridge.get_instance()
-        bridge.call_soon_threadsafe(
-            self.cancel_operation(operation_id, reason, message)
-        )
+        Note:
+            The cancelation is scheduled via AnyioBridge and executes asynchronously.
+            This method returns immediately without waiting for completion.
+        """
+        from hother.cancelable.utils.anyio_bridge import call_soon_threadsafe
+
+        async def do_cancel():
+            await self.cancel_operation(operation_id, reason, message)
+
+        call_soon_threadsafe(do_cancel)
 
     def cancel_all_sync(
         self,
@@ -491,25 +530,23 @@ class OperationRegistry:
         message: str | None = None,
     ) -> None:
         """
-        Cancel all operations with optional status filter (synchronous, schedules async work).
+        Cancel all operations (thread-safe, asynchronous execution).
 
-        Schedules the cancelation to be executed asynchronously and returns immediately.
+        This method can be called from any thread. It schedules the cancelation
+        to be executed asynchronously and returns immediately.
 
         Args:
             status: Only cancel operations with this status
             reason: Reason for cancelation
             message: Optional cancelation message
+
+        Note:
+            The cancelation is scheduled via AnyioBridge and executes asynchronously.
+            This method returns immediately without waiting for completion.
         """
-        from hother.cancelable.utils.anyio_bridge import AnyioBridge
+        from hother.cancelable.utils.anyio_bridge import call_soon_threadsafe
 
-        bridge = AnyioBridge.get_instance()
-        bridge.call_soon_threadsafe(
-            self.cancel_all(status, reason, message)
-        )
+        async def do_cancel():
+            await self.cancel_all(status, reason, message)
 
-    async def clear_all(self) -> None:
-        """Clear all operations and history (for testing)."""
-        async with self._lock:
-            self._operations.clear()
-            self._history.clear()
-            logger.warning("Registry cleared - all operations removed")
+        call_soon_threadsafe(do_cancel)

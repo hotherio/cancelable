@@ -1,4 +1,4 @@
-"""Unit tests for timeout cancellation source."""
+"""Unit tests for timeout cancelation source."""
 
 import anyio
 import pytest

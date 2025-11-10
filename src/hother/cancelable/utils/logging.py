@@ -1,13 +1,17 @@
 """
 Logging utilities for the cancelable library.
+
+Following Python library best practices, this module provides logger access
+but does not configure logging. Applications using cancelable should configure
+their own logging as needed.
 """
 
 import logging
-import sys
 from typing import Optional
 
-# Add NullHandler to prevent "No handlers could be found" warning
-logging.getLogger('hother.cancelable').addHandler(logging.NullHandler())
+
+# Add a NullHandler to prevent "No handler found" warnings
+logging.getLogger("hother.cancelable").addHandler(logging.NullHandler())
 
 
 def get_logger(name: Optional[str] = None) -> logging.Logger:
@@ -19,56 +23,33 @@ def get_logger(name: Optional[str] = None) -> logging.Logger:
 
     Returns:
         A configured standard library logger
+
+    Note:
+        This function does not configure logging handlers or formatters.
+        Applications should configure logging using logging.basicConfig()
+        or their preferred logging configuration method.
+
+    Example:
+        In your application code:
+        ```python
+        import logging
+        logging.basicConfig(
+            level=logging.INFO,
+            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        )
+
+        from hother.cancelable.utils.logging import get_logger
+        logger = get_logger(__name__)
+        logger.info("Application started")
+        ```
     """
     if name is None:
         import inspect
+
         frame = inspect.currentframe()
         if frame and frame.f_back:
-            name = frame.f_back.f_globals.get('__name__', 'cancelable')
+            name = frame.f_back.f_globals.get("__name__", "cancelable")
         else:
-            name = 'cancelable'
+            name = "cancelable"
 
     return logging.getLogger(name)
-
-
-def configure_logging(
-    log_level: str = "INFO",
-    json_output: bool = False,
-    dev_mode: bool = True
-) -> None:
-    """
-    Configure standard library logging for the library.
-
-    Args:
-        log_level: Logging level (DEBUG, INFO, WARNING, ERROR)
-        json_output: Whether to output JSON format
-        dev_mode: Whether to use dev-friendly console output
-    """
-    # Configure standard logging
-    if json_output:
-        # JSON format for production
-        formatter = logging.Formatter(
-            '{"timestamp": "%(asctime)s", "level": "%(levelname)s", "name": "%(name)s", "message": "%(message)s"}'
-        )
-    elif dev_mode:
-        # Human-readable format for development
-        formatter = logging.Formatter(
-            "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
-        )
-    else:
-        # Simple format
-        formatter = logging.Formatter(
-            "%(levelname)s - %(name)s - %(message)s"
-        )
-
-    # Setup handler
-    handler = logging.StreamHandler(sys.stdout)
-    handler.setFormatter(formatter)
-
-    # Configure root logger
-    root_logger = logging.getLogger()
-    root_logger.setLevel(getattr(logging, log_level.upper()))
-    root_logger.addHandler(handler)
-
-    # Prevent duplicate handlers if called multiple times
-    root_logger.propagate = False

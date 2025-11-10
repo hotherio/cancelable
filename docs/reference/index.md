@@ -1,46 +1,53 @@
 # API Reference
 
-This section contains the complete API reference for the cancelable library.
+Welcome to the complete API reference for the Cancelable library. All documentation is automatically generated from code docstrings.
 
-## Core Classes
+## Navigation
 
-::: hother.cancelable.core.cancelable
-    options:
-      show_root_heading: true
-      show_source: false
+The API reference is organized into the following sections:
 
-::: hother.cancelable.core.token
-    options:
-      show_root_heading: true
-      show_source: false
+### [Core Components](core.md)
 
-::: hother.cancelable.core.models
-    options:
-      show_root_heading: true
-      show_source: false
+The fundamental building blocks for async cancellation:
 
-::: hother.cancelable.core.exceptions
-    options:
-      show_root_heading: true
-      show_source: false
+- **Cancelable** - Main context manager for cancellable operations
+- **CancellationToken** - Thread-safe token for manual cancellation
+- **LinkedCancellationToken** - Combine multiple cancellation tokens
+- **OperationContext** - Track operation state and metadata
+- **OperationStatus** - Operation state enumeration
+- **OperationRegistry** - Global operation tracking
+- **Exceptions** - All cancellation-related exceptions
 
-## Cancellation Sources
+### [Cancellation Sources](sources.md)
 
-::: hother.cancelable.sources
-    options:
-      show_root_heading: true
-      show_source: false
+Different ways to trigger cancellation:
 
-## Integrations
+- **CancellationSource** - Base class for all sources
+- **TimeoutSource** - Time-based cancellation
+- **SignalSource** - Unix signal-based cancellation (SIGTERM, SIGINT, etc.)
+- **ConditionSource** - Predicate-based cancellation
+- **TokenSource** - Token-based cancellation
+- **CompositeCancellationSource** - Combine multiple sources
 
-::: hother.cancelable.integrations
-    options:
-      show_root_heading: true
-      show_source: false
+### [Integrations](integrations.md)
 
-## Utilities
+Framework and library integrations:
 
-::: hother.cancelable.utils
-    options:
-      show_root_heading: true
-      show_source: false
+- **FastAPI** - Middleware and utilities for FastAPI applications
+
+### [Utilities](utilities.md)
+
+Helper functions, decorators, bridges, and testing tools:
+
+- **Decorators** - `@cancelable` decorator for easy cancellation
+- **Bridges** - AnyIO, threading, and context bridges
+- **Streams** - Cancellable async stream processing
+- **Streaming Simulator** - Testing and demonstration tools
+- **Logging** - Structured logging utilities
+- **Testing** - Test utilities and fixtures
+
+## Quick Links
+
+- [Getting Started Guide](../getting_started.md)
+- [Usage Patterns](../patterns.md)
+- [Examples](../examples/index.md)

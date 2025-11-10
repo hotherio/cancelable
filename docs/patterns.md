@@ -1,31 +1,46 @@
 # Common Patterns and Best Practices
 
-## Pattern: Graceful Shutdown
+Here is a collection of common patterns that leverage `Cancelable`.
+
+## Graceful Shutdown
 
 Handle application shutdown gracefully:
 
 ```python
 import signal
-from hother.cancelable import Cancellable
+from hother.cancelable import Cancelable
 
 async def main():
     # Handle SIGINT and SIGTERM
-    async with Cancellable.with_signal(signal.SIGINT, signal.SIGTERM) as cancel:
+    async with Cancelable.with_signal(signal.SIGINT, signal.SIGTERM) as cancel:
         cancel.on_cancel(lambda ctx: print("Shutting down gracefully..."))
 
         # Your application logic
         await run_application()
 ```
 
-## Pattern: Resource Cleanup
+Or using the decorator:
 
-Ensure resources are cleaned up even on cancellation:
+```python
+import signal
+from hother.cancelable import cancelable_with_signal
+
+@cancelable_with_signal(signal.SIGINT, signal.SIGTERM)
+async def main(cancelable=None):
+    """Application with graceful shutdown."""
+    cancelable.on_cancel(lambda ctx: print("Shutting down gracefully..."))
+    await run_application()
+```
+
+## Resource Cleanup
+
+Ensure resources are cleaned up even on cancelation:
 
 ```python
 async def process_with_cleanup():
     resource = None
 
-    async with Cancellable.with_timeout(30) as cancel:
+    async with Cancelable.with_timeout(30) as cancel:
         try:
             # Acquire resource
             resource = await acquire_resource()
@@ -36,19 +51,19 @@ async def process_with_cleanup():
             return result
 
         finally:
-            # Shield cleanup from cancellation
+            # Shield cleanup from cancelation
             if resource:
                 async with cancel.shield():
                     await resource.cleanup()
 ```
 
-## Pattern: Batch Processing with Progress
+## Batch Processing with Progress
 
 Process data in batches with progress reporting:
 
 ```python
 async def process_large_dataset(data: List[Any], batch_size: int = 100):
-    async with Cancellable(name="batch_processing") as cancel:
+    async with Cancelable(name="batch_processing") as cancel:
         cancel.on_progress(lambda op_id, msg, meta: logger.info(msg, **meta))
 
         total = len(data)
@@ -69,27 +84,27 @@ async def process_large_dataset(data: List[Any], batch_size: int = 100):
             )
 ```
 
-## Pattern: Retry with Cancellation
+## Retry with Cancelation
 
-Implement retry logic with cancellation support:
+Implement retry logic with cancelation support:
 
 ```python
-async def retry_with_cancellation(
+async def retry_with_cancelation(
     operation: Callable,
     max_retries: int = 3,
     delay: float = 1.0,
     backoff: float = 2.0,
 ):
-    async with Cancellable(name="retry_operation") as cancel:
+    async with Cancelable(name="retry_operation") as cancel:
         last_error = None
+
+        # Wrap operation to automatically check cancelation
+        wrapped_op = cancel.wrap(operation)
 
         for attempt in range(max_retries):
             try:
-                # Check cancellation before retry
-                await cancel._token.check_async()
-
-                # Attempt operation
-                result = await operation()
+                # Cancelation checked automatically by wrap()
+                result = await wrapped_op()
                 return result
 
             except Exception as e:
@@ -108,20 +123,20 @@ async def retry_with_cancellation(
         raise last_error
 ```
 
-## Pattern: Concurrent Operations with Shared Cancellation
+## Concurrent Operations with Shared Cancelation
 
-Run multiple operations with shared cancellation:
+Run multiple operations with shared cancelation:
 
 ```python
 async def parallel_operations():
-    async with Cancellable(name="parallel_work") as cancel:
+    async with Cancelable(name="parallel_work") as cancel:
+        # Wrap process_item to automatically check cancelation
+        wrapped_process = cancel.wrap(process_item)
+
         async def worker(worker_id: int, items: List[Any]):
             for item in items:
-                # Check cancellation
-                await cancel._token.check_async()
-
-                # Process item
-                await process_item(item)
+                # Cancelation checked automatically
+                await wrapped_process(item)
 
                 # Report progress
                 await cancel.report_progress(
@@ -138,16 +153,16 @@ async def parallel_operations():
                 tg.start_soon(worker, i, items)
 ```
 
-## Pattern: Hierarchical Cancellation
+## Hierarchical Cancelation
 
 Create operation hierarchies with parent-child relationships:
 
 ```python
 async def hierarchical_operations():
-    async with Cancellable(name="parent_operation") as parent:
+    async with Cancelable(name="parent_operation") as parent:
         # Create child operations
         async def child_operation(child_id: int):
-            child = Cancellable(
+            child = Cancelable(
                 name=f"child_{child_id}",
                 parent=parent
             )
@@ -162,7 +177,7 @@ async def hierarchical_operations():
                 tg.start_soon(child_operation, i)
 ```
 
-## Pattern: Conditional Cancellation
+## Conditional Cancelation
 
 Cancel based on system resources:
 
@@ -174,7 +189,7 @@ def check_memory_usage():
     return psutil.virtual_memory().percent > 90
 
 async def memory_aware_operation():
-    async with Cancellable.with_condition(
+    async with Cancelable.with_condition(
         check_memory_usage,
         check_interval=5.0,
         condition_name="memory_check"
@@ -184,101 +199,4 @@ async def memory_aware_operation():
         )
 
         await memory_intensive_operation()
-```
-
-## Pattern: Stream Processing with Backpressure
-
-Handle backpressure in stream processing:
-
-```python
-async def process_stream_with_backpressure(source: AsyncIterator[Any]):
-    # Create bounded channel for backpressure
-    send_channel, receive_channel = anyio.create_memory_object_stream(max_buffer_size=100)
-
-    async with Cancellable(name="stream_processing") as cancel:
-        async def producer():
-            async with send_channel:
-                async for item in cancel.stream(source):
-                    try:
-                        # Try to send without blocking
-                        send_channel.send_nowait(item)
-                    except anyio.WouldBlock:
-                        # Handle backpressure
-                        await cancel.report_progress(
-                            "Backpressure detected, waiting for consumer"
-                        )
-                        await send_channel.send(item)
-
-        async def consumer():
-            async with receive_channel:
-                async for item in receive_channel:
-                    # Process item
-                    await process_item(item)
-
-        # Run producer and consumer concurrently
-        async with anyio.create_task_group() as tg:
-            tg.start_soon(producer)
-            tg.start_soon(consumer)
-```
-
-## Anti-Patterns to Avoid
-
-### Don't forget to check cancellation in loops
-
-❌ **Bad:**
-```python
-async with Cancellable.with_timeout(10) as cancel:
-    for item in large_list:
-        # This might run forever if list is large
-        await process_item(item)
-```
-
-✅ **Good:**
-```python
-async with Cancellable.with_timeout(10) as cancel:
-    for item in large_list:
-        # Check cancellation in each iteration
-        await cancel._token.check_async()
-        await process_item(item)
-```
-
-### Don't ignore cancellation in cleanup
-
-❌ **Bad:**
-```python
-try:
-    async with Cancellable.with_timeout(10) as cancel:
-        result = await operation()
-finally:
-    # This might not run if cancelled
-    await cleanup()
-```
-
-✅ **Good:**
-```python
-async with Cancellable.with_timeout(10) as cancel:
-    try:
-        result = await operation()
-    finally:
-        # Shield cleanup from cancellation
-        async with cancel.shield():
-            await cleanup()
-```
-
-### Don't create unnecessary cancellables
-
-❌ **Bad:**
-```python
-# Creating new cancellable for each item
-for item in items:
-    async with Cancellable() as cancel:
-        await process_item(item)
-```
-
-✅ **Good:**
-```python
-# Reuse single cancellable
-async with Cancellable() as cancel:
-    for item in items:
-        await process_item(item)
 ```

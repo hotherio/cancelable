@@ -1,21 +1,87 @@
 # Cancelable
 
+[![PyPI version](https://badge.fury.io/py/cancelable.svg)](https://pypi.org/project/cancelable/)
+[![Python Versions](https://img.shields.io/pypi/pyversions/cancelable)](https://pypi.org/project/cancelable/)
+[![License](https://img.shields.io/github/license/hother/cancelable)](https://github.com/hother/cancelable/blob/main/LICENSE)
+[![CI](https://github.com/hother/cancelable/actions/workflows/ci.yml/badge.svg)](https://github.com/hother/cancelable/actions)
+
 A comprehensive, production-ready async cancellation system for Python 3.12+ using anyio.
+
+## Table of Contents
+
+- [Features](#features)
+- [Installation](#installation)
+- [Quick Start](#quick-start)
+- [Integrations](#integrations)
+- [Documentation](#documentation)
+- [Development](#development)
+- [Contributing](#contributing)
+- [License](#license)
 
 ## Features
 
 - **Multiple Cancellation Sources**: Timeout, manual tokens, OS signals, and custom conditions
 - **Composable Design**: Combine multiple cancellation sources easily
-- **Stream Processing**: Built-in support for cancellable async iterators
+- **Stream Processing**: Built-in support for cancelable async iterators
 - **Operation Tracking**: Full lifecycle tracking with status and progress reporting
 - **Library Integrations**: Ready-to-use integrations for httpx, FastAPI, and SQLAlchemy
 - **Type Safe**: Full type hints and runtime validation with Pydantic
-- **Production Ready**: Comprehensive error handling, structured logging, and performance optimized
+- **Production Ready**: Comprehensive error handling, logging, and performance optimized
 
 ## Installation
 
+### Core Installation
+
+The core library includes only essential dependencies (`anyio` and `pydantic`):
+
 ```bash
-uv add hother-cancelable
+uv add cancelable
+```
+
+### Optional Extras
+
+Cancelable provides optional extras for various integrations and use cases:
+
+#### Integration Extras
+
+| Extra | Dependencies | Purpose |
+|-------|-------------|---------|
+| `httpx` | httpx | HTTP client integration for cancelable requests |
+| `sqlalchemy` | sqlalchemy, aiosqlite | Database integration for cancelable queries |
+| `fastapi` | fastapi | FastAPI middleware for request cancellation |
+| `aiofiles` | aiofiles | Async file I/O operations |
+| `asyncer` | asyncer | Additional async utilities |
+
+#### Development Extras
+
+| Extra | Dependencies | Purpose |
+|-------|-------------|---------|
+| `examples` | google-genai, pynput, psutil | Run example scripts and demonstrations |
+
+### Installing with Extras
+
+**Single extra:**
+```bash
+# HTTP client support
+uv add "cancelable[httpx]"
+
+# Database support
+uv add "cancelable[sqlalchemy]"
+
+# FastAPI integration
+uv add "cancelable[fastapi]"
+```
+
+**Multiple extras:**
+```bash
+# Install multiple integrations at once
+uv add "cancelable[httpx,sqlalchemy,fastapi]"
+```
+
+**All extras:**
+```bash
+# Install all optional extras (useful for development)
+uv add "cancelable[httpx,sqlalchemy,fastapi,aiofiles,asyncer,examples]"
 ```
 
 ## Quick Start
@@ -23,10 +89,10 @@ uv add hother-cancelable
 ### Basic Usage
 
 ```python
-from hother.cancelable import Cancellable
+from hother.cancelable import Cancelable
 
 # Timeout-based cancellation
-async with Cancellable.with_timeout(30.0) as cancel:
+async with Cancelable.with_timeout(30.0) as cancel:
     result = await long_running_operation()
 
 # Manual cancellation with token
@@ -34,7 +100,7 @@ from hother.cancelable import CancellationToken
 
 token = CancellationToken()
 
-async with Cancellable.with_token(token) as cancel:
+async with Cancelable.with_token(token) as cancel:
     # In another task/thread: await token.cancel()
     result = await interruptible_operation()
 ```
@@ -42,8 +108,8 @@ async with Cancellable.with_token(token) as cancel:
 ### Stream Processing
 
 ```python
-# Cancellable stream processing
-async with Cancellable.with_timeout(60.0) as cancel:
+# Cancelable stream processing
+async with Cancelable.with_timeout(60.0) as cancel:
     async for item in cancel.stream(data_source(), report_interval=100):
         await process_item(item)
 ```
@@ -51,43 +117,93 @@ async with Cancellable.with_timeout(60.0) as cancel:
 ### Function Decorators
 
 ```python
-from hother.cancelable import cancellable
+from hother.cancelable import cancelable
 
-@cancellable(timeout=30.0, register_globally=True)
-async def process_data(data: list, cancellable: Cancellable = None):
+@cancelable(timeout=30.0, register_globally=True)
+async def process_data(data: list, cancelable: Cancelable = None):
     for i, item in enumerate(data):
-        await cancellable.report_progress(f"Processing item {i+1}/{len(data)}")
+        await cancelable.report_progress(f"Processing item {i+1}/{len(data)}")
         await process_item(item)
 ```
+
+## Integrations
+
+Cancelable provides seamless integrations with popular async libraries. See the [integrations documentation](docs/integrations/) for detailed guides and examples.
+
+- **HTTPX**: Cancel HTTP requests with timeout and manual cancellation
+- **FastAPI**: Add cancellation middleware to FastAPI applications
+- **SQLAlchemy**: Cancel database operations and transactions
 
 ## Documentation
 
 To build and serve the documentation locally:
 
-1. Install the dependencies:
-```
+1. Install the documentation dependencies:
+
+```bash
 uv sync --group doc
 source .venv/bin/activate
 ```
 
 2. Serve the documentation:
-```
+
+```bash
 mkdocs serve
 ```
 
 ## Development
 
+### Dependency Groups
+
+Cancelable uses dependency groups for development and documentation:
+
+| Group | Purpose | Key Dependencies |
+|-------|---------|------------------|
+| `dev` | Development tools | pytest, ruff, basedpyright, twine, git-cliff |
+| `doc` | Documentation building | mkdocs, mkdocs-material, mike |
+
 ### Installation
 
-The only command that should be necessary is:
-```
+**Basic development setup:**
+```bash
 uv sync --group dev
 source .venv/bin/activate
 lefthook install
 ```
 
-It creates a virtual environment, install all dependencies required for development and install the library in editable mode.
-It also installs the Lefthook git hooks manager.
+This creates a virtual environment, installs all development dependencies, and installs the library in editable mode. It also sets up Lefthook git hooks.
+
+**Full development setup with integrations:**
+
+Some tests require optional integration extras. To run the full test suite:
+
+```bash
+# Install dev tools + all integration extras
+uv sync --group dev --all-extras
+```
+
+**Selective installation:**
+```bash
+# Install only specific integrations
+uv sync --group dev --extra httpx --extra sqlalchemy
+
+# Install documentation tools
+uv sync --group doc
+```
+
+### Quick Reference
+
+**Available extras:**
+- `httpx` - HTTP client integration
+- `sqlalchemy` - Database integration
+- `fastapi` - FastAPI middleware
+- `aiofiles` - Async file I/O
+- `asyncer` - Async utilities
+- `examples` - Example scripts
+
+**Available groups:**
+- `dev` - Development tools (pytest, ruff, basedpyright, etc.)
+- `doc` - Documentation tools (mkdocs, mkdocs-material, etc.)
 
 ### Git Hooks with Lefthook
 
@@ -101,11 +217,36 @@ lefthook run pre-commit
 
 ### Tests
 
-uv run -m pytest
+**Run core tests (without integration extras):**
+```bash
+uv run pytest
+```
+
+Integration tests that require optional dependencies (httpx, sqlalchemy, fastapi) will be automatically skipped if the extras are not installed.
+
+**Run all tests including integrations:**
+```bash
+# First install all extras
+uv sync --all-extras
+
+# Then run tests
+uv run pytest
+```
+
+**Run specific test categories:**
+```bash
+# Run only unit tests
+uv run pytest tests/unit
+
+# Run only integration tests (requires extras)
+uv run pytest tests/integration
+```
 
 ### Coverage
 
-uv run python -m pytest src --cov=cancelable
+```bash
+uv run pytest --cov=hother.cancelable
+```
 
 ### Building the package
 
@@ -150,7 +291,7 @@ The SHA must be:
 #### How it Works
 
 - **Development releases** (`dev`): Increments patch version and adds `-dev` suffix
-- **Release candidates** (`rc`): Removes `-dev` and adds `rc` suffix  
+- **Release candidates** (`rc`): Removes `-dev` and adds `rc` suffix
 - **Final releases** (`final`): Uses git-cliff to analyze commits and automatically bumps major/minor/patch based on conventional commits
 
 The release process:
@@ -243,3 +384,11 @@ More Examples:
 - `ci`: (changes in the CI/CD and deployment pipelines)
 - `perf`: (significant performance improvement)
 - `revert`: (revert a previous change)
+
+## Contributing
+
+We welcome contributions! Please see our [Contributing Guide](CONTRIBUTING.md) for details on how to get started.
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.

@@ -1,5 +1,5 @@
 """
-Integration tests for the async cancellation system.
+Integration tests for the async cancelation system.
 """
 
 import anyio
@@ -13,7 +13,7 @@ class TestIntegration:
 
     @pytest.mark.anyio
     async def test_http_download_simulation(self):
-        """Test simulated HTTP download with cancellation."""
+        """Test simulated HTTP download with cancelation."""
         downloaded_chunks = []
 
         async def simulate_download(url: str, cancelable: Cancelable):
@@ -28,7 +28,7 @@ class TestIntegration:
                 if (i + 1) % 5 == 0:
                     await cancelable.report_progress(f"Downloaded {i + 1}/{total_chunks} chunks", {"progress": (i + 1) / total_chunks * 100})
 
-                # Check for cancellation
+                # Check for cancelation
                 await cancelable._token.check_async()
 
             return len(downloaded_chunks)
@@ -50,7 +50,7 @@ class TestIntegration:
 
     @pytest.mark.anyio
     async def test_database_transaction_simulation(self):
-        """Test simulated database operations with cancellation."""
+        """Test simulated database operations with cancelation."""
 
         class MockDatabase:
             def __init__(self):
@@ -82,7 +82,7 @@ class TestIntegration:
 
         @cancelable(name="db_operation")
         async def insert_records(count: int, db: MockDatabase, cancelable: Cancelable = None):
-            """Insert records with cancellation support."""
+            """Insert records with cancelation support."""
             await db.begin()
 
             try:
@@ -186,7 +186,7 @@ class TestIntegration:
             saved = await stage3_save(processed_data, cancel)
             assert saved == 10
 
-        # Test pipeline cancellation at different stages
+        # Test pipeline cancelation at different stages
         for cancel_after in [0.3, 0.8, 1.2]:
             token = CancelationToken()
 
@@ -213,7 +213,7 @@ class TestIntegration:
                 except anyio.get_cancelled_exc_class():
                     pass
 
-            # Verify cancellation happened at expected stage
+            # Verify cancelation happened at expected stage
             if cancel_after < 0.6:
                 assert stage_reached <= 1
             elif cancel_after < 1.0:
@@ -222,8 +222,8 @@ class TestIntegration:
                 assert stage_reached <= 3
 
     @pytest.mark.anyio
-    async def test_recursive_cancellation(self):
-        """Test recursive operation cancellation."""
+    async def test_recursive_cancelation(self):
+        """Test recursive operation cancelation."""
         execution_order = []
 
         async def recursive_operation(depth: int, cancelable: Cancelable):
@@ -246,7 +246,7 @@ class TestIntegration:
         # Verify execution order
         assert execution_order == ["start_3", "start_2", "start_1", "start_0", "end_0", "end_1", "end_2", "end_3"]
 
-        # Test cancellation propagation
+        # Test cancelation propagation
         execution_order.clear()
         root_cancel = Cancelable(name="root")
 
@@ -334,7 +334,7 @@ class TestIntegration:
         assert result["items_extracted"] == 25
         assert result["errors"] == 0
 
-        # Test with cancellation
+        # Test with cancelation
         scraper2 = WebScraper()
         token = CancelationToken()
 
@@ -357,6 +357,6 @@ class TestIntegration:
             except anyio.get_cancelled_exc_class():
                 pass
 
-        # Should have scraped some pages before cancellation
+        # Should have scraped some pages before cancelation
         assert 0 < scraper2.pages_scraped < 20
         assert len(scraper2.data_extracted) > 0

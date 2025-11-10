@@ -3,7 +3,7 @@ VENV := $(PWD)/.venv
 PYTHON := $(VENV)/bin/python$(PYTHON_VERSION)
 PIP := $(PYTHON) -m pip
 VERSION := $(file < VERSION)
-PACKAGE := 'hother'
+PACKAGE := 'cancelaable'
 FORMAT := "md"  # License format
 
 .PHONY: help lint test package clean install

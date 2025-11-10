@@ -1,5 +1,5 @@
 """
-Tests for async cancellation decorators.
+Tests for async cancelation decorators.
 """
 
 from datetime import timedelta
@@ -47,14 +47,14 @@ class TestCancelableDecorator:
         """Test decorator with cancelable injection."""
 
         @cancelable(timeout=1.0)
-        async def function_with_cancelable(data: str, cancelable: Cancelable = None) -> str:
+        async def function_with_cancellable(data: str, cancelable: Cancelable = None) -> str:
             await cancelable.report_progress(f"Processing {data}")
             await anyio.sleep(0.1)
             await cancelable.report_progress("Done")
             return data.upper()
 
         # Capture progress through wrapper attribute
-        result = await function_with_cancelable("test")
+        result = await function_with_cancellable("test")
 
         assert result == "TEST"
 
@@ -132,8 +132,8 @@ class TestCancelableDecorator:
         assert documented_function.__doc__ == "This function has documentation."
 
         # Check decorator parameters are accessible
-        assert hasattr(documented_function, "_cancelable_params")
-        params = documented_function._cancelable_params
+        assert hasattr(documented_function, "_cancellable_params")
+        params = documented_function._cancellable_params
         assert params["timeout"] == 5.0
         assert params["name"] == "documented_function"
 
@@ -153,8 +153,8 @@ class TestWithTimeout:
         assert result == "success"
 
     @pytest.mark.anyio
-    async def test_with_timeout_cancellation(self):
-        """Test timeout cancellation."""
+    async def test_with_timeout_cancelation(self):
+        """Test timeout cancelation."""
 
         async def slow_operation():
             await anyio.sleep(1.0)

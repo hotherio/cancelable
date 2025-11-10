@@ -9,11 +9,11 @@ from hother.cancelable import Cancelable, OperationStatus
 
 
 class TestShielding:
-    """Test shielding from cancellation."""
+    """Test shielding from cancelation."""
 
     @pytest.mark.anyio
     async def test_shield_basic(self):
-        """Test basic shielding from cancellation."""
+        """Test basic shielding from cancelation."""
         completed_steps = []
 
         try:
@@ -29,7 +29,7 @@ class TestShielding:
                 # This won't execute due to timeout
                 completed_steps.append("parent_end")
         except anyio.get_cancelled_exc_class():
-            # Expected cancellation
+            # Expected cancelation
             pass
 
         assert completed_steps == ["parent_start", "shield_start", "shield_end"]
@@ -55,7 +55,7 @@ class TestShielding:
 
                 execution_order.append("parent_end")
         except anyio.get_cancelled_exc_class():
-            # Expected cancellation after shields complete
+            # Expected cancelation after shields complete
             pass
 
         # All shielded sections should complete
@@ -71,8 +71,8 @@ class TestShielding:
                 assert shielded.context.parent_id == parent.context.id
 
     @pytest.mark.anyio
-    async def test_shield_with_manual_cancellation(self):
-        """Test shielding with manual cancellation."""
+    async def test_shield_with_manual_cancelation(self):
+        """Test shielding with manual cancelation."""
         completed = []
 
         try:
@@ -97,10 +97,10 @@ class TestShielding:
         assert completed == ["parent_start", "shield_start", "shield_end"]
 
     @pytest.mark.anyio
-    async def test_shield_cancellation_propagation(self):
-        """Test that cancellation doesn't propagate through shield."""
+    async def test_shield_cancelation_propagation(self):
+        """Test that cancelation doesn't propagate through shield."""
         # This test verifies that the shield properly isolates its content
-        # from cancellation but allows the parent to be cancelled afterward
+        # from cancelation but allows the parent to be cancelled afterward
 
         shield_completed = False
         parent_after_shield = False

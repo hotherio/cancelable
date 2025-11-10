@@ -47,10 +47,10 @@ class OperationContext(BaseModel):
         status: Current operation status
         start_time: When the operation started
         end_time: When the operation ended (if applicable)
-        cancel_reason: Reason for cancellation (if cancelled)
-        cancel_message: Additional cancellation message
+        cancel_reason: Reason for cancelation (if cancelled)
+        cancel_message: Additional cancelation message
         error: Error message (if failed)
-        partial_result: Any partial results before cancellation
+        partial_result: Any partial results before cancelation
         metadata: Additional operation metadata
         parent_id: Parent operation ID (for nested operations)
         child_ids: Set of child operation IDs

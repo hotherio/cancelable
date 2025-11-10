@@ -26,16 +26,6 @@ dependencies = [
 ]
 
 [project.optional-dependencies]
-# HTTP client integration (includes aiofiles for download_file support)
-httpx = ["httpx>=0.28.1", "aiofiles>=24.1.0"]
-
-# Database integration
-sqlalchemy = [
-    "sqlalchemy>=2.0.41",
-    "aiosqlite>=0.21.0",
-    "greenlet>=3.0.0",
-]
-
 # Web framework integration
 fastapi = ["fastapi>=0.115.14"]
 

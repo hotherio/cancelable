@@ -9,15 +9,15 @@ import anyio
 from fastapi import HTTPException, Request
 from fastapi.responses import StreamingResponse
 
-from hother.cancelable.core.cancellable import Cancellable
-from hother.cancelable.core.models import CancellationReason
-from hother.cancelable.core.token import CancellationToken
+from hother.cancelable.core.cancelable import Cancelable
+from hother.cancelable.core.models import CancelationReason
+from hother.cancelable.core.token import CancelationToken
 from hother.cancelable.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
 
-class RequestCancellationMiddleware:
+class RequestCancelationMiddleware:
     """
     FastAPI middleware that provides request-scoped cancellation.
     """
@@ -37,7 +37,7 @@ class RequestCancellationMiddleware:
         """ASGI middleware implementation."""
         if scope["type"] == "http":
             # Create cancellation token for this request
-            token = CancellationToken()
+            token = CancelationToken()
             scope["cancellation_token"] = token
 
             # Monitor for client disconnect
@@ -45,7 +45,7 @@ class RequestCancellationMiddleware:
                 while True:
                     message = await receive()
                     if message["type"] == "http.disconnect":
-                        await token.cancel(CancellationReason.SIGNAL, "Client disconnected")
+                        await token.cancel(CancelationReason.SIGNAL, "Client disconnected")
                         break
 
             # Run app with monitoring
@@ -56,7 +56,7 @@ class RequestCancellationMiddleware:
             await self.app(scope, receive, send)
 
 
-def get_request_token(request: Request) -> CancellationToken:
+def get_request_token(request: Request) -> CancelationToken:
     """
     Get cancellation token from request.
 
@@ -64,13 +64,13 @@ def get_request_token(request: Request) -> CancellationToken:
         request: FastAPI request
 
     Returns:
-        Cancellation token for this request
+        Cancelation token for this request
     """
     if hasattr(request, "scope") and "cancellation_token" in request.scope:
         return request.scope["cancellation_token"]
 
     # Create new token if middleware not installed
-    token = CancellationToken()
+    token = CancelationToken()
     request.scope["cancellation_token"] = token
     return token
 
@@ -78,7 +78,7 @@ def get_request_token(request: Request) -> CancellationToken:
 async def cancellable_dependency(
     request: Request,
     timeout: float | None = None,
-) -> Cancellable:
+) -> Cancelable:
     """
     FastAPI dependency that provides a cancellable for the request.
 
@@ -87,12 +87,12 @@ async def cancellable_dependency(
         timeout: Optional timeout override
 
     Returns:
-        Cancellable instance for this request
+        Cancelable instance for this request
 
     Example:
         @app.get("/data")
         async def get_data(
-            cancel: Cancellable = Depends(cancellable_dependency)
+            cancel: Cancelable = Depends(cancellable_dependency)
         ):
             async with cancel:
                 return await fetch_data()
@@ -107,11 +107,11 @@ async def cancellable_dependency(
         "client": request.client.host if request.client else None,
     }
 
-    base_cancellable = Cancellable.with_token(token, name=name, metadata=metadata)
+    base_cancellable = Cancelable.with_token(token, name=name, metadata=metadata)
 
     # Add timeout if specified
     if timeout:
-        timeout_cancellable = Cancellable.with_timeout(timeout, name=f"timeout_{timeout}s")
+        timeout_cancellable = Cancelable.with_timeout(timeout, name=f"timeout_{timeout}s")
         # Combine but preserve the original name and metadata
         combined = base_cancellable.combine(timeout_cancellable)
         combined.context.name = name  # Override the combined name
@@ -139,7 +139,7 @@ def with_cancellation(
         @app.get("/slow")
         @with_cancellation(timeout=30.0)
         async def slow_endpoint(request: Request):
-            # Cancellable is automatically injected
+            # Cancelable is automatically injected
             cancellable = current_operation()
             await long_operation()
     """
@@ -154,9 +154,9 @@ def with_cancellation(
 
             except anyio.get_cancelled_exc_class():
                 if raise_on_cancel:
-                    if cancellable.context.cancel_reason == CancellationReason.TIMEOUT:
+                    if cancellable.context.cancel_reason == CancelationReason.TIMEOUT:
                         raise HTTPException(status_code=504, detail="Request timeout")
-                    if cancellable.context.cancel_reason == CancellationReason.SIGNAL:
+                    if cancellable.context.cancel_reason == CancelationReason.SIGNAL:
                         raise HTTPException(status_code=499, detail="Client closed connection")
                     raise HTTPException(status_code=503, detail=f"Request cancelled: {cancellable.context.cancel_message}")
                 raise
@@ -168,7 +168,7 @@ def with_cancellation(
 
 async def cancellable_streaming_response(
     generator: AsyncIterator[Any],
-    cancellable: Cancellable,
+    cancellable: Cancelable,
     media_type: str = "text/plain",
     chunk_size: int | None = None,
 ) -> StreamingResponse:
@@ -177,7 +177,7 @@ async def cancellable_streaming_response(
 
     Args:
         generator: Async generator producing response chunks
-        cancellable: Cancellable instance
+        cancellable: Cancelable instance
         media_type: Response media type
         chunk_size: Optional chunk size hint
 
@@ -186,7 +186,7 @@ async def cancellable_streaming_response(
 
     Example:
         @app.get("/stream")
-        async def stream_data(cancel: Cancellable = Depends(cancellable_dependency)):
+        async def stream_data(cancel: Cancelable = Depends(cancellable_dependency)):
             async def generate():
                 for i in range(1000):
                     await anyio.sleep(0.1)
@@ -221,12 +221,12 @@ async def cancellable_streaming_response(
 
 
 # WebSocket support
-class CancellableWebSocket:
+class CancelableWebSocket:
     """
     WebSocket wrapper with cancellation support.
     """
 
-    def __init__(self, websocket, cancellable: Cancellable):
+    def __init__(self, websocket, cancellable: Cancelable):
         self.websocket = websocket
         self.cancellable = cancellable
 

@@ -8,7 +8,7 @@ from datetime import timedelta
 import anyio
 import pytest
 
-from hother.cancelable.core.models import CancellationReason
+from hother.cancelable.core.models import CancelationReason
 from hother.cancelable.sources.composite import AnyOfSource, CompositeSource
 from hother.cancelable.sources.condition import ConditionSource
 from hother.cancelable.sources.signal import SignalSource
@@ -23,15 +23,15 @@ class TestTimeoutSource:
         """Test basic timeout functionality."""
         source = TimeoutSource(0.1)
         assert source.timeout == 0.1
-        assert source.reason == CancellationReason.TIMEOUT
+        assert source.reason == CancelationReason.TIMEOUT
         assert not source.triggered
 
-        # Test with actual cancellable
-        from hother.cancelable import Cancellable
+        # Test with actual cancelable
+        from hother.cancelable import Cancelable
 
         start = anyio.current_time()
         with pytest.raises(anyio.get_cancelled_exc_class()):
-            async with Cancellable.with_timeout(0.1):
+            async with Cancelable.with_timeout(0.1):
                 await anyio.sleep(1.0)
 
         duration = anyio.current_time() - start
@@ -57,17 +57,17 @@ class TestTimeoutSource:
         """Test timeout with manual scope handling."""
         source = TimeoutSource(0.1)
 
-        # Create a cancellable that uses this source
-        from hother.cancelable import Cancellable
+        # Create a cancelable that uses this source
+        from hother.cancelable import Cancelable
 
-        cancellable = Cancellable()
-        cancellable._sources.append(source)
+        cancelable = Cancelable()
+        cancelable._sources.append(source)
 
         with pytest.raises(anyio.get_cancelled_exc_class()):
-            async with cancellable:
+            async with cancelable:
                 await anyio.sleep(1.0)
 
-        assert cancellable.context.cancel_reason == CancellationReason.TIMEOUT
+        assert cancelable.context.cancel_reason == CancelationReason.TIMEOUT
 
 
 class TestSignalSource:
@@ -131,12 +131,12 @@ class TestConditionSource:
             check_count += 1
             return check_count >= 3
 
-        # Test with actual cancellable
-        from hother.cancelable import Cancellable
+        # Test with actual cancelable
+        from hother.cancelable import Cancelable
 
         start = anyio.current_time()
         with pytest.raises(anyio.get_cancelled_exc_class()):
-            async with Cancellable.with_condition(condition, check_interval=0.05, condition_name="test_condition"):
+            async with Cancelable.with_condition(condition, check_interval=0.05, condition_name="test_condition"):
                 await anyio.sleep(1.0)
 
         duration = anyio.current_time() - start
@@ -154,11 +154,11 @@ class TestConditionSource:
             await anyio.sleep(0.01)  # Simulate async work
             return check_count >= 2
 
-        # Test with actual cancellable
-        from hother.cancelable import Cancellable
+        # Test with actual cancelable
+        from hother.cancelable import Cancelable
 
         with pytest.raises(anyio.get_cancelled_exc_class()):
-            async with Cancellable.with_condition(async_condition, check_interval=0.1):
+            async with Cancelable.with_condition(async_condition, check_interval=0.1):
                 await anyio.sleep(1.0)
 
         assert check_count >= 2
@@ -175,11 +175,11 @@ class TestConditionSource:
                 raise ValueError("Condition error")
             return call_count >= 4
 
-        # Test with actual cancellable
-        from hother.cancelable import Cancellable
+        # Test with actual cancelable
+        from hother.cancelable import Cancelable
 
         with pytest.raises(anyio.get_cancelled_exc_class()):
-            async with Cancellable.with_condition(faulty_condition, check_interval=0.05):
+            async with Cancelable.with_condition(faulty_condition, check_interval=0.05):
                 await anyio.sleep(1.0)
 
         # Should continue checking despite error
@@ -206,7 +206,7 @@ class TestConditionSource:
         assert source.condition == test_condition
         assert source.check_interval == 0.1
         assert source.condition_name == "my_condition"
-        assert source.reason == CancellationReason.CONDITION
+        assert source.reason == CancelationReason.CONDITION
         assert not source.triggered
 
 
@@ -216,11 +216,11 @@ class TestCompositeSource:
     @pytest.mark.anyio
     async def test_composite_any_of(self):
         """Test composite source with ANY logic."""
-        from hother.cancelable import Cancellable
+        from hother.cancelable import Cancelable
 
-        # Create two cancellables with different timeouts
-        cancel1 = Cancellable.with_timeout(0.2)
-        cancel2 = Cancellable.with_timeout(0.1)  # This will trigger first
+        # Create two cancelables with different timeouts
+        cancel1 = Cancelable.with_timeout(0.2)
+        cancel2 = Cancelable.with_timeout(0.1)  # This will trigger first
 
         # Combine them
         combined = cancel1.combine(cancel2)
@@ -248,7 +248,7 @@ class TestCompositeSource:
     @pytest.mark.anyio
     async def test_composite_multiple_types(self):
         """Test combining different source types."""
-        from hother.cancelable import Cancellable
+        from hother.cancelable import Cancelable
 
         check_count = 0
 
@@ -257,9 +257,9 @@ class TestCompositeSource:
             check_count += 1
             return check_count >= 3
 
-        # Create cancellables with different sources
-        timeout_cancel = Cancellable.with_timeout(0.5)
-        condition_cancel = Cancellable.with_condition(condition, check_interval=0.05)
+        # Create cancelables with different sources
+        timeout_cancel = Cancelable.with_timeout(0.5)
+        condition_cancel = Cancelable.with_condition(condition, check_interval=0.05)
 
         # Combine them
         combined = timeout_cancel.combine(condition_cancel)
@@ -285,10 +285,10 @@ class TestAllOfSource:
         # since our current combine() implements ANY logic
         # Let's test the concept with manual coordination
 
-        from hother.cancelable import Cancellable, CancellationToken
+        from hother.cancelable import Cancelable, CancelationToken
 
-        token1 = CancellationToken()
-        token2 = CancellationToken()
+        token1 = CancelationToken()
+        token2 = CancelationToken()
 
         # Track which tokens have been cancelled
         cancelled_tokens = set()
@@ -301,7 +301,7 @@ class TestAllOfSource:
             if len(cancelled_tokens) == 2:
                 await main_token.cancel()
 
-        main_token = CancellationToken()
+        main_token = CancelationToken()
 
         async with anyio.create_task_group() as tg:
             # Monitor both tokens
@@ -320,7 +320,7 @@ class TestAllOfSource:
             # Main operation
             start = anyio.current_time()
             with pytest.raises(anyio.get_cancelled_exc_class()):
-                async with Cancellable.with_token(main_token):
+                async with Cancelable.with_token(main_token):
                     await anyio.sleep(1.0)
 
             duration = anyio.current_time() - start
@@ -332,10 +332,10 @@ class TestAllOfSource:
         # This is more of a conceptual test since we don't have AllOfSource implemented
         # in the main codebase yet
 
-        from hother.cancelable import Cancellable, CancellationToken
+        from hother.cancelable import Cancelable, CancelationToken
 
-        token1 = CancellationToken()
-        token2 = CancellationToken()
+        token1 = CancelationToken()
+        token2 = CancelationToken()
 
         # Only cancel one token
         async def cancel_one():
@@ -345,9 +345,9 @@ class TestAllOfSource:
         async with anyio.create_task_group() as tg:
             tg.start_soon(cancel_one)
 
-            # Create cancellables that would need both tokens
+            # Create cancelables that would need both tokens
             # Since we don't have ALL logic, just verify individual behavior
-            async with Cancellable.with_token(token2):
+            async with Cancelable.with_token(token2):
                 await anyio.sleep(0.2)  # Should complete without cancellation
 
             # Token2 was never cancelled

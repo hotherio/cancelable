@@ -3,7 +3,7 @@ Tests for thread-safe cancellation with anyio bridge.
 
 This module tests the thread-safe cancellation features including:
 - AnyioBridge thread-to-async communication
-- CancellationToken.cancel_sync() method
+- CancelationToken.cancel_sync() method
 - Signal handler integration via bridge
 - pynput-like keyboard listener scenarios
 """
@@ -17,8 +17,8 @@ from typing import Any
 import anyio
 import pytest
 
-from hother.cancelable import AnyioBridge, CancellationToken, call_soon_threadsafe
-from hother.cancelable.core.models import CancellationReason
+from hother.cancelable import AnyioBridge, CancelationToken, call_soon_threadsafe
+from hother.cancelable.core.models import CancelationReason
 
 
 pytestmark = pytest.mark.anyio
@@ -116,16 +116,16 @@ class TestAnyioBridge:
 
 
 class TestTokenCancelSync:
-    """Test cases for CancellationToken.cancel_sync() method."""
+    """Test cases for CancelationToken.cancel_sync() method."""
 
     async def test_cancel_sync_from_thread(self, bridge):
         """Test that cancel_sync() can be called from a thread."""
-        token = CancellationToken()
+        token = CancelationToken()
 
         # Cancel from thread
         def cancel_in_thread():
             result = token.cancel_sync(
-                reason=CancellationReason.MANUAL, message="Cancelled from thread"
+                reason=CancelationReason.MANUAL, message="Cancelled from thread"
             )
             assert result is True
 
@@ -138,12 +138,12 @@ class TestTokenCancelSync:
 
         # Verify token is cancelled
         assert token.is_cancelled
-        assert token.reason == CancellationReason.MANUAL
+        assert token.reason == CancelationReason.MANUAL
         assert token.message == "Cancelled from thread"
 
     async def test_cancel_sync_sets_event(self, bridge):
         """Test that cancel_sync() sets the anyio event via bridge."""
-        token = CancellationToken()
+        token = CancelationToken()
 
         # Start task waiting for cancellation
         async def waiter():
@@ -171,10 +171,10 @@ class TestTokenCancelSync:
 
     async def test_cancel_sync_triggers_callbacks(self, bridge):
         """Test that cancel_sync() triggers registered callbacks."""
-        token = CancellationToken()
+        token = CancelationToken()
         callback_executed = []
 
-        async def my_callback(t: CancellationToken):
+        async def my_callback(t: CancelationToken):
             callback_executed.append(True)
             assert t.is_cancelled
 
@@ -196,7 +196,7 @@ class TestTokenCancelSync:
 
     async def test_cancel_sync_idempotent(self, bridge):
         """Test that cancel_sync() is idempotent."""
-        token = CancellationToken()
+        token = CancelationToken()
 
         # Cancel twice from thread
         def cancel_in_thread():
@@ -215,7 +215,7 @@ class TestTokenCancelSync:
 
     async def test_cancel_sync_thread_safe(self, bridge):
         """Test that cancel_sync() is thread-safe with multiple threads."""
-        token = CancellationToken()
+        token = CancelationToken()
         success_count = []
 
         # Try to cancel from multiple threads simultaneously
@@ -243,12 +243,12 @@ class TestPynputScenario:
 
     async def test_keyboard_listener_simulation(self, bridge):
         """Test simulated keyboard listener cancelling operation."""
-        token = CancellationToken()
+        token = CancelationToken()
 
         class SimulatedKeyboardHandler:
             """Simulates pynput keyboard listener."""
 
-            def __init__(self, token: CancellationToken):
+            def __init__(self, token: CancelationToken):
                 self.token = token
                 self.listener_thread = None
 
@@ -257,7 +257,7 @@ class TestPynputScenario:
                 if key == "SPACE":
                     # Cancel token from keyboard thread
                     self.token.cancel_sync(
-                        reason=CancellationReason.MANUAL, message="User pressed SPACE"
+                        reason=CancelationReason.MANUAL, message="User pressed SPACE"
                     )
 
             def start(self):
@@ -286,17 +286,17 @@ class TestPynputScenario:
         kb.join()
 
         assert token.is_cancelled
-        assert token.reason == CancellationReason.MANUAL
+        assert token.reason == CancelationReason.MANUAL
         assert "SPACE" in token.message
 
     async def test_streaming_with_keyboard_cancellation(self, bridge):
         """Test LLM-like streaming with keyboard cancellation."""
-        token = CancellationToken()
+        token = CancelationToken()
         chunks_processed = []
 
         # Simulate keyboard handler
         class KeyboardHandler:
-            def __init__(self, token: CancellationToken):
+            def __init__(self, token: CancelationToken):
                 self.token = token
 
             def trigger_cancel_from_thread(self):
@@ -351,13 +351,13 @@ class TestBridgeErrorHandling:
 
     async def test_cancel_sync_with_failing_callback(self, bridge):
         """Test that cancel_sync continues even if a callback fails."""
-        token = CancellationToken()
+        token = CancelationToken()
         successful_callbacks = []
 
-        async def failing_callback(t: CancellationToken):
+        async def failing_callback(t: CancelationToken):
             raise ValueError("Callback error")
 
-        async def successful_callback(t: CancellationToken):
+        async def successful_callback(t: CancelationToken):
             successful_callbacks.append(True)
 
         # Register callbacks

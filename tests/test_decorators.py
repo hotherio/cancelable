@@ -7,19 +7,19 @@ from datetime import timedelta
 import anyio
 import pytest
 
-from hother.cancelable import Cancellable, current_operation
-from hother.cancelable.utils.decorators import cancellable, cancellable_method, with_current_operation, with_timeout
+from hother.cancelable import Cancelable, current_operation
+from hother.cancelable.utils.decorators import cancelable, cancelable_method, with_current_operation, with_timeout
 
 
-class TestCancellableDecorator:
-    """Test @cancellable decorator."""
+class TestCancelableDecorator:
+    """Test @cancelable decorator."""
 
     @pytest.mark.anyio
     async def test_basic_decorator(self):
         """Test basic decorator usage."""
         call_count = 0
 
-        @cancellable()
+        @cancelable()
         async def decorated_function(value: int) -> int:
             nonlocal call_count
             call_count += 1
@@ -34,7 +34,7 @@ class TestCancellableDecorator:
     async def test_decorator_with_timeout(self):
         """Test decorator with timeout."""
 
-        @cancellable(timeout=0.1)
+        @cancelable(timeout=0.1)
         async def slow_function():
             await anyio.sleep(1.0)
             return "completed"
@@ -44,17 +44,17 @@ class TestCancellableDecorator:
 
     @pytest.mark.anyio
     async def test_decorator_with_injection(self):
-        """Test decorator with cancellable injection."""
+        """Test decorator with cancelable injection."""
 
-        @cancellable(timeout=1.0)
-        async def function_with_cancellable(data: str, cancellable: Cancellable = None) -> str:
-            await cancellable.report_progress(f"Processing {data}")
+        @cancelable(timeout=1.0)
+        async def function_with_cancelable(data: str, cancelable: Cancelable = None) -> str:
+            await cancelable.report_progress(f"Processing {data}")
             await anyio.sleep(0.1)
-            await cancellable.report_progress("Done")
+            await cancelable.report_progress("Done")
             return data.upper()
 
         # Capture progress through wrapper attribute
-        result = await function_with_cancellable("test")
+        result = await function_with_cancelable("test")
 
         assert result == "TEST"
 
@@ -63,8 +63,8 @@ class TestCancellableDecorator:
         """Test decorator with custom parameters."""
         operation_found = False
 
-        @cancellable(operation_id="custom-op-123", name="custom_operation", register_globally=True)
-        async def custom_function(cancellable: Cancellable = None):
+        @cancelable(operation_id="custom-op-123", name="custom_operation", register_globally=True)
+        async def custom_function(cancelable: Cancelable = None):
             nonlocal operation_found
             # Check registry while operation is running
             from hother.cancelable import OperationRegistry
@@ -72,7 +72,7 @@ class TestCancellableDecorator:
             registry = OperationRegistry.get_instance()
             ops = await registry.list_operations()
             operation_found = any(op.id == "custom-op-123" for op in ops)
-            return cancellable.context.id
+            return cancelable.context.id
 
         from hother.cancelable import OperationRegistry
 
@@ -98,9 +98,9 @@ class TestCancellableDecorator:
     async def test_decorator_no_injection(self):
         """Test decorator with injection disabled."""
 
-        @cancellable(inject_param=None)
+        @cancelable(inject_param=None)
         async def no_injection_function(value: int) -> int:
-            # No cancellable parameter
+            # No cancelable parameter
             await anyio.sleep(0.05)
             return value + 1
 
@@ -111,8 +111,8 @@ class TestCancellableDecorator:
     async def test_decorator_custom_injection_name(self):
         """Test decorator with custom injection parameter name."""
 
-        @cancellable(inject_param="cancel_ctx")
-        async def custom_param_function(value: int, cancel_ctx: Cancellable = None) -> int:
+        @cancelable(inject_param="cancel_ctx")
+        async def custom_param_function(value: int, cancel_ctx: Cancelable = None) -> int:
             await cancel_ctx.report_progress(f"Value: {value}")
             return value * 3
 
@@ -123,7 +123,7 @@ class TestCancellableDecorator:
     async def test_decorator_preserves_metadata(self):
         """Test that decorator preserves function metadata."""
 
-        @cancellable(timeout=5.0)
+        @cancelable(timeout=5.0)
         async def documented_function(x: int) -> int:
             """This function has documentation."""
             return x * 2
@@ -132,8 +132,8 @@ class TestCancellableDecorator:
         assert documented_function.__doc__ == "This function has documentation."
 
         # Check decorator parameters are accessible
-        assert hasattr(documented_function, "_cancellable_params")
-        params = documented_function._cancellable_params
+        assert hasattr(documented_function, "_cancelable_params")
+        params = documented_function._cancelable_params
         assert params["timeout"] == 5.0
         assert params["name"] == "documented_function"
 
@@ -196,7 +196,7 @@ class TestWithCurrentOperation:
         """Test injecting current operation."""
 
         @with_current_operation()
-        async def function_with_operation(value: int, operation: Cancellable = None) -> str:
+        async def function_with_operation(value: int, operation: Cancelable = None) -> str:
             if operation:
                 return f"{operation.context.name}:{value}"
             return f"no_op:{value}"
@@ -206,7 +206,7 @@ class TestWithCurrentOperation:
         assert result == "no_op:1"
 
         # With active operation
-        async with Cancellable(name="test_op"):
+        async with Cancelable(name="test_op"):
             result = await function_with_operation(2)
             assert result == "test_op:2"
 
@@ -228,19 +228,19 @@ class TestWithCurrentOperation:
         """Test when operation is already provided."""
 
         @with_current_operation()
-        async def function_with_operation(operation: Cancellable = None) -> str:
+        async def function_with_operation(operation: Cancelable = None) -> str:
             return operation.context.name if operation else "none"
 
-        custom_op = Cancellable(name="custom")
+        custom_op = Cancelable(name="custom")
 
         # Explicitly provided operation takes precedence
-        async with Cancellable(name="context_op"):
+        async with Cancelable(name="context_op"):
             result = await function_with_operation(operation=custom_op)
             assert result == "custom"
 
 
-class TestCancellableMethod:
-    """Test @cancellable_method decorator."""
+class TestCancelableMethod:
+    """Test @cancelable_method decorator."""
 
     @pytest.mark.anyio
     async def test_method_decorator(self):
@@ -250,15 +250,15 @@ class TestCancellableMethod:
             def __init__(self):
                 self.processed_count = 0
 
-            @cancellable_method(timeout=1.0)
-            async def process(self, items: list[int], cancellable: Cancellable = None) -> int:
+            @cancelable_method(timeout=1.0)
+            async def process(self, items: list[int], cancelable: Cancelable = None) -> int:
                 total = 0
                 for i, item in enumerate(items):
                     await anyio.sleep(0.01)
                     total += item
 
                     if i % 10 == 0:
-                        await cancellable.report_progress(f"Processed {i}/{len(items)}")
+                        await cancelable.report_progress(f"Processed {i}/{len(items)}")
 
                 self.processed_count += len(items)
                 return total
@@ -274,8 +274,8 @@ class TestCancellableMethod:
         """Test method decorator with timeout."""
 
         class SlowProcessor:
-            @cancellable_method(timeout=0.1)
-            async def process(self, cancellable: Cancellable = None):
+            @cancelable_method(timeout=0.1)
+            async def process(self, cancelable: Cancelable = None):
                 await anyio.sleep(1.0)
                 return "done"
 
@@ -289,9 +289,9 @@ class TestCancellableMethod:
         """Test method decorator generates correct name."""
 
         class TestClass:
-            @cancellable_method()
-            async def test_method(self, cancellable: Cancellable = None):
-                return cancellable.context.name
+            @cancelable_method()
+            async def test_method(self, cancelable: Cancelable = None):
+                return cancelable.context.name
 
         obj = TestClass()
         name = await obj.test_method()
@@ -303,9 +303,9 @@ class TestCancellableMethod:
         """Test method decorator with custom name."""
 
         class TestClass:
-            @cancellable_method(name="custom_method_name")
-            async def method(self, cancellable: Cancellable = None):
-                return cancellable.context.name
+            @cancelable_method(name="custom_method_name")
+            async def method(self, cancelable: Cancelable = None):
+                return cancelable.context.name
 
         obj = TestClass()
         name = await obj.method()
@@ -317,20 +317,20 @@ class TestCancellableMethod:
         """Test method decorator with inheritance."""
 
         class BaseProcessor:
-            @cancellable_method(timeout=1.0)
-            async def process(self, data: str, cancellable: Cancellable = None):
-                await cancellable.report_progress("Base processing")
+            @cancelable_method(timeout=1.0)
+            async def process(self, data: str, cancelable: Cancelable = None):
+                await cancelable.report_progress("Base processing")
                 return data.upper()
 
         class DerivedProcessor(BaseProcessor):
-            @cancellable_method(timeout=2.0)
-            async def process(self, data: str, cancellable: Cancellable = None):
-                await cancellable.report_progress("Derived processing")
+            @cancelable_method(timeout=2.0)
+            async def process(self, data: str, cancelable: Cancelable = None):
+                await cancelable.report_progress("Derived processing")
                 base_result = await super().process(data)
                 return f"[{base_result}]"
 
         processor = DerivedProcessor()
         result = await processor.process("test")
 
-        # Note: super() call creates new cancellable context
+        # Note: super() call creates new cancelable context
         assert result == "[TEST]"

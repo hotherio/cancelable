@@ -7,30 +7,30 @@ from contextlib import asynccontextmanager
 
 import httpx
 
-from hother.cancelable.core.cancellable import Cancellable
-from hother.cancelable.core.token import CancellationToken
+from hother.cancelable.core.cancelable import Cancelable
+from hother.cancelable.core.token import CancelationToken
 from hother.cancelable.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
 
-class CancellableHTTPClient:
+class CancelableHTTPClient:
     """
     HTTPX async client wrapper with cancellation support.
     """
 
     def __init__(
         self,
-        cancellable: Cancellable | None = None,
-        token: CancellationToken | None = None,
+        cancellable: Cancelable | None = None,
+        token: CancelationToken | None = None,
         **httpx_kwargs,
     ):
         """
         Initialize cancellable HTTP client.
 
         Args:
-            cancellable: Cancellable instance to use
-            token: Cancellation token (alternative to cancellable)
+            cancellable: Cancelable instance to use
+            token: Cancelation token (alternative to cancellable)
             **httpx_kwargs: Arguments passed to httpx.AsyncClient
         """
         self.cancellable = cancellable
@@ -38,7 +38,7 @@ class CancellableHTTPClient:
         self.client = httpx.AsyncClient(**httpx_kwargs)
         self._closed = False
 
-    async def __aenter__(self) -> "CancellableHTTPClient":
+    async def __aenter__(self) -> "CancelableHTTPClient":
         """Enter context manager."""
         await self.client.__aenter__()
         return self
@@ -58,7 +58,7 @@ class CancellableHTTPClient:
         method: str,
         url: str,
         *,
-        cancellable: Cancellable | None = None,
+        cancellable: Cancelable | None = None,
         **kwargs,
     ) -> httpx.Response:
         """
@@ -118,7 +118,7 @@ class CancellableHTTPClient:
         method: str,
         url: str,
         *,
-        cancellable: Cancellable | None = None,
+        cancellable: Cancelable | None = None,
         chunk_size: int | None = None,
         **kwargs,
     ) -> AsyncIterator[httpx.Response]:
@@ -172,7 +172,7 @@ class CancellableHTTPClient:
     async def _wrap_stream(
         self,
         stream_factory,
-        cancellable: Cancellable,
+        cancellable: Cancelable,
         chunk_size: int | None,
     ):
         """Wrap a stream method with cancellation checking."""
@@ -198,7 +198,7 @@ class CancellableHTTPClient:
 async def download_file(
     url: str,
     output_path: str,
-    cancellable: Cancellable,
+    cancellable: Cancelable,
     chunk_size: int = 8192,
     resume: bool = True,
 ) -> int:
@@ -208,7 +208,7 @@ async def download_file(
     Args:
         url: URL to download from
         output_path: Path to save file
-        cancellable: Cancellable instance
+        cancellable: Cancelable instance
         chunk_size: Size of chunks to download
         resume: Whether to resume partial downloads
 
@@ -216,7 +216,7 @@ async def download_file(
         Total bytes downloaded
 
     Example:
-        async with Cancellable.with_timeout(300) as cancel:
+        async with Cancelable.with_timeout(300) as cancel:
             bytes_downloaded = await download_file(
                 "https://example.com/large.zip",
                 "/tmp/large.zip",
@@ -237,7 +237,7 @@ async def download_file(
     if start_byte > 0:
         headers["Range"] = f"bytes={start_byte}-"
 
-    async with CancellableHTTPClient(cancellable) as client:
+    async with CancelableHTTPClient(cancellable) as client:
         async with client.stream("GET", url, headers=headers) as response:
             # Get total size
             content_length = response.headers.get("content-length")

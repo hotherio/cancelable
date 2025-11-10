@@ -6,16 +6,16 @@ from datetime import timedelta
 
 import anyio
 
-from hother.cancelable.core.models import CancellationReason
-from hother.cancelable.sources.base import CancellationSource
+from hother.cancelable.core.models import CancelationReason
+from hother.cancelable.sources.base import CancelationSource
 from hother.cancelable.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
 
-class TimeoutSource(CancellationSource):
+class TimeoutSource(CancelationSource):
     """
-    Cancellation source that triggers after a specified timeout.
+    Cancelation source that triggers after a specified timeout.
     """
 
     def __init__(self, timeout: float | timedelta, name: str | None = None):
@@ -26,7 +26,7 @@ class TimeoutSource(CancellationSource):
             timeout: Timeout duration in seconds or as timedelta
             name: Optional name for the source
         """
-        super().__init__(CancellationReason.TIMEOUT, name)
+        super().__init__(CancelationReason.TIMEOUT, name)
 
         if isinstance(timeout, timedelta):
             timeout = timeout.total_seconds()

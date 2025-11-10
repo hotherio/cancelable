@@ -1,5 +1,5 @@
 """
-Tests for the main Cancellable class.
+Tests for the main Cancelable class.
 """
 
 from datetime import timedelta
@@ -7,70 +7,70 @@ from datetime import timedelta
 import anyio
 import pytest
 
-from hother.cancelable import Cancellable, CancellationReason, CancellationToken, OperationStatus, current_operation
+from hother.cancelable import Cancelable, CancelationReason, CancelationToken, OperationStatus, current_operation
 from tests.conftest import assert_cancelled_within
 
 
-class TestCancellableBasics:
-    """Test basic Cancellable functionality."""
+class TestCancelableBasics:
+    """Test basic Cancelable functionality."""
 
     @pytest.mark.anyio
     async def test_context_manager(self):
         """Test basic context manager usage."""
-        cancellable = Cancellable(name="test_operation")
+        cancelable = Cancelable(name="test_operation")
 
-        assert cancellable.context.status == OperationStatus.PENDING
+        assert cancelable.context.status == OperationStatus.PENDING
 
-        async with cancellable:
-            assert cancellable.context.status == OperationStatus.RUNNING
-            assert cancellable.is_running
+        async with cancelable:
+            assert cancelable.context.status == OperationStatus.RUNNING
+            assert cancelable.is_running
 
             # Current operation should be set
-            assert current_operation() is cancellable
+            assert current_operation() is cancelable
 
             await anyio.sleep(0.1)
 
-        assert cancellable.context.status == OperationStatus.COMPLETED
-        assert cancellable.is_completed
-        assert not cancellable.is_cancelled
-        assert cancellable.context.duration is not None
+        assert cancelable.context.status == OperationStatus.COMPLETED
+        assert cancelable.is_completed
+        assert not cancelable.is_cancelled
+        assert cancelable.context.duration is not None
 
     @pytest.mark.anyio
     async def test_operation_id(self):
         """Test operation ID handling."""
         # Auto-generated ID
-        cancel1 = Cancellable()
+        cancel1 = Cancelable()
         assert cancel1.operation_id is not None
         assert len(cancel1.operation_id) == 36  # UUID
 
         # Custom ID
-        cancel2 = Cancellable(operation_id="custom-123")
+        cancel2 = Cancelable(operation_id="custom-123")
         assert cancel2.operation_id == "custom-123"
 
     @pytest.mark.anyio
     async def test_metadata(self):
         """Test metadata handling."""
         metadata = {"key": "value", "number": 42}
-        cancellable = Cancellable(metadata=metadata)
+        cancelable = Cancelable(metadata=metadata)
 
-        assert cancellable.context.metadata == metadata
+        assert cancelable.context.metadata == metadata
 
         # Metadata is mutable
-        cancellable.context.metadata["new_key"] = "new_value"
-        assert cancellable.context.metadata["new_key"] == "new_value"
+        cancelable.context.metadata["new_key"] = "new_value"
+        assert cancelable.context.metadata["new_key"] == "new_value"
 
     @pytest.mark.anyio
     async def test_parent_child_relationship(self):
-        """Test parent-child cancellable relationships."""
-        parent = Cancellable(name="parent")
+        """Test parent-child cancelable relationships."""
+        parent = Cancelable(name="parent")
 
         # Track what happens
         parent_cancelled = False
 
         try:
             async with parent:
-                child1 = Cancellable(name="child1", parent=parent)
-                child2 = Cancellable(name="child2", parent=parent)
+                child1 = Cancelable(name="child1", parent=parent)
+                child2 = Cancelable(name="child2", parent=parent)
 
                 # Check relationships
                 assert child1.context.parent_id == parent.context.id
@@ -95,18 +95,18 @@ class TestCancellableBasics:
         assert parent_cancelled, "Parent should have been cancelled"
 
 
-class TestCancellableFactories:
-    """Test Cancellable factory methods."""
+class TestCancelableFactories:
+    """Test Cancelable factory methods."""
 
     @pytest.mark.anyio
     async def test_with_timeout(self):
-        """Test timeout-based cancellable."""
+        """Test timeout-based cancelable."""
         with pytest.raises(anyio.get_cancelled_exc_class()):
-            async with Cancellable.with_timeout(0.1) as cancel:
+            async with Cancelable.with_timeout(0.1) as cancel:
                 await anyio.sleep(1.0)  # Will timeout
 
         assert cancel.context.status == OperationStatus.CANCELLED
-        assert cancel.context.cancel_reason == CancellationReason.TIMEOUT
+        assert cancel.context.cancel_reason == CancelationReason.TIMEOUT
 
     @pytest.mark.anyio
     async def test_with_timeout_timedelta(self):
@@ -114,33 +114,33 @@ class TestCancellableFactories:
         timeout = timedelta(milliseconds=100)
 
         with pytest.raises(anyio.get_cancelled_exc_class()):
-            async with Cancellable.with_timeout(timeout) as cancel:
+            async with Cancelable.with_timeout(timeout) as cancel:
                 await anyio.sleep(1.0)
 
         assert cancel.is_cancelled
 
     @pytest.mark.anyio
     async def test_with_token(self):
-        """Test token-based cancellable."""
-        token = CancellationToken()
+        """Test token-based cancelable."""
+        token = CancelationToken()
 
         async def cancel_after_delay():
             await anyio.sleep(0.1)
-            await token.cancel(CancellationReason.MANUAL, "Test cancel")
+            await token.cancel(CancelationReason.MANUAL, "Test cancel")
 
         async with anyio.create_task_group() as tg:
             tg.start_soon(cancel_after_delay)
 
             async with assert_cancelled_within(0.2):
-                async with Cancellable.with_token(token) as cancel:
+                async with Cancelable.with_token(token) as cancel:
                     await anyio.sleep(1.0)
 
-        assert cancel.context.cancel_reason == CancellationReason.MANUAL
+        assert cancel.context.cancel_reason == CancelationReason.MANUAL
         assert cancel.context.cancel_message == "Test cancel"
 
     @pytest.mark.anyio
     async def test_with_condition(self):
-        """Test condition-based cancellable."""
+        """Test condition-based cancelable."""
         counter = 0
 
         def should_cancel():
@@ -150,15 +150,15 @@ class TestCancellableFactories:
 
         cancel = None  # Initialize variable
         with pytest.raises(anyio.get_cancelled_exc_class()):
-            cancel = Cancellable.with_condition(should_cancel, check_interval=0.1, condition_name="counter_check")
+            cancel = Cancelable.with_condition(should_cancel, check_interval=0.1, condition_name="counter_check")
             async with cancel:
                 await anyio.sleep(2.0)
 
-        assert cancel.context.cancel_reason == CancellationReason.CONDITION
+        assert cancel.context.cancel_reason == CancelationReason.CONDITION
 
     @pytest.mark.anyio
     async def test_with_condition_async(self):
-        """Test async condition-based cancellable."""
+        """Test async condition-based cancelable."""
         checks = 0
 
         async def async_condition():
@@ -167,8 +167,8 @@ class TestCancellableFactories:
             await anyio.sleep(0.01)  # Simulate async work
             return checks >= 3
 
-        # Create cancellable before the try block
-        cancel = Cancellable.with_condition(async_condition, check_interval=0.05, condition_name="test_async_condition")
+        # Create cancelable before the try block
+        cancel = Cancelable.with_condition(async_condition, check_interval=0.05, condition_name="test_async_condition")
 
         # Run the test
         start_time = anyio.current_time()
@@ -189,23 +189,23 @@ class TestCancellableFactories:
 
             # Verify final state
             assert cancel.context.status == OperationStatus.CANCELLED
-            assert cancel.context.cancel_reason == CancellationReason.CONDITION
+            assert cancel.context.cancel_reason == CancelationReason.CONDITION
 
 
-class TestCancellableComposition:
-    """Test combining multiple cancellables."""
+class TestCancelableComposition:
+    """Test combining multiple cancelables."""
 
     @pytest.mark.anyio
     async def test_combine_timeout_and_token(self):
         """Test combining timeout and token cancellation."""
-        token = CancellationToken()
+        token = CancelationToken()
 
-        combined = Cancellable.with_timeout(1.0).combine(Cancellable.with_token(token))
+        combined = Cancelable.with_timeout(1.0).combine(Cancelable.with_token(token))
 
         # Cancel via token (faster than timeout)
         async def cancel_soon():
             await anyio.sleep(0.1)
-            await token.cancel(CancellationReason.MANUAL)
+            await token.cancel(CancelationReason.MANUAL)
 
         async with anyio.create_task_group() as tg:
             tg.start_soon(cancel_soon)
@@ -214,18 +214,18 @@ class TestCancellableComposition:
                 async with combined:
                     await anyio.sleep(2.0)
 
-        # The combined cancellable might show PARENT because it's linked
+        # The combined cancelable might show PARENT because it's linked
         # But we should check the original token
         assert token.is_cancelled
-        assert token.reason == CancellationReason.MANUAL
+        assert token.reason == CancelationReason.MANUAL
 
     @pytest.mark.anyio
     async def test_combine_multiple_sources(self):
         """Test combining multiple cancellation sources."""
-        token1 = CancellationToken()
-        token2 = CancellationToken()
+        token1 = CancelationToken()
+        token2 = CancelationToken()
 
-        combined = Cancellable.with_timeout(5.0).combine(Cancellable.with_token(token1)).combine(Cancellable.with_token(token2))
+        combined = Cancelable.with_timeout(5.0).combine(Cancelable.with_token(token1)).combine(Cancelable.with_token(token2))
 
         # Cancel second token
         async def cancel_token2():
@@ -242,7 +242,7 @@ class TestCancellableComposition:
         assert combined.is_cancelled
 
 
-class TestCancellableCallbacks:
+class TestCancelableCallbacks:
     """Test callback functionality."""
 
     @pytest.mark.anyio
@@ -253,12 +253,12 @@ class TestCancellableCallbacks:
         def capture_progress(op_id, msg, meta):
             messages.append((op_id, msg, meta))
 
-        cancellable = Cancellable(name="progress_test")
-        cancellable.on_progress(capture_progress)
+        cancelable = Cancelable(name="progress_test")
+        cancelable.on_progress(capture_progress)
 
-        async with cancellable:
-            await cancellable.report_progress("Step 1")
-            await cancellable.report_progress("Step 2", {"value": 42})
+        async with cancelable:
+            await cancelable.report_progress("Step 1")
+            await cancelable.report_progress("Step 2", {"value": 42})
 
         assert len(messages) == 2
         assert messages[0][1] == "Step 1"
@@ -273,9 +273,9 @@ class TestCancellableCallbacks:
         async def record_event(ctx):
             events.append((ctx.status.value, anyio.current_time()))
 
-        cancellable = Cancellable(name="status_test").on_start(record_event).on_complete(record_event)
+        cancelable = Cancelable(name="status_test").on_start(record_event).on_complete(record_event)
 
-        async with cancellable:
+        async with cancelable:
             await anyio.sleep(0.1)
 
         assert len(events) == 2
@@ -295,16 +295,16 @@ class TestCancellableCallbacks:
                 "duration": ctx.duration_seconds,
             }
 
-        cancellable = Cancellable.with_timeout(0.1).on_cancel(on_cancel)
+        cancelable = Cancelable.with_timeout(0.1).on_cancel(on_cancel)
 
         try:
-            async with cancellable:
+            async with cancelable:
                 await anyio.sleep(1.0)
         except anyio.get_cancelled_exc_class():
             pass
 
         assert cancel_info is not None
-        assert cancel_info["reason"] == CancellationReason.TIMEOUT
+        assert cancel_info["reason"] == CancelationReason.TIMEOUT
         assert cancel_info["duration"] > 0
 
     @pytest.mark.anyio
@@ -320,10 +320,10 @@ class TestCancellableCallbacks:
                 "status": ctx.status.value,
             }
 
-        cancellable = Cancellable().on_error(on_error)
+        cancelable = Cancelable().on_error(on_error)
 
         with pytest.raises(ValueError):
-            async with cancellable:
+            async with cancelable:
                 raise ValueError("Test error")
 
         assert error_info is not None
@@ -332,7 +332,7 @@ class TestCancellableCallbacks:
         assert error_info["status"] == "failed"
 
 
-class TestCancellableStreams:
+class TestCancelableStreams:
     """Test stream processing functionality."""
 
     @pytest.mark.anyio
@@ -346,7 +346,7 @@ class TestCancellableStreams:
 
         collected = []
 
-        async with Cancellable() as cancel:
+        async with Cancelable() as cancel:
             async for item in cancel.stream(number_stream()):
                 collected.append(item)
 
@@ -366,7 +366,7 @@ class TestCancellableStreams:
         collected = []
 
         with pytest.raises(anyio.get_cancelled_exc_class()):
-            async with Cancellable.with_timeout(0.1) as cancel:
+            async with Cancelable.with_timeout(0.1) as cancel:
                 async for item in cancel.stream(infinite_stream()):
                     collected.append(item)
 
@@ -389,11 +389,11 @@ class TestCancellableStreams:
             if "Processed" in msg:
                 progress_reports.append(meta["count"])
 
-        cancellable = Cancellable().on_progress(capture_progress)
+        cancelable = Cancelable().on_progress(capture_progress)
 
-        async with cancellable:
+        async with cancelable:
             items = []
-            async for item in cancellable.stream(data_stream(), report_interval=10):
+            async for item in cancelable.stream(data_stream(), report_interval=10):
                 items.append(item)
 
         assert len(items) == 25
@@ -408,7 +408,7 @@ class TestCancellableStreams:
                 yield i
                 await anyio.sleep(0.01)
 
-        async with Cancellable.with_timeout(0.05) as cancel:
+        async with Cancelable.with_timeout(0.05) as cancel:
             try:
                 async for _ in cancel.stream(slow_stream(), buffer_partial=True):
                     pass
@@ -424,7 +424,7 @@ class TestCancellableStreams:
         assert len(partial["buffer"]) > 0
 
 
-class TestCancellableShielding:
+class TestCancelableShielding:
     """Test shielding functionality."""
 
     @pytest.mark.anyio
@@ -433,7 +433,7 @@ class TestCancellableShielding:
         completed_steps = []
         shield_completed = False
 
-        parent = Cancellable.with_timeout(0.1, name="parent")
+        parent = Cancelable.with_timeout(0.1, name="parent")
 
         try:
             async with parent:
@@ -462,14 +462,14 @@ class TestCancellableShielding:
     @pytest.mark.anyio
     async def test_shield_status(self):
         """Test shield status tracking."""
-        async with Cancellable() as parent:
+        async with Cancelable() as parent:
             async with parent.shield() as shielded:
                 assert shielded.context.status == OperationStatus.SHIELDED
                 assert shielded.context.metadata.get("shielded") is True
                 assert shielded.context.parent_id == parent.context.id
 
 
-class TestCancellableWrapping:
+class TestCancelableWrapping:
     """Test function wrapping functionality."""
 
     @pytest.mark.anyio
@@ -483,48 +483,48 @@ class TestCancellableWrapping:
             await anyio.sleep(0.1)
             return value * 2
 
-        cancellable = Cancellable.with_timeout(1.0)
-        wrapped = cancellable.wrap(async_function)
+        cancelable = Cancelable.with_timeout(1.0)
+        wrapped = cancelable.wrap(async_function)
 
         # Should complete normally
         result = await wrapped(21)
         assert result == 42
         assert call_count == 1
-        assert cancellable.is_completed
+        assert cancelable.is_completed
 
     @pytest.mark.anyio
-    async def test_wrap_with_cancellable_param(self):
-        """Test wrapping function that accepts cancellable."""
+    async def test_wrap_with_cancelable_param(self):
+        """Test wrapping function that accepts cancelable."""
 
-        async def func_with_cancellable(value: int, cancellable: Cancellable = None):
-            await cancellable.report_progress(f"Processing {value}")
+        async def func_with_cancelable(value: int, cancelable: Cancelable = None):
+            await cancelable.report_progress(f"Processing {value}")
             return value * 2
 
         messages = []
-        cancellable = Cancellable().on_progress(lambda op_id, msg, meta: messages.append(msg))
+        cancelable = Cancelable().on_progress(lambda op_id, msg, meta: messages.append(msg))
 
-        wrapped = cancellable.wrap(func_with_cancellable)
+        wrapped = cancelable.wrap(func_with_cancelable)
         result = await wrapped(21)
 
         assert result == 42
         assert "Processing 21" in messages
 
 
-class TestCancellableIntegration:
+class TestCancelableIntegration:
     """Test integration scenarios."""
 
     @pytest.mark.anyio
     async def test_nested_operations(self):
-        """Test nested cancellable operations."""
+        """Test nested cancelable operations."""
 
         async def inner_operation():
-            async with Cancellable(name="inner") as inner:
+            async with Cancelable(name="inner") as inner:
                 await inner.report_progress("Inner started")
                 await anyio.sleep(0.1)
                 return "inner_result"
 
         async def outer_operation():
-            async with Cancellable(name="outer") as outer:
+            async with Cancelable(name="outer") as outer:
                 await outer.report_progress("Outer started")
                 result = await inner_operation()
                 await outer.report_progress(f"Inner returned: {result}")
@@ -539,7 +539,7 @@ class TestCancellableIntegration:
         results = []
 
         async def operation(op_id: int, duration: float):
-            async with Cancellable(name=f"op_{op_id}"):
+            async with Cancelable(name=f"op_{op_id}"):
                 await anyio.sleep(duration)
                 results.append(op_id)
 
@@ -553,10 +553,10 @@ class TestCancellableIntegration:
 
     @pytest.mark.anyio
     async def test_exception_handling(self):
-        """Test exception handling in cancellable context."""
+        """Test exception handling in cancelable context."""
         # Regular exception
         with pytest.raises(ValueError):
-            async with Cancellable() as cancel:
+            async with Cancelable() as cancel:
                 raise ValueError("Test error")
 
         assert cancel.context.status == OperationStatus.FAILED
@@ -564,10 +564,10 @@ class TestCancellableIntegration:
 
         # Cancellation exception
         try:
-            async with Cancellable.with_timeout(0.01) as cancel:
+            async with Cancelable.with_timeout(0.01) as cancel:
                 await anyio.sleep(1.0)
         except anyio.get_cancelled_exc_class():
             pass
 
         assert cancel.context.status == OperationStatus.CANCELLED
-        assert cancel.context.cancel_reason == CancellationReason.TIMEOUT
+        assert cancel.context.cancel_reason == CancelationReason.TIMEOUT

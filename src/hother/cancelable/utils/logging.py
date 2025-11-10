@@ -6,8 +6,6 @@ import logging
 import sys
 from typing import Optional
 
-import structlog
-
 
 def get_logger(name: Optional[str] = None) -> logging.Logger:
     """
@@ -43,25 +41,6 @@ def configure_logging(
         json_output: Whether to output JSON format
         dev_mode: Whether to use dev-friendly console output
     """
-    # Configure structlog to enable **kwargs logging
-    structlog.configure(
-        processors=[
-            structlog.stdlib.filter_by_level,
-            structlog.stdlib.add_logger_name,
-            structlog.stdlib.add_log_level,
-            structlog.stdlib.PositionalArgumentsFormatter(),
-            structlog.processors.TimeStamper(fmt="%Y-%m-%d %H:%M:%S"),
-            structlog.processors.StackInfoRenderer(),
-            structlog.processors.format_exc_info,
-            structlog.processors.UnicodeDecoder(),
-            structlog.stdlib.ProcessorFormatter.wrap_for_formatter,
-        ],
-        context_class=dict,
-        logger_factory=structlog.stdlib.LoggerFactory(),
-        wrapper_class=structlog.stdlib.BoundLogger,
-        cache_logger_on_first_use=True,
-    )
-
     # Configure standard logging
     if json_output:
         # JSON format for production

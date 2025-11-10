@@ -6,7 +6,7 @@ from statistics import mean
 import anyio
 import pytest
 
-from hother.cancelable import Cancellable, CancellationToken
+from hother.cancelable import Cancelable, CancelationToken
 
 
 class TestPerformanceOverhead:
@@ -14,7 +14,7 @@ class TestPerformanceOverhead:
 
     @pytest.mark.anyio
     async def test_context_manager_overhead(self):
-        """Measure overhead of Cancellable context manager."""
+        """Measure overhead of Cancelable context manager."""
         iterations = 1000
 
         # Baseline: raw async function
@@ -22,9 +22,9 @@ class TestPerformanceOverhead:
             await anyio.sleep(0)
             return 42
 
-        # With cancellable
-        async def with_cancellable():
-            async with Cancellable():
+        # With cancelable
+        async def with_cancelable():
+            async with Cancelable():
                 await anyio.sleep(0)
                 return 42
 
@@ -35,22 +35,22 @@ class TestPerformanceOverhead:
             await baseline()
             baseline_times.append(time.perf_counter() - start)
 
-        # Measure with cancellable
-        cancellable_times = []
+        # Measure with cancelable
+        cancelable_times = []
         for _ in range(iterations):
             start = time.perf_counter()
-            await with_cancellable()
-            cancellable_times.append(time.perf_counter() - start)
+            await with_cancelable()
+            cancelable_times.append(time.perf_counter() - start)
 
         # Calculate statistics
         baseline_avg = mean(baseline_times) * 1000  # Convert to ms
-        cancellable_avg = mean(cancellable_times) * 1000
-        overhead = cancellable_avg - baseline_avg
+        cancelable_avg = mean(cancelable_times) * 1000
+        overhead = cancelable_avg - baseline_avg
         overhead_percent = (overhead / baseline_avg) * 100
 
         print("\nContext Manager Overhead:")
         print(f"  Baseline: {baseline_avg:.3f}ms")
-        print(f"  With Cancellable: {cancellable_avg:.3f}ms")
+        print(f"  With Cancelable: {cancelable_avg:.3f}ms")
         print(f"  Overhead: {overhead:.3f}ms ({overhead_percent:.1f}%)")
 
         # Check absolute overhead is reasonable (less than 0.5ms)
@@ -69,7 +69,7 @@ class TestPerformanceOverhead:
         """Test performance of cancellation checking."""
         iterations = 10000
 
-        token = CancellationToken()
+        token = CancelationToken()
 
         # Measure check performance when not cancelled
         start = time.perf_counter()
@@ -99,7 +99,7 @@ class TestPerformanceOverhead:
 
     @pytest.mark.anyio
     async def test_context_manager_overhead(self):
-        """Measure overhead of Cancellable context manager."""
+        """Measure overhead of Cancelable context manager."""
         iterations = 1000
 
         # Baseline: raw async function
@@ -107,9 +107,9 @@ class TestPerformanceOverhead:
             await anyio.sleep(0)
             return 42
 
-        # With cancellable
-        async def with_cancellable():
-            async with Cancellable():
+        # With cancelable
+        async def with_cancelable():
+            async with Cancelable():
                 await anyio.sleep(0)
                 return 42
 
@@ -120,22 +120,22 @@ class TestPerformanceOverhead:
             await baseline()
             baseline_times.append(time.perf_counter() - start)
 
-        # Measure with cancellable
-        cancellable_times = []
+        # Measure with cancelable
+        cancelable_times = []
         for _ in range(iterations):
             start = time.perf_counter()
-            await with_cancellable()
-            cancellable_times.append(time.perf_counter() - start)
+            await with_cancelable()
+            cancelable_times.append(time.perf_counter() - start)
 
         # Calculate statistics
         baseline_avg = mean(baseline_times) * 1000  # Convert to ms
-        cancellable_avg = mean(cancellable_times) * 1000
-        overhead = cancellable_avg - baseline_avg
+        cancelable_avg = mean(cancelable_times) * 1000
+        overhead = cancelable_avg - baseline_avg
         overhead_percent = (overhead / baseline_avg) * 100
 
         print("\nContext Manager Overhead:")
         print(f"  Baseline: {baseline_avg:.3f}ms")
-        print(f"  With Cancellable: {cancellable_avg:.3f}ms")
+        print(f"  With Cancelable: {cancelable_avg:.3f}ms")
         print(f"  Overhead: {overhead:.3f}ms ({overhead_percent:.1f}%)")
 
         # Check absolute overhead is reasonable (less than 0.5ms)
@@ -158,7 +158,7 @@ class TestPerformanceOverhead:
         no_callback_times = []
         for _ in range(iterations):
             start = time.perf_counter()
-            async with Cancellable() as cancel:
+            async with Cancelable() as cancel:
                 await cancel.report_progress("test")
             no_callback_times.append(time.perf_counter() - start)
 
@@ -175,7 +175,7 @@ class TestPerformanceOverhead:
         with_callback_times = []
         for _ in range(iterations):
             start = time.perf_counter()
-            async with Cancellable().on_progress(progress_callback).on_start(async_callback).on_complete(async_callback) as cancel:
+            async with Cancelable().on_progress(progress_callback).on_start(async_callback).on_complete(async_callback) as cancel:
                 await cancel.report_progress("test")
             with_callback_times.append(time.perf_counter() - start)
 

@@ -7,16 +7,16 @@ from collections.abc import Awaitable, Callable
 
 import anyio
 
-from hother.cancelable.core.models import CancellationReason
-from hother.cancelable.sources.base import CancellationSource
+from hother.cancelable.core.models import CancelationReason
+from hother.cancelable.sources.base import CancelationSource
 from hother.cancelable.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
 
-class ConditionSource(CancellationSource):
+class ConditionSource(CancelationSource):
     """
-    Cancellation source that monitors a condition function.
+    Cancelation source that monitors a condition function.
 
     Cancels when the condition function returns True.
     """
@@ -37,7 +37,7 @@ class ConditionSource(CancellationSource):
             condition_name: Name for the condition (for logging)
             name: Optional name for the source
         """
-        super().__init__(CancellationReason.CONDITION, name)
+        super().__init__(CancelationReason.CONDITION, name)
 
         self.condition = condition
         self.check_interval = check_interval

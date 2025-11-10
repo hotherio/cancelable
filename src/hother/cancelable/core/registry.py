@@ -7,11 +7,11 @@ from typing import TYPE_CHECKING, Any, Optional
 
 import anyio
 
-from hother.cancelable.core.models import CancellationReason, OperationContext, OperationStatus
+from hother.cancelable.core.models import CancelationReason, OperationContext, OperationStatus
 from hother.cancelable.utils.logging import get_logger
 
 if TYPE_CHECKING:
-    from .cancellable import Cancellable
+    from .cancelable import Cancelable
 
 logger = get_logger(__name__)
 
@@ -38,7 +38,7 @@ class OperationRegistry:
         if self._initialized:
             return
 
-        self._operations: dict[str, "Cancellable"] = {}
+        self._operations: dict[str, "Cancelable"] = {}
         self._history: list[OperationContext] = []
         self._history_limit = 1000
         self._lock: anyio.Lock = anyio.Lock()
@@ -58,12 +58,12 @@ class OperationRegistry:
             cls._instance = cls()
         return cls._instance
 
-    async def register(self, operation: "Cancellable") -> None:
+    async def register(self, operation: "Cancelable") -> None:
         """
         Register an operation with the registry.
 
         Args:
-            operation: Cancellable operation to register
+            operation: Cancelable operation to register
         """
         async with self._lock:
             self._operations[operation.context.id] = operation
@@ -98,7 +98,7 @@ class OperationRegistry:
                     duration=operation.context.duration_seconds,
                 )
 
-    async def get_operation(self, operation_id: str) -> Optional["Cancellable"]:
+    async def get_operation(self, operation_id: str) -> Optional["Cancelable"]:
         """
         Get operation by ID.
 
@@ -106,7 +106,7 @@ class OperationRegistry:
             operation_id: Operation ID to look up
 
         Returns:
-            Cancellable operation or None if not found
+            Cancelable operation or None if not found
         """
         async with self._lock:
             return self._operations.get(operation_id)
@@ -146,7 +146,7 @@ class OperationRegistry:
     async def cancel_operation(
         self,
         operation_id: str,
-        reason: CancellationReason = CancellationReason.MANUAL,
+        reason: CancelationReason = CancelationReason.MANUAL,
         message: str | None = None,
     ) -> bool:
         """
@@ -173,7 +173,7 @@ class OperationRegistry:
     async def cancel_all(
         self,
         status: OperationStatus | None = None,
-        reason: CancellationReason = CancellationReason.MANUAL,
+        reason: CancelationReason = CancelationReason.MANUAL,
         message: str | None = None,
     ) -> int:
         """

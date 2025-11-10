@@ -10,7 +10,7 @@ A comprehensive, production-ready async cancellation system for Python 3.12+ usi
 - **Operation Tracking**: Full lifecycle tracking with status and progress reporting
 - **Library Integrations**: Ready-to-use integrations for httpx, FastAPI, and SQLAlchemy
 - **Type Safe**: Full type hints and runtime validation with Pydantic
-- **Production Ready**: Comprehensive error handling, logging with structlog, and performance optimized
+- **Production Ready**: Comprehensive error handling, structured logging, and performance optimized
 
 ## Installation
 

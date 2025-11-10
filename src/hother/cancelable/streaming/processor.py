@@ -7,7 +7,7 @@ from typing import Any, Generic, TypeVar
 import anyio
 from pydantic import BaseModel, ConfigDict, Field
 
-from hother.cancelable import Cancellable
+from hother.cancelable import Cancelable
 
 # Generic type for stream events
 T = TypeVar("T")
@@ -46,7 +46,7 @@ async def process_stream(
     stream: AsyncGenerator[T, None],
     extract_metadata: Callable[[T, int, float], BaseModel | dict[str, Any]] | None = None,
     extract_text: Callable[[T], str] | None = None,
-    cancellable: Cancellable | None = None,
+    cancellable: Cancelable | None = None,
     metadata_class: type[BaseModel] | None = None,
 ) -> AsyncGenerator[ProcessedEvent[T, Any], None]:
     """

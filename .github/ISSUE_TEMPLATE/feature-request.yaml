@@ -1,0 +1,73 @@
+name: 🚀 Cancelable Feature Request
+description: "Suggest a new feature for Cancelable"
+labels: ["feature request"]
+
+body:
+  - type: markdown
+    attributes:
+      value: Thank you for contributing to Cancelable! ✊
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: |
+        Please give as much detail as possible about the feature you would like to suggest. 🙏
+
+        You might like to add:
+        * A demo of how code might look when using the feature
+        * Your use case(s) for the feature
+        * Why existing features don't cover your use case
+        * Reference to other projects that have a similar feature
+      placeholder: |
+        ## Proposed Feature
+
+        I'd like to suggest...
+
+        ## Example Usage
+
+        ```python
+        from hother.cancelable import Cancelable
+
+        async with Cancelable.with_custom_feature(...) as cancel:
+            # Example of how this would be used
+            ...
+        ```
+
+        ## Use Case
+
+        This would be useful for...
+
+        ## Alternatives Considered
+
+        I looked at... but it doesn't work because...
+    validations:
+      required: true
+
+  - type: dropdown
+    id: area
+    attributes:
+      label: Feature Area
+      description: Which area of Cancelable does this feature relate to?
+      options:
+        - Core Cancelation
+        - Cancellation Sources
+        - Streaming
+        - Threading/Bridges
+        - Progress Reporting
+        - Operation Registry
+        - Integrations (FastAPI, HTTPX, SQLAlchemy, etc.)
+        - Documentation
+        - Other
+
+  - type: textarea
+    id: references
+    attributes:
+      label: References
+      description: |
+        Please add any links or references that might help us understand your feature request better. 📚
+
+        This could include:
+        * Links to similar features in other libraries
+        * Related issues or discussions
+        * Blog posts or papers describing the pattern

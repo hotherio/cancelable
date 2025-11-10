@@ -5,7 +5,7 @@ Tests for shielding functionality.
 import anyio
 import pytest
 
-from hother.cancelable import Cancellable, OperationStatus
+from hother.cancelable import Cancelable, OperationStatus
 
 
 class TestShielding:
@@ -17,7 +17,7 @@ class TestShielding:
         completed_steps = []
 
         try:
-            async with Cancellable.with_timeout(0.1) as parent:
+            async with Cancelable.with_timeout(0.1) as parent:
                 completed_steps.append("parent_start")
 
                 # This will complete despite parent timeout
@@ -40,7 +40,7 @@ class TestShielding:
         execution_order = []
 
         try:
-            async with Cancellable.with_timeout(0.1) as parent:
+            async with Cancelable.with_timeout(0.1) as parent:
                 execution_order.append("parent_start")
 
                 async with parent.shield() as shield1:
@@ -64,7 +64,7 @@ class TestShielding:
     @pytest.mark.anyio
     async def test_shield_status(self):
         """Test shield status tracking."""
-        async with Cancellable() as parent:
+        async with Cancelable() as parent:
             async with parent.shield() as shielded:
                 assert shielded.context.status == OperationStatus.SHIELDED
                 assert shielded.context.metadata.get("shielded") is True
@@ -76,7 +76,7 @@ class TestShielding:
         completed = []
 
         try:
-            async with Cancellable(name="parent") as parent:
+            async with Cancelable(name="parent") as parent:
                 completed.append("parent_start")
 
                 async with parent.shield():
@@ -112,7 +112,7 @@ class TestShielding:
                 shield_completed = True
 
         try:
-            async with Cancellable.with_timeout(0.1) as parent:
+            async with Cancelable.with_timeout(0.1) as parent:
                 await shielded_operation(parent)
                 parent_after_shield = True
         except anyio.get_cancelled_exc_class():

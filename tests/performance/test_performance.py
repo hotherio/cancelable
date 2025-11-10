@@ -9,15 +9,15 @@ from statistics import mean
 import anyio
 import pytest
 
-from hother.cancelable import Cancellable, CancellationToken, OperationRegistry
+from hother.cancelable import Cancelable, CancelationToken, OperationRegistry
 
 
-class TestCancellablePerformance:
-    """Test performance characteristics of Cancellable."""
+class TestCancelablePerformance:
+    """Test performance characteristics of Cancelable."""
 
     @pytest.mark.anyio
     async def test_context_manager_overhead(self):
-        """Measure overhead of Cancellable context manager."""
+        """Measure overhead of Cancelable context manager."""
         iterations = 1000
 
         # Baseline: raw async function
@@ -25,9 +25,9 @@ class TestCancellablePerformance:
             await anyio.sleep(0)
             return 42
 
-        # With cancellable
-        async def with_cancellable():
-            async with Cancellable():
+        # With cancelable
+        async def with_cancelable():
+            async with Cancelable():
                 await anyio.sleep(0)
                 return 42
 
@@ -38,22 +38,22 @@ class TestCancellablePerformance:
             await baseline()
             baseline_times.append(time.perf_counter() - start)
 
-        # Measure with cancellable
-        cancellable_times = []
+        # Measure with cancelable
+        cancelable_times = []
         for _ in range(iterations):
             start = time.perf_counter()
-            await with_cancellable()
-            cancellable_times.append(time.perf_counter() - start)
+            await with_cancelable()
+            cancelable_times.append(time.perf_counter() - start)
 
         # Calculate statistics
         baseline_avg = mean(baseline_times) * 1000  # Convert to ms
-        cancellable_avg = mean(cancellable_times) * 1000
-        overhead = cancellable_avg - baseline_avg
+        cancelable_avg = mean(cancelable_times) * 1000
+        overhead = cancelable_avg - baseline_avg
         overhead_percent = (overhead / baseline_avg) * 100
 
         print("\nContext Manager Overhead:")
         print(f"  Baseline: {baseline_avg:.3f}ms")
-        print(f"  With Cancellable: {cancellable_avg:.3f}ms")
+        print(f"  With Cancelable: {cancelable_avg:.3f}ms")
         print(f"  Overhead: {overhead:.3f}ms ({overhead_percent:.1f}%)")
 
         # Check absolute overhead is reasonable (less than 0.5ms)
@@ -72,7 +72,7 @@ class TestCancellablePerformance:
         """Test performance of cancellation checking."""
         iterations = 10000
 
-        token = CancellationToken()
+        token = CancelationToken()
 
         # Measure check performance when not cancelled
         start = time.perf_counter()
@@ -116,37 +116,37 @@ class TestCancellablePerformance:
             baseline_sum += item
         baseline_time = time.perf_counter() - start
 
-        # With cancellable stream (no progress reporting)
+        # With cancelable stream (no progress reporting)
         start = time.perf_counter()
-        cancellable_sum = 0
-        async with Cancellable() as cancel:
+        cancelable_sum = 0
+        async with Cancelable() as cancel:
             async for item in cancel.stream(generate_items(), buffer_partial=False):
-                cancellable_sum += item
-        cancellable_time = time.perf_counter() - start
+                cancelable_sum += item
+        cancelable_time = time.perf_counter() - start
 
-        assert baseline_sum == cancellable_sum
+        assert baseline_sum == cancelable_sum
 
-        overhead = cancellable_time - baseline_time
+        overhead = cancelable_time - baseline_time
         overhead_percent = (overhead / baseline_time) * 100 if baseline_time > 0 else 0
 
         # Calculate throughput
         baseline_throughput = item_count / baseline_time if baseline_time > 0 else 0
-        cancellable_throughput = item_count / cancellable_time if cancellable_time > 0 else 0
+        cancelable_throughput = item_count / cancelable_time if cancelable_time > 0 else 0
 
         print(f"\nStream Processing Performance ({item_count} items):")
         print(f"  Baseline: {baseline_time * 1000:.2f}ms ({baseline_throughput:.0f} items/sec)")
-        print(f"  With Cancellable: {cancellable_time * 1000:.2f}ms ({cancellable_throughput:.0f} items/sec)")
+        print(f"  With Cancelable: {cancelable_time * 1000:.2f}ms ({cancelable_throughput:.0f} items/sec)")
         print(f"  Overhead: {overhead * 1000:.2f}ms ({overhead_percent:.1f}%)")
 
         # Check throughput instead of percentage overhead
         # Should be able to process at least 10,000 items per second even with cancellation
-        assert cancellable_throughput > 10000, f"Throughput too low: {cancellable_throughput:.0f} items/sec"
+        assert cancelable_throughput > 10000, f"Throughput too low: {cancelable_throughput:.0f} items/sec"
 
         # Also test with less frequent cancellation checks
         print("\n  Testing with report_interval=100 (less frequent checks):")
         start = time.perf_counter()
         optimized_sum = 0
-        async with Cancellable() as cancel:
+        async with Cancelable() as cancel:
             # Using report_interval as a proxy for check frequency
             async for item in cancel.stream(generate_items(), report_interval=100, buffer_partial=False):
                 optimized_sum += item
@@ -161,7 +161,7 @@ class TestCancellablePerformance:
         operation_counts = [10, 50, 100, 200]
 
         async def simple_operation(op_id: int):
-            async with Cancellable(name=f"op_{op_id}"):
+            async with Cancelable(name=f"op_{op_id}"):
                 await anyio.sleep(0.01)
                 return op_id
 
@@ -207,7 +207,7 @@ class TestCancellablePerformance:
 
         # Create operations
         for i in range(operation_count):
-            op = Cancellable(operation_id=f"op_{i}", name=f"operation_{i}", metadata={"index": i, "data": "x" * 100})
+            op = Cancelable(operation_id=f"op_{i}", name=f"operation_{i}", metadata={"index": i, "data": "x" * 100})
             operations.append(op)
 
         # Measure with operations
@@ -238,7 +238,7 @@ class TestCancellablePerformance:
         start = time.perf_counter()
 
         for i in range(operation_count):
-            op = Cancellable(name=f"op_{i}")
+            op = Cancelable(name=f"op_{i}")
             operations.append(op)
             await registry.register(op)
 
@@ -283,7 +283,7 @@ class TestCancellablePerformance:
         no_callback_times = []
         for _ in range(iterations):
             start = time.perf_counter()
-            async with Cancellable() as cancel:
+            async with Cancelable() as cancel:
                 await cancel.report_progress("test")
             no_callback_times.append(time.perf_counter() - start)
 
@@ -300,7 +300,7 @@ class TestCancellablePerformance:
         with_callback_times = []
         for _ in range(iterations):
             start = time.perf_counter()
-            async with Cancellable().on_progress(progress_callback).on_start(async_callback).on_complete(async_callback) as cancel:
+            async with Cancelable().on_progress(progress_callback).on_start(async_callback).on_complete(async_callback) as cancel:
                 await cancel.report_progress("test")
             with_callback_times.append(time.perf_counter() - start)
 
@@ -322,15 +322,15 @@ class TestCancellablePerformance:
 class TestScalability:
     """Test scalability of the cancellation system."""
 
-    async def test_nested_cancellables(self):
-        """Test deeply nested cancellable contexts."""
+    async def test_nested_cancelables(self):
+        """Test deeply nested cancelable contexts."""
         max_depth = 100
 
         async def nested_operation(depth: int):
             if depth <= 0:
                 return depth
 
-            async with Cancellable(name=f"level_{depth}"):
+            async with Cancelable(name=f"level_{depth}"):
                 return await nested_operation(depth - 1)
 
         start = time.perf_counter()
@@ -339,7 +339,7 @@ class TestScalability:
 
         assert result == 0
 
-        print(f"\nNested Cancellables ({max_depth} levels):")
+        print(f"\nNested Cancelables ({max_depth} levels):")
         print(f"  Total time: {duration * 1000:.2f}ms")
         print(f"  Per level: {duration / max_depth * 1000:.3f}ms")
 
@@ -364,7 +364,7 @@ class TestScalability:
 
             async def process_until_count():
                 nonlocal processed
-                async with Cancellable() as cancel:
+                async with Cancelable() as cancel:
                     async for item in cancel.stream(large_stream()):
                         processed += 1
                         if processed >= cancel_at:

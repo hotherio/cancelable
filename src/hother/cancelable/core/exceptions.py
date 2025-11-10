@@ -3,10 +3,10 @@ Custom exceptions for the async cancellation system.
 """
 
 
-from hother.cancelable.core.models import CancellationReason, OperationContext
+from hother.cancelable.core.models import CancelationReason, OperationContext
 
 
-class CancellationError(Exception):
+class CancelationError(Exception):
     """
     Base exception for cancellation-related errors.
 
@@ -18,7 +18,7 @@ class CancellationError(Exception):
 
     def __init__(
         self,
-        reason: CancellationReason,
+        reason: CancelationReason,
         message: str | None = None,
         context: OperationContext | None = None,
     ):
@@ -28,7 +28,7 @@ class CancellationError(Exception):
         super().__init__(self.message)
 
 
-class TimeoutCancellation(CancellationError):
+class TimeoutCancelation(CancelationError):
     """Operation cancelled due to timeout."""
 
     def __init__(
@@ -40,13 +40,13 @@ class TimeoutCancellation(CancellationError):
         self.timeout_seconds = timeout_seconds
         default_message = f"Operation timed out after {timeout_seconds}s"
         super().__init__(
-            CancellationReason.TIMEOUT,
+            CancelationReason.TIMEOUT,
             message or default_message,
             context,
         )
 
 
-class ManualCancellation(CancellationError):
+class ManualCancelation(CancelationError):
     """Operation cancelled manually via token or API."""
 
     def __init__(
@@ -55,13 +55,13 @@ class ManualCancellation(CancellationError):
         context: OperationContext | None = None,
     ):
         super().__init__(
-            CancellationReason.MANUAL,
+            CancelationReason.MANUAL,
             message or "Operation cancelled manually",
             context,
         )
 
 
-class SignalCancellation(CancellationError):
+class SignalCancelation(CancelationError):
     """Operation cancelled by system signal."""
 
     def __init__(
@@ -73,13 +73,13 @@ class SignalCancellation(CancellationError):
         self.signal_number = signal_number
         default_message = f"Operation cancelled by signal {signal_number}"
         super().__init__(
-            CancellationReason.SIGNAL,
+            CancelationReason.SIGNAL,
             message or default_message,
             context,
         )
 
 
-class ConditionCancellation(CancellationError):
+class ConditionCancelation(CancelationError):
     """Operation cancelled by condition check."""
 
     def __init__(
@@ -93,19 +93,19 @@ class ConditionCancellation(CancellationError):
         if condition_name:
             default_message = f"Operation cancelled: {condition_name} condition met"
         super().__init__(
-            CancellationReason.CONDITION,
+            CancelationReason.CONDITION,
             message or default_message,
             context,
         )
 
 
-class ParentCancellation(CancellationError):
+class ParentCancelation(CancelationError):
     """Operation cancelled because parent was cancelled."""
 
     def __init__(
         self,
         parent_id: str,
-        parent_reason: CancellationReason | None = None,
+        parent_reason: CancelationReason | None = None,
         message: str | None = None,
         context: OperationContext | None = None,
     ):
@@ -115,7 +115,7 @@ class ParentCancellation(CancellationError):
         if parent_reason:
             default_message = f"Operation cancelled: parent {parent_id} was cancelled ({parent_reason.value})"
         super().__init__(
-            CancellationReason.PARENT,
+            CancelationReason.PARENT,
             message or default_message,
             context,
         )

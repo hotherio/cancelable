@@ -7,7 +7,7 @@ from datetime import UTC, datetime, timedelta
 import anyio
 import pytest
 
-from hother.cancelable import Cancellable, CancellationReason, OperationRegistry, OperationStatus
+from hother.cancelable import Cancelable, CancelationReason, OperationRegistry, OperationStatus
 
 
 class TestOperationRegistry:
@@ -26,25 +26,25 @@ class TestOperationRegistry:
         """Test operation registration and unregistration."""
         registry = clean_registry
 
-        cancellable = Cancellable(name="test_op")
+        cancelable = Cancelable(name="test_op")
 
         # Register
-        await registry.register(cancellable)
+        await registry.register(cancelable)
 
         # Should be in registry
-        op = await registry.get_operation(cancellable.context.id)
-        assert op is cancellable
+        op = await registry.get_operation(cancelable.context.id)
+        assert op is cancelable
 
         # Unregister
-        await registry.unregister(cancellable.context.id)
+        await registry.unregister(cancelable.context.id)
 
         # Should not be in registry
-        op = await registry.get_operation(cancellable.context.id)
+        op = await registry.get_operation(cancelable.context.id)
         assert op is None
 
         # Should be in history
         history = await registry.get_history()
-        assert any(h.id == cancellable.context.id for h in history)
+        assert any(h.id == cancelable.context.id for h in history)
 
     @pytest.mark.anyio
     async def test_list_operations(self, clean_registry):
@@ -52,9 +52,9 @@ class TestOperationRegistry:
         registry = clean_registry
 
         # Create operations with different statuses
-        op1 = Cancellable(name="op1")
-        op2 = Cancellable(name="op2")
-        op3 = Cancellable(name="op3", parent=op1)
+        op1 = Cancelable(name="op1")
+        op2 = Cancelable(name="op2")
+        op3 = Cancelable(name="op3", parent=op1)
 
         await registry.register(op1)
         await registry.register(op2)
@@ -94,7 +94,7 @@ class TestOperationRegistry:
         async def long_operation():
             nonlocal token_cancelled
             try:
-                async with Cancellable(name="long_op", register_globally=True):
+                async with Cancelable(name="long_op", register_globally=True):
                     await anyio.sleep(1.0)
             except anyio.get_cancelled_exc_class():
                 token_cancelled = True
@@ -111,7 +111,7 @@ class TestOperationRegistry:
             assert len(ops) == 1
 
             # Cancel it
-            result = await registry.cancel_operation(ops[0].id, CancellationReason.MANUAL, "Test cancellation")
+            result = await registry.cancel_operation(ops[0].id, CancelationReason.MANUAL, "Test cancellation")
             assert result is True
 
         assert token_cancelled
@@ -123,10 +123,10 @@ class TestOperationRegistry:
 
         cancel_count = 0
 
-        async def cancellable_op(op_id: int):
+        async def cancelable_op(op_id: int):
             nonlocal cancel_count
             try:
-                async with Cancellable(name=f"op_{op_id}", register_globally=True) as cancel:
+                async with Cancelable(name=f"op_{op_id}", register_globally=True) as cancel:
                     cancel.context.status = OperationStatus.RUNNING
                     await anyio.sleep(1.0)
             except anyio.get_cancelled_exc_class():
@@ -135,7 +135,7 @@ class TestOperationRegistry:
         # Start multiple operations
         async with anyio.create_task_group() as tg:
             for i in range(3):
-                tg.start_soon(cancellable_op, i)
+                tg.start_soon(cancelable_op, i)
 
             # Wait for registration
             await anyio.sleep(0.1)
@@ -153,17 +153,17 @@ class TestOperationRegistry:
 
         # Create and complete operations
         for i in range(5):
-            cancellable = Cancellable(name=f"op_{i}")
-            await registry.register(cancellable)
+            cancelable = Cancelable(name=f"op_{i}")
+            await registry.register(cancelable)
 
             # Set different end states
             if i % 2 == 0:
-                cancellable.context.status = OperationStatus.COMPLETED
+                cancelable.context.status = OperationStatus.COMPLETED
             else:
-                cancellable.context.status = OperationStatus.FAILED
+                cancelable.context.status = OperationStatus.FAILED
 
-            cancellable.context.end_time = datetime.now(UTC)
-            await registry.unregister(cancellable.context.id)
+            cancelable.context.end_time = datetime.now(UTC)
+            await registry.unregister(cancelable.context.id)
 
         # Get full history
         history = await registry.get_history()
@@ -190,7 +190,7 @@ class TestOperationRegistry:
         # Create mix of operations
         ops = []
         for i in range(6):
-            op = Cancellable(name=f"op_{i}")
+            op = Cancelable(name=f"op_{i}")
             await registry.register(op)
             ops.append(op)
 
@@ -223,12 +223,12 @@ class TestOperationRegistry:
         # Create old and new operations
         now = datetime.now(UTC)
 
-        old_op = Cancellable(name="old_op")
+        old_op = Cancelable(name="old_op")
         await registry.register(old_op)
         old_op.context.status = OperationStatus.COMPLETED
         old_op.context.end_time = now - timedelta(hours=2)
 
-        new_op = Cancellable(name="new_op")
+        new_op = Cancelable(name="new_op")
         await registry.register(new_op)
         new_op.context.status = OperationStatus.COMPLETED
         new_op.context.end_time = now - timedelta(minutes=30)
@@ -252,7 +252,7 @@ class TestOperationRegistry:
         durations = [1.0, 2.0, 3.0]
 
         for i, duration in enumerate(durations):
-            op = Cancellable(name=f"op_{i}")
+            op = Cancelable(name=f"op_{i}")
             await registry.register(op)
 
             op.context.status = OperationStatus.COMPLETED
@@ -262,7 +262,7 @@ class TestOperationRegistry:
 
         # Add some active operations
         for i in range(2):
-            op = Cancellable(name=f"active_{i}")
+            op = Cancelable(name=f"active_{i}")
             op.context.status = OperationStatus.RUNNING
             await registry.register(op)
 
@@ -286,7 +286,7 @@ class TestOperationRegistry:
 
         # Create more operations than the limit
         for i in range(15):
-            op = Cancellable(name=f"op_{i}")
+            op = Cancelable(name=f"op_{i}")
             await registry.register(op)
             op.context.status = OperationStatus.COMPLETED
             await registry.unregister(op.context.id)

@@ -5,12 +5,12 @@ Tests for stream utilities.
 import anyio
 import pytest
 
-from hother.cancelable import Cancellable, CancellationToken
-from hother.cancelable.utils.streams import CancellableAsyncIterator, cancellable_stream, chunked_cancellable_stream
+from hother.cancelable import Cancelable, CancelationToken
+from hother.cancelable.utils.streams import CancelableAsyncIterator, cancelable_stream, chunked_cancelable_stream
 
 
-class TestCancellableStream:
-    """Test cancellable_stream function."""
+class TestCancelableStream:
+    """Test cancelable_stream function."""
 
     @pytest.mark.anyio
     async def test_basic_stream(self):
@@ -22,7 +22,7 @@ class TestCancellableStream:
                 await anyio.sleep(0.01)
 
         items = []
-        async for item in cancellable_stream(number_stream()):
+        async for item in cancelable_stream(number_stream()):
             items.append(item)
 
         assert items == [0, 1, 2, 3, 4]
@@ -40,7 +40,7 @@ class TestCancellableStream:
 
         items = []
         with pytest.raises(anyio.get_cancelled_exc_class()):
-            async for item in cancellable_stream(slow_stream(), timeout=0.15):
+            async for item in cancelable_stream(slow_stream(), timeout=0.15):
                 items.append(item)
 
         # Should get ~3 items before timeout
@@ -60,11 +60,11 @@ class TestCancellableStream:
             if "chunk" in msg:
                 progress_messages.append(msg)
 
-        cancellable = Cancellable().on_progress(capture_progress)
+        cancelable = Cancelable().on_progress(capture_progress)
         chunks = []
 
-        async with cancellable:
-            async for chunk in chunked_cancellable_stream(source(), chunk_size=5, cancellable=cancellable):
+        async with cancelable:
+            async for chunk in chunked_cancelable_stream(source(), chunk_size=5, cancelable=cancelable):
                 chunks.append(chunk)
 
         assert len(chunks) == 5
@@ -78,7 +78,7 @@ class TestCancellableStream:
     @pytest.mark.anyio
     async def test_stream_with_token(self):
         """Test stream with cancellation token."""
-        token = CancellationToken()
+        token = CancelationToken()
 
         async def infinite_stream():
             i = 0
@@ -97,7 +97,7 @@ class TestCancellableStream:
             tg.start_soon(cancel_after_delay)
 
             with pytest.raises(anyio.get_cancelled_exc_class()):
-                async for item in cancellable_stream(infinite_stream(), token=token):
+                async for item in cancelable_stream(infinite_stream(), token=token):
                     items.append(item)
 
         assert len(items) > 5  # Should process several items
@@ -116,7 +116,7 @@ class TestCancellableStream:
             progress_reports.append((count, item))
 
         items = []
-        async for item in cancellable_stream(number_stream(), report_interval=10, on_progress=on_progress):
+        async for item in cancelable_stream(number_stream(), report_interval=10, on_progress=on_progress):
             items.append(item)
 
         assert len(items) == 25
@@ -127,7 +127,7 @@ class TestCancellableStream:
     @pytest.mark.anyio
     async def test_stream_combined_cancellation(self):
         """Test stream with both timeout and token."""
-        token = CancellationToken()
+        token = CancelationToken()
 
         async def stream():
             for i in range(100):
@@ -145,7 +145,7 @@ class TestCancellableStream:
             tg.start_soon(cancel_soon)
 
             with pytest.raises(anyio.get_cancelled_exc_class()):
-                async for item in cancellable_stream(
+                async for item in cancelable_stream(
                     stream(),
                     timeout=1.0,  # Long timeout
                     token=token,
@@ -155,8 +155,8 @@ class TestCancellableStream:
         assert len(items) < 10  # Cancelled early by token
 
 
-class TestCancellableAsyncIterator:
-    """Test CancellableAsyncIterator class."""
+class TestCancelableAsyncIterator:
+    """Test CancelableAsyncIterator class."""
 
     @pytest.mark.anyio
     async def test_iterator_basic(self):
@@ -166,11 +166,11 @@ class TestCancellableAsyncIterator:
             for i in range(5):
                 yield i
 
-        cancellable = Cancellable()
-        iterator = CancellableAsyncIterator(source(), cancellable)
+        cancelable = Cancelable()
+        iterator = CancelableAsyncIterator(source(), cancelable)
 
         items = []
-        async with cancellable:
+        async with cancelable:
             async for item in iterator:
                 items.append(item)
 
@@ -187,13 +187,13 @@ class TestCancellableAsyncIterator:
                 i += 1
                 await anyio.sleep(0.01)
 
-        cancellable = Cancellable.with_timeout(0.1)
-        iterator = CancellableAsyncIterator(infinite(), cancellable)
+        cancelable = Cancelable.with_timeout(0.1)
+        iterator = CancelableAsyncIterator(infinite(), cancelable)
 
         items = []
 
         with pytest.raises(anyio.get_cancelled_exc_class()):
-            async with cancellable:
+            async with cancelable:
                 async for item in iterator:
                     items.append(item)
 
@@ -215,10 +215,10 @@ class TestCancellableAsyncIterator:
             if meta and "count" in meta:
                 progress_counts.append(meta["count"])
 
-        cancellable = Cancellable().on_progress(capture_progress)
-        iterator = CancellableAsyncIterator(source(), cancellable, report_interval=10)
+        cancelable = Cancelable().on_progress(capture_progress)
+        iterator = CancelableAsyncIterator(source(), cancelable, report_interval=10)
 
-        async with cancellable:
+        async with cancelable:
             items = [item async for item in iterator]
 
         assert len(items) == 25
@@ -233,18 +233,18 @@ class TestCancellableAsyncIterator:
                 yield f"item_{i}"
                 await anyio.sleep(0.01)
 
-        cancellable = Cancellable.with_timeout(0.15)
-        iterator = CancellableAsyncIterator(source(), cancellable, buffer_partial=True)
+        cancelable = Cancelable.with_timeout(0.15)
+        iterator = CancelableAsyncIterator(source(), cancelable, buffer_partial=True)
 
         try:
-            async with cancellable:
+            async with cancelable:
                 async for _ in iterator:
                     pass
         except anyio.get_cancelled_exc_class():
             pass
 
         # Check partial results
-        partial = cancellable.context.partial_result
+        partial = cancelable.context.partial_result
         assert partial is not None
         assert "count" in partial
         assert "buffer" in partial
@@ -268,10 +268,10 @@ class TestCancellableAsyncIterator:
                 nonlocal close_called
                 close_called = True
 
-        cancellable = Cancellable()
-        iterator = CancellableAsyncIterator(CloseableIterator(), cancellable)
+        cancelable = Cancelable()
+        iterator = CancelableAsyncIterator(CloseableIterator(), cancelable)
 
-        async with cancellable:
+        async with cancelable:
             async for _ in iterator:
                 pass
 
@@ -279,8 +279,8 @@ class TestCancellableAsyncIterator:
         assert close_called
 
 
-class TestChunkedCancellableStream:
-    """Test chunked_cancellable_stream function."""
+class TestChunkedCancelableStream:
+    """Test chunked_cancelable_stream function."""
 
     @pytest.mark.anyio
     async def test_chunked_basic(self):
@@ -290,11 +290,11 @@ class TestChunkedCancellableStream:
             for i in range(10):
                 yield i
 
-        cancellable = Cancellable()
+        cancelable = Cancelable()
         chunks = []
 
-        async with cancellable:
-            async for chunk in chunked_cancellable_stream(source(), chunk_size=3, cancellable=cancellable):
+        async with cancelable:
+            async for chunk in chunked_cancelable_stream(source(), chunk_size=3, cancelable=cancelable):
                 chunks.append(chunk)
 
         assert len(chunks) == 4  # 3, 3, 3, 1
@@ -311,11 +311,11 @@ class TestChunkedCancellableStream:
             for i in range(9):
                 yield i
 
-        cancellable = Cancellable()
+        cancelable = Cancelable()
         chunks = []
 
-        async with cancellable:
-            async for chunk in chunked_cancellable_stream(source(), chunk_size=3, cancellable=cancellable):
+        async with cancelable:
+            async for chunk in chunked_cancelable_stream(source(), chunk_size=3, cancelable=cancelable):
                 chunks.append(chunk)
 
         assert len(chunks) == 3
@@ -332,12 +332,12 @@ class TestChunkedCancellableStream:
                 i += 1
                 await anyio.sleep(0.01)
 
-        cancellable = Cancellable.with_timeout(0.15)
+        cancelable = Cancelable.with_timeout(0.15)
         chunks = []
 
         with pytest.raises(anyio.get_cancelled_exc_class()):
-            async with cancellable:
-                async for chunk in chunked_cancellable_stream(infinite_source(), chunk_size=5, cancellable=cancellable):
+            async with cancelable:
+                async for chunk in chunked_cancelable_stream(infinite_source(), chunk_size=5, cancelable=cancelable):
                     chunks.append(chunk)
 
         # Should have processed some chunks
@@ -358,11 +358,11 @@ class TestChunkedCancellableStream:
             if "chunk" in msg:
                 progress_messages.append(msg)
 
-        cancellable = Cancellable().on_progress(capture_progress)
+        cancelable = Cancelable().on_progress(capture_progress)
         chunks = []
 
-        async with cancellable:
-            async for chunk in chunked_cancellable_stream(source(), chunk_size=5, cancellable=cancellable):
+        async with cancelable:
+            async for chunk in chunked_cancelable_stream(source(), chunk_size=5, cancelable=cancelable):
                 chunks.append(chunk)
 
         assert len(chunks) == 4
@@ -378,11 +378,11 @@ class TestChunkedCancellableStream:
             return
             yield  # Make it a generator
 
-        cancellable = Cancellable()
+        cancelable = Cancelable()
         chunks = []
 
-        async with cancellable:
-            async for chunk in chunked_cancellable_stream(empty_source(), chunk_size=5, cancellable=cancellable):
+        async with cancelable:
+            async for chunk in chunked_cancelable_stream(empty_source(), chunk_size=5, cancelable=cancelable):
                 chunks.append(chunk)
 
         assert chunks == []

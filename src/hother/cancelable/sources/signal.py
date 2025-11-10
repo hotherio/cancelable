@@ -10,17 +10,17 @@ from collections.abc import Callable
 
 import anyio
 
-from hother.cancelable.core.models import CancellationReason
-from hother.cancelable.sources.base import CancellationSource
+from hother.cancelable.core.models import CancelationReason
+from hother.cancelable.sources.base import CancelationSource
 from hother.cancelable.utils.anyio_bridge import call_soon_threadsafe
 from hother.cancelable.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
 
-class SignalSource(CancellationSource):
+class SignalSource(CancelationSource):
     """
-    Cancellation source that monitors OS signals.
+    Cancelation source that monitors OS signals.
 
     Supports graceful shutdown via SIGINT, SIGTERM, etc.
     """
@@ -38,7 +38,7 @@ class SignalSource(CancellationSource):
             *signals: Signal numbers to monitor (e.g., signal.SIGINT)
             name: Optional name for the source
         """
-        super().__init__(CancellationReason.SIGNAL, name)
+        super().__init__(CancelationReason.SIGNAL, name)
 
         if not signals:
             # Default to SIGINT and SIGTERM

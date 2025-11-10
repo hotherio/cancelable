@@ -8,13 +8,13 @@ from typing import Any
 
 import anyio
 
-from hother.cancelable.core.models import CancellationReason
+from hother.cancelable.core.models import CancelationReason
 from hother.cancelable.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
 
-class CancellationSource(ABC):
+class CancelationSource(ABC):
     """
     Abstract base class for cancellation sources.
 
@@ -22,7 +22,7 @@ class CancellationSource(ABC):
     cancellation when that condition is met.
     """
 
-    def __init__(self, reason: CancellationReason, name: str | None = None):
+    def __init__(self, reason: CancelationReason, name: str | None = None):
         """
         Initialize cancellation source.
 
@@ -54,7 +54,7 @@ class CancellationSource(ABC):
             self._monitoring_task.cancel()
             self._monitoring_task = None
 
-    def set_cancel_callback(self, callback: Callable[[CancellationReason, str], Any]) -> None:
+    def set_cancel_callback(self, callback: Callable[[CancelationReason, str], Any]) -> None:
         """
         Set callback to be called when cancellation is triggered.
 
@@ -72,7 +72,7 @@ class CancellationSource(ABC):
         """
         if self.scope and not self.scope.cancel_called:
             logger.info(
-                "Cancellation triggered",
+                "Cancelation triggered",
                 extra={
                     "source": self.name,
                     "reason": self.reason.value,

@@ -4,7 +4,7 @@ Tests for async cancellation models.
 
 from datetime import timedelta
 
-from hother.cancelable import CancellationReason, OperationContext, OperationStatus
+from hother.cancelable import CancelationReason, OperationContext, OperationStatus
 
 
 class TestOperationStatus:
@@ -26,17 +26,17 @@ class TestOperationStatus:
         assert OperationStatus.PENDING != OperationStatus.RUNNING
 
 
-class TestCancellationReason:
-    """Test CancellationReason enum."""
+class TestCancelationReason:
+    """Test CancelationReason enum."""
 
     def test_reason_values(self):
         """Test reason enum values."""
-        assert CancellationReason.TIMEOUT.value == "timeout"
-        assert CancellationReason.MANUAL.value == "manual"
-        assert CancellationReason.SIGNAL.value == "signal"
-        assert CancellationReason.CONDITION.value == "condition"
-        assert CancellationReason.PARENT.value == "parent"
-        assert CancellationReason.ERROR.value == "error"
+        assert CancelationReason.TIMEOUT.value == "timeout"
+        assert CancelationReason.MANUAL.value == "manual"
+        assert CancelationReason.SIGNAL.value == "signal"
+        assert CancelationReason.CONDITION.value == "condition"
+        assert CancelationReason.PARENT.value == "parent"
+        assert CancelationReason.ERROR.value == "error"
 
 
 class TestOperationContext:
@@ -165,10 +165,10 @@ class TestOperationContext:
         # Valid context
         context = OperationContext(
             status=OperationStatus.RUNNING,
-            cancel_reason=CancellationReason.TIMEOUT,
+            cancel_reason=CancelationReason.TIMEOUT,
         )
         assert context.status == OperationStatus.RUNNING
-        assert context.cancel_reason == CancellationReason.TIMEOUT
+        assert context.cancel_reason == CancelationReason.TIMEOUT
 
         # Test serialization
         data = context.model_dump()

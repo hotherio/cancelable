@@ -6,7 +6,7 @@ import time
 import anyio
 import pytest
 
-from hother.cancelable import Cancellable, OperationRegistry
+from hother.cancelable import Cancelable, OperationRegistry
 
 
 class TestScalability:
@@ -18,7 +18,7 @@ class TestScalability:
         operation_counts = [10, 50, 100, 200]
 
         async def simple_operation(op_id: int):
-            async with Cancellable(name=f"op_{op_id}"):
+            async with Cancelable(name=f"op_{op_id}"):
                 await anyio.sleep(0.01)
                 return op_id
 
@@ -50,15 +50,15 @@ class TestScalability:
             assert ratio < ops_ratio * 1.5  # Allow 50% overhead for scaling
 
     @pytest.mark.anyio
-    async def test_nested_cancellables(self):
-        """Test deeply nested cancellable contexts."""
+    async def test_nested_cancelables(self):
+        """Test deeply nested cancelable contexts."""
         max_depth = 100
 
         async def nested_operation(depth: int):
             if depth <= 0:
                 return depth
 
-            async with Cancellable(name=f"level_{depth}"):
+            async with Cancelable(name=f"level_{depth}"):
                 return await nested_operation(depth - 1)
 
         start = time.perf_counter()
@@ -67,7 +67,7 @@ class TestScalability:
 
         assert result == 0
 
-        print(f"\nNested Cancellables ({max_depth} levels):")
+        print(f"\nNested Cancelables ({max_depth} levels):")
         print(f"  Total time: {duration * 1000:.2f}ms")
         print(f"  Per level: {duration / max_depth * 1000:.3f}ms")
 
@@ -93,7 +93,7 @@ class TestScalability:
 
             async def process_until_count():
                 nonlocal processed
-                async with Cancellable() as cancel:
+                async with Cancelable() as cancel:
                     async for item in cancel.stream(large_stream()):
                         processed += 1
                         if processed >= cancel_at:
@@ -129,7 +129,7 @@ class TestScalability:
         start = time.perf_counter()
 
         for i in range(operation_count):
-            op = Cancellable(name=f"op_{i}")
+            op = Cancelable(name=f"op_{i}")
             operations.append(op)
             await registry.register(op)
 
@@ -182,7 +182,7 @@ class TestScalability:
 
         # Create operations
         for i in range(operation_count):
-            op = Cancellable(operation_id=f"op_{i}", name=f"operation_{i}", metadata={"index": i, "data": "x" * 100})
+            op = Cancelable(operation_id=f"op_{i}", name=f"operation_{i}", metadata={"index": i, "data": "x" * 100})
             operations.append(op)
 
         # Measure with operations

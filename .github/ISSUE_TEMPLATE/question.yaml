@@ -1,0 +1,82 @@
+name: ❓ Cancelable Question
+description: "Ask a question about Cancelable"
+labels: ["question"]
+
+body:
+  - type: markdown
+    attributes:
+      value: Thank you for reaching out to the Cancelable community! We're here to help! 🤝
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Initial Checks
+      description: Help us help you faster!
+      options:
+        - label: I have checked the documentation at https://hotherio.github.io/cancelable/
+        - label: I have searched for similar questions in existing issues
+
+  - type: textarea
+    id: question
+    attributes:
+      label: Question
+      description: |
+        Please provide as much detail as possible about your question. 🙏
+
+        You might like to include:
+        * Code snippets showing what you've tried
+        * Error messages you're encountering (if any)
+        * Expected vs actual behavior
+        * Your use case and what you're trying to achieve
+      placeholder: |
+        ## What I'm trying to do
+
+        I'm trying to...
+
+        ## What I've tried
+
+        ```python
+        from hother.cancelable import Cancelable
+
+        async with Cancelable.with_timeout(30.0) as cancel:
+            # My code
+            ...
+        ```
+
+        ## My Question
+
+        How can I...?
+    validations:
+      required: true
+
+  - type: dropdown
+    id: topic
+    attributes:
+      label: Question Topic
+      description: What is your question about?
+      options:
+        - Getting Started / Basic Usage
+        - Timeouts and Cancellation Sources
+        - Streaming and Async Iteration
+        - Threading and Cross-context Cancellation
+        - Progress Reporting
+        - Operation Registry
+        - FastAPI Integration
+        - HTTPX Integration
+        - SQLAlchemy Integration
+        - Other Integration
+        - Performance / Best Practices
+        - Debugging / Troubleshooting
+        - Other
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: |
+        Please provide any additional context that might help us better understand your question, such as:
+        * Your Cancelable version (`pip show hother-cancelable`)
+        * Your Python version
+        * Async backend (asyncio, trio)
+        * Relevant configuration or environment details 📝
+      render: Text

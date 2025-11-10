@@ -1,0 +1,86 @@
+name: 🐛 Cancelable Bug
+description: Report a bug or unexpected behavior in Cancelable
+labels: ["bug", "need confirmation"]
+
+body:
+  - type: markdown
+    attributes:
+      value: Thank you for contributing to Cancelable! ✊
+
+  - type: checkboxes
+    id: checks
+    attributes:
+      label: Initial Checks
+      description: Just making sure you're using the latest version of Cancelable.
+      options:
+        - label: I confirm that I'm using the latest version of Cancelable
+          required: true
+        - label: I confirm that I searched for my issue in https://github.com/hotherio/cancelable/issues before opening this issue
+          required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Description
+      description: |
+        Please explain what you're seeing and what you would expect to see.
+
+        Please provide as much detail as possible to make understanding and solving your problem as quick as possible. 🙏
+    validations:
+      required: true
+
+  - type: textarea
+    id: example
+    attributes:
+      label: Example Code
+      description: >
+        If applicable, please add a self-contained,
+        [minimal, reproducible, example](https://stackoverflow.com/help/minimal-reproducible-example)
+        demonstrating the bug.
+
+      placeholder: |
+        from hother.cancelable import Cancelable
+
+        async with Cancelable.with_timeout(30.0) as cancel:
+            # Your code that demonstrates the bug
+            ...
+      render: Python
+
+  - type: textarea
+    id: version
+    attributes:
+      label: Python, Cancelable & Dependencies version
+      description: |
+        Which version of Python, Cancelable, anyio and other relevant dependencies are you using?
+
+        You can get this information by running:
+        ```bash
+        python --version
+        pip show hother-cancelable anyio
+        ```
+      render: Text
+    validations:
+      required: true
+
+  - type: dropdown
+    id: async-backend
+    attributes:
+      label: Async Backend
+      description: Which async backend are you using?
+      options:
+        - asyncio
+        - trio (via anyio)
+        - Other
+    validations:
+      required: true
+
+  - type: textarea
+    id: additional-context
+    attributes:
+      label: Additional Context
+      description: |
+        Please provide any additional context that might help us reproduce or understand the issue:
+        * Operating system (macOS, Linux, Windows)
+        * Integration being used (FastAPI, HTTPX, SQLAlchemy, etc.)
+        * Full error traceback (if applicable)
+      render: Text

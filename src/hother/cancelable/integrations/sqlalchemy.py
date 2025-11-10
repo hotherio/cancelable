@@ -13,7 +13,7 @@ from sqlalchemy.exc import SQLAlchemyError
 from sqlalchemy.ext.asyncio import AsyncEngine, AsyncSession
 from sqlalchemy.sql import Select
 
-from hother.cancelable.core.cancellable import Cancellable
+from hother.cancelable.core.cancelable import Cancelable
 from hother.cancelable.utils.logging import get_logger
 
 logger = get_logger(__name__)
@@ -21,7 +21,7 @@ logger = get_logger(__name__)
 T = TypeVar("T")
 
 
-class CancellableAsyncSession:
+class CancelableAsyncSession:
     """
     SQLAlchemy async session wrapper with cancellation support.
 
@@ -32,7 +32,7 @@ class CancellableAsyncSession:
     def __init__(
         self,
         session: AsyncSession,
-        cancellable: Cancellable | None = None,
+        cancellable: Cancelable | None = None,
         check_interval: int = 100,
     ):
         """
@@ -40,7 +40,7 @@ class CancellableAsyncSession:
 
         Args:
             session: SQLAlchemy async session
-            cancellable: Cancellable instance
+            cancellable: Cancelable instance
             check_interval: Check cancellation every N operations
         """
         self.session = session
@@ -81,13 +81,13 @@ class CancellableAsyncSession:
         """Stream results with cancellation support."""
         await self._check_cancellation()
         result = await self.session.stream(statement, params, execution_options=execution_options, **kw)  # type: ignore
-        return CancellableAsyncResult(result, self.cancellable)
+        return CancelableAsyncResult(result, self.cancellable)
 
     async def stream_scalars(self, statement, params=None, execution_options=None, **kw):
         """Stream scalars with cancellation support."""
         await self._check_cancellation()
         result = await self.session.stream_scalars(statement, params, execution_options=execution_options, **kw)  # type: ignore
-        return CancellableAsyncScalarResult(result, self.cancellable)
+        return CancelableAsyncScalarResult(result, self.cancellable)
 
     def add(self, instance, _warn=True):
         """Add instance to session."""
@@ -199,10 +199,10 @@ class CancellableAsyncSession:
         return instance in self.session
 
 
-class CancellableAsyncResult:
+class CancelableAsyncResult:
     """Wrapper for async result with cancellation support."""
 
-    def __init__(self, result, cancellable: Cancellable | None):
+    def __init__(self, result, cancellable: Cancelable | None):
         self.result = result
         self.cancellable = cancellable
         self._row_count = 0
@@ -244,10 +244,10 @@ class CancellableAsyncResult:
             yield partition
 
 
-class CancellableScalarResult:
+class CancelableScalarResult:
     """Wrapper for scalar result with cancellation support."""
 
-    def __init__(self, result, cancellable: Cancellable | None):
+    def __init__(self, result, cancellable: Cancelable | None):
         self.result = result
         self.cancellable = cancellable
 
@@ -276,10 +276,10 @@ class CancellableScalarResult:
         return await self.result.one_or_none()
 
 
-class CancellableAsyncScalarResult:
+class CancelableAsyncScalarResult:
     """Wrapper for async scalar result with cancellation support."""
 
-    def __init__(self, result, cancellable: Cancellable | None):
+    def __init__(self, result, cancellable: Cancelable | None):
         self.result = result
         self.cancellable = cancellable
         self._count = 0
@@ -298,20 +298,20 @@ class CancellableAsyncScalarResult:
 
 
 @asynccontextmanager
-async def cancellable_session(engine: AsyncEngine, cancellable: Cancellable, **session_kwargs) -> AsyncIterator[CancellableAsyncSession]:
+async def cancellable_session(engine: AsyncEngine, cancellable: Cancelable, **session_kwargs) -> AsyncIterator[CancelableAsyncSession]:
     """
     Create a cancellable database session with proper cleanup.
 
     Args:
         engine: SQLAlchemy async engine
-        cancellable: Cancellable instance
+        cancellable: Cancelable instance
         **session_kwargs: Additional session arguments
 
     Yields:
-        Cancellable session
+        Cancelable session
 
     Example:
-        async with Cancellable.with_timeout(30) as cancel:
+        async with Cancelable.with_timeout(30) as cancel:
             async with cancellable_session(engine, cancel) as session:
                 result = await session.execute(select(User))
                 users = result.scalars().all()
@@ -319,7 +319,7 @@ async def cancellable_session(engine: AsyncEngine, cancellable: Cancellable, **s
     # Create session
     session = AsyncSession(engine, expire_on_commit=False, **session_kwargs)
 
-    wrapped = CancellableAsyncSession(session, cancellable)
+    wrapped = CancelableAsyncSession(session, cancellable)
 
     try:
         yield wrapped
@@ -348,23 +348,23 @@ async def cancellable_session(engine: AsyncEngine, cancellable: Cancellable, **s
             logger.warning(f"Error closing session: {e}")
 
 
-class CancellableTransaction:
+class CancelableTransaction:
     """
-    Cancellable transaction context manager.
+    Cancelable transaction context manager.
 
     Automatically rolls back on cancellation.
     """
 
     def __init__(
         self,
-        session: CancellableAsyncSession,
+        session: CancelableAsyncSession,
         nested: bool = False,
     ):
         """
         Initialize cancellable transaction.
 
         Args:
-            session: Cancellable session
+            session: Cancelable session
             nested: Whether this is a nested transaction
         """
         self.session = session
@@ -398,7 +398,7 @@ class CancellableTransaction:
 
 
 async def execute_chunked(
-    session: CancellableAsyncSession,
+    session: CancelableAsyncSession,
     query: Select,
     chunk_size: int = 1000,
     process_chunk: Callable | None = None,
@@ -407,7 +407,7 @@ async def execute_chunked(
     Execute query in chunks with cancellation support.
 
     Args:
-        session: Cancellable session
+        session: Cancelable session
         query: SQLAlchemy select query
         chunk_size: Size of chunks to process
         process_chunk: Optional async function to process each chunk

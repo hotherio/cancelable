@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: 📖 Documentation
+    url: 'https://hotherio.github.io/cancelable/'
+    about: Check out our comprehensive documentation with examples and guides
+  - name: 💬 Discussions
+    url: 'https://github.com/hotherio/cancelable/discussions'
+    about: Ask questions, share ideas, and chat with the community in GitHub Discussions

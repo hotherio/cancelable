@@ -11,16 +11,16 @@ import anyio
 import httpx
 import pytest
 
-from hother.cancelable import Cancellable, CancellationToken
+from hother.cancelable import Cancelable, CancelationToken
 
 
 class TestHTTPXIntegration:
     """Test HTTPX integration."""
 
     @pytest.mark.anyio
-    async def test_cancellable_client_basic(self):
-        """Test basic CancellableHTTPClient usage."""
-        from hother.cancelable.integrations.httpx import CancellableHTTPClient
+    async def test_cancelable_client_basic(self):
+        """Test basic CancelableHTTPClient usage."""
+        from hother.cancelable.integrations.httpx import CancelableHTTPClient
 
         # Mock response
         mock_response = Mock(spec=httpx.Response)
@@ -32,11 +32,11 @@ class TestHTTPXIntegration:
         mock_client.request.return_value = mock_response
         mock_client.aclose = AsyncMock()
 
-        cancellable = Cancellable(name="http_test")
-        client = CancellableHTTPClient(cancellable=cancellable)
+        cancelable = Cancelable(name="http_test")
+        client = CancelableHTTPClient(cancelable=cancelable)
         client.client = mock_client  # Replace with mock
 
-        async with cancellable:
+        async with cancelable:
             async with client:
                 response = await client.get("https://example.com")
                 assert response.status_code == 200
@@ -45,9 +45,9 @@ class TestHTTPXIntegration:
         mock_client.aclose.assert_called_once()
 
     @pytest.mark.anyio
-    async def test_cancellable_client_cancellation(self):
+    async def test_cancelable_client_cancellation(self):
         """Test HTTP request cancellation."""
-        from hother.cancelable.integrations.httpx import CancellableHTTPClient
+        from hother.cancelable.integrations.httpx import CancelableHTTPClient
 
         # Mock client that delays
         mock_client = AsyncMock(spec=httpx.AsyncClient)
@@ -59,16 +59,16 @@ class TestHTTPXIntegration:
         mock_client.request = delayed_request
         mock_client.aclose = AsyncMock()
 
-        cancellable = Cancellable.with_timeout(0.1)
-        client = CancellableHTTPClient(cancellable=cancellable)
+        cancelable = Cancelable.with_timeout(0.1)
+        client = CancelableHTTPClient(cancelable=cancelable)
         client.client = mock_client
 
         with pytest.raises(anyio.get_cancelled_exc_class()):
-            async with cancellable:
+            async with cancelable:
                 async with client:
                     await client.get("https://example.com")
 
-        assert cancellable.is_cancelled
+        assert cancelable.is_cancelled
 
     @pytest.mark.anyio
     async def test_download_file(self):
@@ -97,14 +97,14 @@ class TestHTTPXIntegration:
         mock_client = Mock()
         mock_client.stream = Mock(return_value=MockResponse())  # Return the response directly
 
-        # Patch CancellableHTTPClient
+        # Patch CancelableHTTPClient
         from hother.cancelable.integrations import httpx as httpx_integration
 
-        original_client = httpx_integration.CancellableHTTPClient
+        original_client = httpx_integration.CancelableHTTPClient
 
-        class MockCancellableClient:
-            def __init__(self, cancellable):
-                self.cancellable = cancellable
+        class MockCancelableClient:
+            def __init__(self, cancelable):
+                self.cancelable = cancelable
 
             async def __aenter__(self):
                 return mock_client
@@ -112,16 +112,16 @@ class TestHTTPXIntegration:
             async def __aexit__(self, *args):
                 pass
 
-        httpx_integration.CancellableHTTPClient = MockCancellableClient
+        httpx_integration.CancelableHTTPClient = MockCancelableClient
 
         try:
             with tempfile.NamedTemporaryFile(delete=False) as tmp:
                 tmp_path = tmp.name
 
-            cancellable = Cancellable(name="download_test")
+            cancelable = Cancelable(name="download_test")
 
-            async with cancellable:
-                bytes_downloaded = await download_file("https://example.com/file", tmp_path, cancellable, chunk_size=100)
+            async with cancelable:
+                bytes_downloaded = await download_file("https://example.com/file", tmp_path, cancelable, chunk_size=100)
 
             assert bytes_downloaded == 1000
             assert os.path.exists(tmp_path)
@@ -134,7 +134,7 @@ class TestHTTPXIntegration:
 
         finally:
             # Restore original
-            httpx_integration.CancellableHTTPClient = original_client
+            httpx_integration.CancelableHTTPClient = original_client
 
             # Cleanup
             if os.path.exists(tmp_path):
@@ -143,7 +143,7 @@ class TestHTTPXIntegration:
     @pytest.mark.anyio
     async def test_streaming_response(self):
         """Test streaming response with cancellation."""
-        from hother.cancelable.integrations.httpx import CancellableHTTPClient
+        from hother.cancelable.integrations.httpx import CancelableHTTPClient
 
         # Mock streaming response
         class MockStreamResponse:
@@ -188,14 +188,14 @@ class TestHTTPXIntegration:
             async def aclose(self):
                 pass
 
-        cancellable = Cancellable.with_timeout(0.05)
-        client = CancellableHTTPClient(cancellable=cancellable)
+        cancelable = Cancelable.with_timeout(0.05)
+        client = CancelableHTTPClient(cancelable=cancelable)
         client.client = MockClient()
 
         chunks = []
 
         with pytest.raises(anyio.get_cancelled_exc_class()):
-            async with cancellable:
+            async with cancelable:
                 async with client:
                     async with client.stream("GET", "https://example.com") as response:
                         async for chunk in response.aiter_bytes():
@@ -228,10 +228,10 @@ class TestFastAPIIntegration:
 
         # Mock request with token
         mock_request = Mock()
-        mock_request.scope = {"cancellation_token": CancellationToken()}
+        mock_request.scope = {"cancellation_token": CancelationToken()}
 
         token = get_request_token(mock_request)
-        assert isinstance(token, CancellationToken)
+        assert isinstance(token, CancelationToken)
         assert token is mock_request.scope["cancellation_token"]
 
         # Mock request without token
@@ -239,13 +239,13 @@ class TestFastAPIIntegration:
         mock_request2.scope = {}
 
         token2 = get_request_token(mock_request2)
-        assert isinstance(token2, CancellationToken)
+        assert isinstance(token2, CancelationToken)
         assert mock_request2.scope["cancellation_token"] is token2
 
     @pytest.mark.anyio
-    async def test_cancellable_dependency(self):
-        """Test cancellable_dependency for FastAPI."""
-        from hother.cancelable.integrations.fastapi import cancellable_dependency
+    async def test_cancelable_dependency(self):
+        """Test cancelable_dependency for FastAPI."""
+        from hother.cancelable.integrations.fastapi import cancelable_dependency
 
         # Mock request
         mock_request = Mock()
@@ -254,13 +254,13 @@ class TestFastAPIIntegration:
         mock_request.client = Mock(host="127.0.0.1")
         mock_request.scope = {}
 
-        cancellable = await cancellable_dependency(mock_request, timeout=5.0)
+        cancelable = await cancelable_dependency(mock_request, timeout=5.0)
 
-        assert isinstance(cancellable, Cancellable)
-        assert cancellable.context.name == "GET /test"
-        assert cancellable.context.metadata["method"] == "GET"
-        assert cancellable.context.metadata["path"] == "/test"
-        assert cancellable.context.metadata["client"] == "127.0.0.1"
+        assert isinstance(cancelable, Cancelable)
+        assert cancelable.context.name == "GET /test"
+        assert cancelable.context.metadata["method"] == "GET"
+        assert cancelable.context.metadata["path"] == "/test"
+        assert cancelable.context.metadata["client"] == "127.0.0.1"
 
     def test_with_cancellation_decorator(self):
         """Test with_cancellation decorator."""
@@ -274,9 +274,9 @@ class TestFastAPIIntegration:
         assert asyncio.iscoroutinefunction(test_endpoint)
 
     @pytest.mark.anyio
-    async def test_cancellable_websocket(self):
-        """Test CancellableWebSocket wrapper."""
-        from hother.cancelable.integrations.fastapi import CancellableWebSocket
+    async def test_cancelable_websocket(self):
+        """Test CancelableWebSocket wrapper."""
+        from hother.cancelable.integrations.fastapi import CancelableWebSocket
 
         # Mock WebSocket
         mock_ws = AsyncMock()
@@ -287,10 +287,10 @@ class TestFastAPIIntegration:
         mock_ws.receive_json = AsyncMock(return_value={"key": "value"})
         mock_ws.close = AsyncMock()
 
-        cancellable = Cancellable(name="websocket_test")
-        ws = CancellableWebSocket(mock_ws, cancellable)
+        cancelable = Cancelable(name="websocket_test")
+        ws = CancelableWebSocket(mock_ws, cancelable)
 
-        async with cancellable:
+        async with cancelable:
             # Test methods
             await ws.accept()
             await ws.send_text("hello")
@@ -315,9 +315,9 @@ class TestSQLAlchemyIntegration:
     """Test SQLAlchemy integration."""
 
     @pytest.mark.anyio
-    async def test_cancellable_session_basic(self):
-        """Test basic CancellableAsyncSession usage."""
-        from hother.cancelable.integrations.sqlalchemy import CancellableAsyncSession
+    async def test_cancelable_session_basic(self):
+        """Test basic CancelableAsyncSession usage."""
+        from hother.cancelable.integrations.sqlalchemy import CancelableAsyncSession
 
         # Mock SQLAlchemy session
         mock_session = AsyncMock()
@@ -326,10 +326,10 @@ class TestSQLAlchemyIntegration:
         mock_session.commit = AsyncMock()
         mock_session.rollback = AsyncMock()
 
-        cancellable = Cancellable(name="db_test")
-        session = CancellableAsyncSession(mock_session, cancellable)
+        cancelable = Cancelable(name="db_test")
+        session = CancelableAsyncSession(mock_session, cancelable)
 
-        async with cancellable:
+        async with cancelable:
             # Test execute
             result = await session.execute("SELECT 1")
             assert result is not None
@@ -346,9 +346,9 @@ class TestSQLAlchemyIntegration:
         mock_session.commit.assert_called_once()
 
     @pytest.mark.anyio
-    async def test_cancellable_session_cancellation(self):
+    async def test_cancelable_session_cancellation(self):
         """Test session cancellation."""
-        from hother.cancelable.integrations.sqlalchemy import CancellableAsyncSession
+        from hother.cancelable.integrations.sqlalchemy import CancelableAsyncSession
 
         # Mock slow query
         async def slow_execute(*args, **kwargs):
@@ -358,19 +358,19 @@ class TestSQLAlchemyIntegration:
         mock_session = AsyncMock()
         mock_session.execute = slow_execute
 
-        cancellable = Cancellable.with_timeout(0.1)
-        session = CancellableAsyncSession(mock_session, cancellable)
+        cancelable = Cancelable.with_timeout(0.1)
+        session = CancelableAsyncSession(mock_session, cancelable)
 
         with pytest.raises(anyio.get_cancelled_exc_class()):
-            async with cancellable:
+            async with cancelable:
                 await session.execute("SELECT SLEEP(10)")
 
-        assert cancellable.is_cancelled
+        assert cancelable.is_cancelled
 
     @pytest.mark.anyio
     async def test_bulk_operations(self):
         """Test bulk operations with progress."""
-        from hother.cancelable.integrations.sqlalchemy import CancellableAsyncSession
+        from hother.cancelable.integrations.sqlalchemy import CancelableAsyncSession
 
         # Track progress reports
         progress_reports = []
@@ -382,13 +382,13 @@ class TestSQLAlchemyIntegration:
         mock_session = AsyncMock()
         mock_session.bulk_insert_mappings = AsyncMock()
 
-        cancellable = Cancellable().on_progress(capture_progress)
-        session = CancellableAsyncSession(mock_session, cancellable)
+        cancelable = Cancelable().on_progress(capture_progress)
+        session = CancelableAsyncSession(mock_session, cancelable)
 
         # Test bulk insert
         mappings = [{"id": i, "value": f"val_{i}"} for i in range(2500)]
 
-        async with cancellable:
+        async with cancelable:
             await session.bulk_insert_mappings(Mock(), mappings)
 
         # Should have progress reports
@@ -398,8 +398,8 @@ class TestSQLAlchemyIntegration:
 
     @pytest.mark.anyio
     async def test_transaction_context(self):
-        """Test CancellableTransaction context manager."""
-        from hother.cancelable.integrations.sqlalchemy import CancellableTransaction
+        """Test CancelableTransaction context manager."""
+        from hother.cancelable.integrations.sqlalchemy import CancelableTransaction
 
         # Mock session and transaction
         mock_transaction = AsyncMock()
@@ -410,11 +410,11 @@ class TestSQLAlchemyIntegration:
         mock_session.session = AsyncMock()
         mock_session.session.begin = AsyncMock(return_value=mock_transaction)
 
-        cancellable = Cancellable()
-        mock_session.cancellable = cancellable
+        cancelable = Cancelable()
+        mock_session.cancelable = cancelable
 
         # Test successful transaction
-        async with CancellableTransaction(mock_session):
+        async with CancelableTransaction(mock_session):
             pass
 
         mock_transaction.commit.assert_called_once()
@@ -425,7 +425,7 @@ class TestSQLAlchemyIntegration:
         mock_transaction.rollback.reset_mock()
 
         with pytest.raises(ValueError):
-            async with CancellableTransaction(mock_session):
+            async with CancelableTransaction(mock_session):
                 raise ValueError("Test error")
 
         mock_transaction.commit.assert_not_called()
@@ -460,7 +460,7 @@ class TestSQLAlchemyIntegration:
         # Mock session
         mock_session = AsyncMock()
         mock_session.execute = mock_execute
-        mock_session.cancellable = Cancellable()
+        mock_session.cancelable = Cancelable()
 
         # Process chunks
         processed_items = []
@@ -483,15 +483,15 @@ class TestEndToEndIntegration:
 
     async def test_http_with_db_operations(self):
         """Test combining HTTP and database operations."""
-        from hother.cancelable.integrations.httpx import CancellableHTTPClient
-        from hother.cancelable.integrations.sqlalchemy import CancellableAsyncSession
+        from hother.cancelable.integrations.httpx import CancelableHTTPClient
+        from hother.cancelable.integrations.sqlalchemy import CancelableAsyncSession
 
-        # Create shared cancellable
-        async with Cancellable.with_timeout(5.0, name="full_operation") as cancel:
+        # Create shared cancelable
+        async with Cancelable.with_timeout(5.0, name="full_operation") as cancel:
             cancel.on_progress(lambda op_id, msg, meta: print(f"Progress: {msg}"))
 
             # Mock HTTP client
-            http_client = CancellableHTTPClient(cancellable=cancel)
+            http_client = CancelableHTTPClient(cancelable=cancel)
             http_client.client = AsyncMock()
             http_client.client.request = AsyncMock(return_value=Mock(status_code=200, json=lambda: {"data": [1, 2, 3]}))
             http_client.client.aclose = AsyncMock()
@@ -501,7 +501,7 @@ class TestEndToEndIntegration:
             db_session.execute = AsyncMock()
             db_session.commit = AsyncMock()
 
-            cancellable_session = CancellableAsyncSession(db_session, cancel)
+            cancelable_session = CancelableAsyncSession(db_session, cancel)
 
             # Fetch data via HTTP
             async with http_client:
@@ -510,9 +510,9 @@ class TestEndToEndIntegration:
 
             # Store in database
             for item in data["data"]:
-                await cancellable_session.execute(f"INSERT INTO items VALUES ({item})")
+                await cancelable_session.execute(f"INSERT INTO items VALUES ({item})")
 
-            await cancellable_session.commit()
+            await cancelable_session.commit()
 
             # Report completion
             await cancel.report_progress("Operation completed successfully")
@@ -522,14 +522,14 @@ class TestEndToEndIntegration:
 
     async def test_cascading_cancellation(self):
         """Test cancellation propagating through integrations."""
-        token = CancellationToken()
+        token = CancelationToken()
 
         async def integrated_operation():
-            from hother.cancelable.integrations.httpx import CancellableHTTPClient
+            from hother.cancelable.integrations.httpx import CancelableHTTPClient
 
-            async with Cancellable.with_token(token, name="integrated") as cancel:
+            async with Cancelable.with_token(token, name="integrated") as cancel:
                 # Mock slow HTTP operation
-                client = CancellableHTTPClient(cancellable=cancel)
+                client = CancelableHTTPClient(cancelable=cancel)
                 client.client = AsyncMock()
 
                 async def slow_request(*args, **kwargs):

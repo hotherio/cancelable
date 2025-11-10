@@ -9,9 +9,9 @@ from typing import Any, TypeVar
 
 import anyio
 
-from hother.cancelable.core.cancellable import Cancellable
-from hother.cancelable.core.models import CancellationReason, OperationContext, OperationStatus
-from hother.cancelable.core.token import CancellationToken
+from hother.cancelable.core.cancelable import Cancelable
+from hother.cancelable.core.models import CancelationReason, OperationContext, OperationStatus
+from hother.cancelable.core.token import CancelationToken
 from hother.cancelable.utils.logging import get_logger
 
 logger = get_logger(__name__)
@@ -19,7 +19,7 @@ logger = get_logger(__name__)
 T = TypeVar("T")
 
 
-class MockCancellationToken(CancellationToken):
+class MockCancelationToken(CancelationToken):
     """
     Mock cancellation token for testing.
 
@@ -33,7 +33,7 @@ class MockCancellationToken(CancellationToken):
 
     async def cancel(
         self,
-        reason: CancellationReason = CancellationReason.MANUAL,
+        reason: CancelationReason = CancelationReason.MANUAL,
         message: str | None = None,
     ) -> bool:
         """Cancel and record in history."""
@@ -49,7 +49,7 @@ class MockCancellationToken(CancellationToken):
     async def schedule_cancel(
         self,
         delay: float,
-        reason: CancellationReason = CancellationReason.MANUAL,
+        reason: CancelationReason = CancelationReason.MANUAL,
         message: str | None = None,
     ) -> None:
         """
@@ -57,8 +57,8 @@ class MockCancellationToken(CancellationToken):
 
         Args:
             delay: Delay in seconds before cancellation
-            reason: Cancellation reason
-            message: Cancellation message
+            reason: Cancelation reason
+            message: Cancelation message
         """
 
         async def delayed_cancel():
@@ -101,12 +101,12 @@ class TestOperationRecorder:
                 }
             )
 
-    def attach_to_cancellable(self, cancellable: Cancellable) -> Cancellable:
+    def attach_to_cancellable(self, cancellable: Cancelable) -> Cancelable:
         """
         Attach recorder to a cancellable to track its events.
 
         Args:
-            cancellable: Cancellable to track
+            cancellable: Cancelable to track
 
         Returns:
             The cancellable (for chaining)
@@ -187,7 +187,7 @@ class TestOperationRecorder:
 async def create_slow_stream(
     items: list[T],
     delay: float = 0.1,
-    cancellable: Cancellable | None = None,
+    cancellable: Cancelable | None = None,
 ) -> AsyncIterator[T]:
     """
     Create a slow async stream for testing cancellation.
@@ -243,7 +243,7 @@ async def run_with_timeout_test(
 async def assert_cancellation_within(
     min_time: float,
     max_time: float,
-) -> AsyncIterator[MockCancellationToken]:
+) -> AsyncIterator[MockCancelationToken]:
     """
     Context manager that asserts cancellation occurs within a time range.
 
@@ -257,7 +257,7 @@ async def assert_cancellation_within(
     Raises:
         AssertionError: If cancellation timing is wrong
     """
-    token = MockCancellationToken()
+    token = MockCancelationToken()
     start_time = anyio.current_time()
 
     try:
@@ -266,14 +266,14 @@ async def assert_cancellation_within(
         if token.is_cancelled:
             duration = anyio.current_time() - start_time
             if duration < min_time:
-                raise AssertionError(f"Cancellation occurred too early: {duration:.2f}s < {min_time:.2f}s")
+                raise AssertionError(f"Cancelation occurred too early: {duration:.2f}s < {min_time:.2f}s")
             if duration > max_time:
-                raise AssertionError(f"Cancellation occurred too late: {duration:.2f}s > {max_time:.2f}s")
+                raise AssertionError(f"Cancelation occurred too late: {duration:.2f}s > {max_time:.2f}s")
         else:
             raise AssertionError("Expected cancellation but none occurred")
 
 
-class CancellationScenario:
+class CancelationScenario:
     """
     Test scenario builder for cancellation testing.
     """
@@ -283,16 +283,16 @@ class CancellationScenario:
         self.steps: list[dict[str, Any]] = []
         self.assertions: list[Callable] = []
 
-    def add_delay(self, duration: float) -> "CancellationScenario":
+    def add_delay(self, duration: float) -> "CancelationScenario":
         """Add a delay step."""
         self.steps.append({"type": "delay", "duration": duration})
         return self
 
     def add_cancellation(
         self,
-        reason: CancellationReason = CancellationReason.MANUAL,
+        reason: CancelationReason = CancelationReason.MANUAL,
         message: str | None = None,
-    ) -> "CancellationScenario":
+    ) -> "CancelationScenario":
         """Add a cancellation step."""
         self.steps.append(
             {
@@ -307,7 +307,7 @@ class CancellationScenario:
         self,
         expected_message: str,
         timeout: float = 1.0,
-    ) -> "CancellationScenario":
+    ) -> "CancelationScenario":
         """Add assertion for progress message."""
         self.assertions.append(
             {
@@ -321,7 +321,7 @@ class CancellationScenario:
     def add_status_check(
         self,
         expected_status: OperationStatus,
-    ) -> "CancellationScenario":
+    ) -> "CancelationScenario":
         """Add assertion for operation status."""
         self.assertions.append(
             {
@@ -349,10 +349,10 @@ class CancellationScenario:
             Operation recorder with results
         """
         recorder = TestOperationRecorder()
-        token = MockCancellationToken()
+        token = MockCancelationToken()
 
         # Create cancellable
-        cancellable = Cancellable.with_token(token, name=f"scenario_{self.name}")
+        cancellable = Cancelable.with_token(token, name=f"scenario_{self.name}")
         recorder.attach_to_cancellable(cancellable)
 
         # Schedule steps
@@ -390,7 +390,7 @@ class CancellationScenario:
 # Test fixtures
 async def sample_async_operation(
     duration: float = 1.0,
-    cancellable: Cancellable | None = None,
+    cancellable: Cancelable | None = None,
 ) -> str:
     """Sample async operation for testing."""
     if cancellable:

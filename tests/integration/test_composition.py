@@ -3,23 +3,23 @@
 import anyio
 import pytest
 
-from hother.cancelable import Cancellable, CancellationReason, CancellationToken
+from hother.cancelable import Cancelable, CancelationReason, CancelationToken
 
 
-class TestCancellableComposition:
+class TestCancelableComposition:
     """Test composing multiple cancellation sources."""
 
     @pytest.mark.anyio
     async def test_combine_timeout_and_token(self):
         """Test combining timeout and token cancellation."""
-        token = CancellationToken()
+        token = CancelationToken()
 
-        combined = Cancellable.with_timeout(1.0).combine(Cancellable.with_token(token))
+        combined = Cancelable.with_timeout(1.0).combine(Cancelable.with_token(token))
 
         # Cancel via token (faster than timeout)
         async def cancel_soon():
             await anyio.sleep(0.1)
-            await token.cancel(CancellationReason.MANUAL)
+            await token.cancel(CancelationReason.MANUAL)
 
         async with anyio.create_task_group() as tg:
             tg.start_soon(cancel_soon)
@@ -29,15 +29,15 @@ class TestCancellableComposition:
                     await anyio.sleep(2.0)
 
         # Should be cancelled by token, not timeout
-        assert combined._token.reason == CancellationReason.MANUAL
+        assert combined._token.reason == CancelationReason.MANUAL
 
     @pytest.mark.anyio
     async def test_combine_multiple_sources(self):
         """Test combining multiple cancellation sources."""
-        token1 = CancellationToken()
-        token2 = CancellationToken()
+        token1 = CancelationToken()
+        token2 = CancelationToken()
 
-        combined = Cancellable.with_timeout(5.0).combine(Cancellable.with_token(token1)).combine(Cancellable.with_token(token2))
+        combined = Cancelable.with_timeout(5.0).combine(Cancelable.with_token(token1)).combine(Cancelable.with_token(token2))
 
         # Cancel second token
         async def cancel_token2():
@@ -55,12 +55,12 @@ class TestCancellableComposition:
 
     @pytest.mark.anyio
     async def test_nested_composition(self):
-        """Test nested composition of cancellables."""
-        token = CancellationToken()
+        """Test nested composition of cancelables."""
+        token = CancelationToken()
 
         # Create nested composition
-        inner = Cancellable.with_timeout(5.0).combine(Cancellable.with_token(token))
-        outer = Cancellable.with_timeout(10.0).combine(inner)
+        inner = Cancelable.with_timeout(5.0).combine(Cancelable.with_token(token))
+        outer = Cancelable.with_timeout(10.0).combine(inner)
 
         # Cancel via token
         async def cancel_token():
@@ -84,7 +84,7 @@ class TestCancellableComposition:
             counter += 1
             return counter >= 10
 
-        combined = Cancellable.with_timeout(0.2).combine(Cancellable.with_condition(check_condition, check_interval=0.05))
+        combined = Cancelable.with_timeout(0.2).combine(Cancelable.with_condition(check_condition, check_interval=0.05))
 
         # Timeout should trigger first (10 checks * 0.05s = 0.5s > 0.2s timeout)
         with pytest.raises(anyio.get_cancelled_exc_class()):

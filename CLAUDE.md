@@ -83,7 +83,6 @@ uv run mike deploy --update-aliases 0.1 latest
 5. **Dependencies**:
    - anyio for async operations
    - pydantic for models
-   - structlog for logging
    - httpx, FastAPI, SQLAlchemy for integrations
 
 ## Common Issues & Solutions

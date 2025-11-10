@@ -3,7 +3,7 @@
 import anyio
 import pytest
 
-from hother.cancelable.core.models import CancellationReason
+from hother.cancelable.core.models import CancelationReason
 from hother.cancelable.sources.condition import ConditionSource, ResourceConditionSource
 
 
@@ -20,15 +20,15 @@ class TestConditionSource:
             check_count += 1
             return check_count >= 3
 
-        # Use the proper Cancellable API
-        from hother.cancelable import Cancellable
+        # Use the proper Cancelable API
+        from hother.cancelable import Cancelable
 
-        cancellable = Cancellable.with_condition(condition, check_interval=0.05, condition_name="test_condition")
+        cancelable = Cancelable.with_condition(condition, check_interval=0.05, condition_name="test_condition")
 
         # Should cancel after 3 checks
         start = anyio.current_time()
         with pytest.raises(anyio.get_cancelled_exc_class()):
-            async with cancellable:
+            async with cancelable:
                 await anyio.sleep(1.0)
 
         duration = anyio.current_time() - start
@@ -36,7 +36,7 @@ class TestConditionSource:
         assert check_count >= 3
 
         # Check that the cancellation reason is correct
-        assert cancellable.context.cancel_reason == CancellationReason.CONDITION
+        assert cancelable.context.cancel_reason == CancelationReason.CONDITION
 
     @pytest.mark.anyio
     async def test_async_condition(self):
@@ -49,16 +49,16 @@ class TestConditionSource:
             await anyio.sleep(0.01)  # Simulate async work
             return check_count >= 2
 
-        from hother.cancelable import Cancellable
+        from hother.cancelable import Cancelable
 
-        cancellable = Cancellable.with_condition(async_condition, check_interval=0.1)
+        cancelable = Cancelable.with_condition(async_condition, check_interval=0.1)
 
         with pytest.raises(anyio.get_cancelled_exc_class()):
-            async with cancellable:
+            async with cancelable:
                 await anyio.sleep(1.0)
 
         assert check_count >= 2
-        assert cancellable.context.cancel_reason == CancellationReason.CONDITION
+        assert cancelable.context.cancel_reason == CancelationReason.CONDITION
 
     @pytest.mark.anyio
     async def test_condition_error_handling(self):
@@ -72,17 +72,17 @@ class TestConditionSource:
                 raise ValueError("Condition error")
             return call_count >= 4
 
-        from hother.cancelable import Cancellable
+        from hother.cancelable import Cancelable
 
-        cancellable = Cancellable.with_condition(faulty_condition, check_interval=0.05)
+        cancelable = Cancelable.with_condition(faulty_condition, check_interval=0.05)
 
         # Should continue checking despite error
         with pytest.raises(anyio.get_cancelled_exc_class()):
-            async with cancellable:
+            async with cancelable:
                 await anyio.sleep(0.5)  # Wait long enough for 4+ checks
 
         assert call_count >= 4
-        assert cancellable.context.cancel_reason == CancellationReason.CONDITION
+        assert cancelable.context.cancel_reason == CancelationReason.CONDITION
 
     @pytest.mark.anyio
     async def test_condition_validation(self):

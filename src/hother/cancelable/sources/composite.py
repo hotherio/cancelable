@@ -5,23 +5,23 @@ Composite cancellation source for combining multiple sources.
 
 import anyio
 
-from hother.cancelable.core.models import CancellationReason
-from hother.cancelable.sources.base import CancellationSource
+from hother.cancelable.core.models import CancelationReason
+from hother.cancelable.sources.base import CancelationSource
 from hother.cancelable.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
 
-class CompositeSource(CancellationSource):
+class CompositeSource(CancelationSource):
     """
-    Cancellation source that combines multiple other sources.
+    Cancelation source that combines multiple other sources.
 
     Triggers when any of the component sources trigger.
     """
 
     def __init__(
         self,
-        sources: list[CancellationSource],
+        sources: list[CancelationSource],
         name: str | None = None,
     ):
         """
@@ -32,13 +32,13 @@ class CompositeSource(CancellationSource):
             name: Optional name for the source
         """
         # Use MANUAL as default reason (will be overridden by actual source)
-        super().__init__(CancellationReason.MANUAL, name or "composite")
+        super().__init__(CancelationReason.MANUAL, name or "composite")
 
         if not sources:
             raise ValueError("At least one source is required")
 
         self.sources = sources
-        self.triggered_source: CancellationSource | None = None
+        self.triggered_source: CancelationSource | None = None
 
     async def start_monitoring(self, scope: anyio.CancelScope) -> None:
         """
@@ -100,7 +100,7 @@ class CompositeSource(CancellationSource):
             triggered_source=str(self.triggered_source) if self.triggered_source else None,
         )
 
-    async def _monitor_source(self, source: CancellationSource) -> None:
+    async def _monitor_source(self, source: CancelationSource) -> None:
         """
         Monitor a single source and propagate its cancellation.
 
@@ -138,16 +138,16 @@ class AnyOfSource(CompositeSource):
     """Alias for CompositeSource - triggers when ANY source triggers."""
 
 
-class AllOfSource(CancellationSource):
+class AllOfSource(CancelationSource):
     """
-    Cancellation source that requires ALL component sources to trigger.
+    Cancelation source that requires ALL component sources to trigger.
 
     Only cancels when all component sources have triggered.
     """
 
     def __init__(
         self,
-        sources: list[CancellationSource],
+        sources: list[CancelationSource],
         name: str | None = None,
     ):
         """
@@ -157,13 +157,13 @@ class AllOfSource(CancellationSource):
             sources: List of cancellation sources that must all trigger
             name: Optional name for the source
         """
-        super().__init__(CancellationReason.MANUAL, name or "all_of")
+        super().__init__(CancelationReason.MANUAL, name or "all_of")
 
         if not sources:
             raise ValueError("At least one source is required")
 
         self.sources = sources
-        self.triggered_sources: set[CancellationSource] = set()
+        self.triggered_sources: set[CancelationSource] = set()
         self._lock = anyio.Lock()
 
     async def start_monitoring(self, scope: anyio.CancelScope) -> None:
@@ -203,7 +203,7 @@ class AllOfSource(CancellationSource):
                     exc_info=True,
                 )
 
-    async def _monitor_source(self, source: CancellationSource) -> None:
+    async def _monitor_source(self, source: CancelationSource) -> None:
         """Monitor a single source and check if all have triggered."""
         # Override the source's trigger method
         original_trigger = source.trigger_cancellation

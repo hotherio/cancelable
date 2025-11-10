@@ -4,7 +4,7 @@ Utility modules providing helper functions, decorators, bridges, and testing too
 
 ## Decorators
 
-The `@cancelable` decorator for easily making functions cancellable.
+The `@cancelable` decorator for easily making functions cancelable.
 
 ::: hother.cancelable.utils.decorators
     options:
@@ -46,7 +46,7 @@ Context propagation utilities.
 
 ## Stream Processing
 
-Utilities for cancellable async stream processing.
+Utilities for cancelable async stream processing.
 
 ::: hother.cancelable.utils.streams
     options:
@@ -76,7 +76,7 @@ Structured logging utilities for cancellation events.
 
 ## Testing
 
-Test utilities and fixtures for cancellable operations.
+Test utilities and fixtures for cancelable operations.
 
 ::: hother.cancelable.utils.testing
     options:

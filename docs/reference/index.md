@@ -8,26 +8,26 @@ The API reference is organized into the following sections:
 
 ### [Core Components](core.md)
 
-The fundamental building blocks for async cancellation:
+The fundamental building blocks for async cancelation:
 
 - **Cancelable** - Main context manager for cancellable operations
-- **CancellationToken** - Thread-safe token for manual cancellation
-- **LinkedCancellationToken** - Combine multiple cancellation tokens
+- **CancelationToken** - Thread-safe token for manual cancelation
+- **LinkedCancelationToken** - Combine multiple cancelation tokens
 - **OperationContext** - Track operation state and metadata
 - **OperationStatus** - Operation state enumeration
 - **OperationRegistry** - Global operation tracking
-- **Exceptions** - All cancellation-related exceptions
+- **Exceptions** - All cancelation-related exceptions
 
-### [Cancellation Sources](sources.md)
+### [Cancelation Sources](sources.md)
 
-Different ways to trigger cancellation:
+Different ways to trigger cancelation:
 
-- **CancellationSource** - Base class for all sources
-- **TimeoutSource** - Time-based cancellation
-- **SignalSource** - Unix signal-based cancellation (SIGTERM, SIGINT, etc.)
-- **ConditionSource** - Predicate-based cancellation
-- **TokenSource** - Token-based cancellation
-- **CompositeCancellationSource** - Combine multiple sources
+- **CancelationSource** - Base class for all sources
+- **TimeoutSource** - Time-based cancelation
+- **SignalSource** - Unix signal-based cancelation (SIGTERM, SIGINT, etc.)
+- **ConditionSource** - Predicate-based cancelation
+- **TokenSource** - Token-based cancelation
+- **CompositeCancelationSource** - Combine multiple sources
 
 ### [Integrations](integrations.md)
 
@@ -39,7 +39,7 @@ Framework and library integrations:
 
 Helper functions, decorators, bridges, and testing tools:
 
-- **Decorators** - `@cancelable` decorator for easy cancellation
+- **Decorators** - `@cancelable` decorator for easy cancelation
 - **Bridges** - AnyIO, threading, and context bridges
 - **Streams** - Cancellable async stream processing
 - **Streaming Simulator** - Testing and demonstration tools

@@ -1,14 +1,14 @@
-# Cancellation Sources
+# Cancelation Sources
 
-Cancellation sources provide different ways to trigger cancellation of async operations.
+Cancelation sources provide different ways to trigger cancelation of async operations.
 
 ## Base Source
 
-### CancellationSource
+### CancelationSource
 
-Abstract base class for all cancellation sources.
+Abstract base class for all cancelation sources.
 
-::: hother.cancelable.sources.base.CancellationSource
+::: hother.cancelable.sources.base.CancelationSource
     options:
       show_root_heading: true
       members_order: source
@@ -58,7 +58,7 @@ Specialized condition source for monitoring system resources (CPU, memory).
 
 ## Composite Sources
 
-Composite sources allow combining multiple cancellation sources with different logic:
+Composite sources allow combining multiple cancelation sources with different logic:
 
 ### OR vs AND Logic Comparison
 
@@ -100,7 +100,7 @@ and_source = AllOfSource([
 
 ### CompositeSource
 
-Combines multiple cancellation sources into a single source (any-of logic).
+Combines multiple cancelation sources into a single source (any-of logic).
 
 ::: hother.cancelable.sources.composite.CompositeSource
     options:

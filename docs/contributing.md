@@ -44,10 +44,10 @@ uv run pytest
 uv run pytest --cov=hother.cancelable
 
 # Run specific test file
-uv run pytest tests/unit/test_cancellable.py -v
+uv run pytest tests/unit/test_cancelable.py -v
 
 # Run specific test
-uv run pytest tests/unit/test_cancellable.py::test_name -v
+uv run pytest tests/unit/test_cancelable.py::test_name -v
 ```
 
 ### Linting and Formatting

@@ -1,10 +1,10 @@
 # Core Components
 
-The core components provide the fundamental building blocks for async cancellation in Python.
+The core components provide the fundamental building blocks for async cancelation in Python.
 
 ## Cancelable
 
-The main context manager for cancellable operations.
+The main context manager for cancelable operations.
 
 ::: hother.cancelable.core.cancelable.Cancelable
     options:
@@ -12,11 +12,11 @@ The main context manager for cancellable operations.
       members_order: source
       show_inheritance: true
 
-## Cancellation Tokens
+## Cancelation Tokens
 
 ### CancelationToken
 
-Thread-safe token for manual cancellation.
+Thread-safe token for manual cancelation.
 
 ::: hother.cancelable.core.token.CancelationToken
     options:
@@ -26,7 +26,7 @@ Thread-safe token for manual cancellation.
 
 ### LinkedCancelationToken
 
-Token that combines multiple cancellation tokens.
+Token that combines multiple cancelation tokens.
 
 ::: hother.cancelable.core.token.LinkedCancelationToken
     options:
@@ -38,7 +38,7 @@ Token that combines multiple cancellation tokens.
 
 ### OperationContext
 
-Tracks the state and metadata of a cancellable operation.
+Tracks the state and metadata of a cancelable operation.
 
 ::: hother.cancelable.core.models.OperationContext
     options:
@@ -58,7 +58,7 @@ Enumeration of possible operation states.
 
 ### CancelationReason
 
-Enumeration of cancellation reason categories.
+Enumeration of cancelation reason categories.
 
 ::: hother.cancelable.core.models.CancelationReason
     options:
@@ -70,7 +70,7 @@ Enumeration of cancellation reason categories.
 
 ### OperationRegistry
 
-Global registry for tracking active cancellable operations.
+Global registry for tracking active cancelable operations.
 
 ::: hother.cancelable.core.registry.OperationRegistry
     options:
@@ -80,7 +80,7 @@ Global registry for tracking active cancellable operations.
 
 ## Exceptions
 
-All exception classes used by the cancellation system.
+All exception classes used by the cancelation system.
 
 ::: hother.cancelable.core.exceptions
     options:

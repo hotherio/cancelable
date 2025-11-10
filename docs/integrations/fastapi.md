@@ -35,11 +35,11 @@ async def long_operation(cancel: Cancelable = Depends(cancelable_dependency)):
 from hother.cancelable.integrations.fastapi import cancelable_dependency
 
 # Create a custom dependency with timeout
-def get_cancellable_30s():
+def get_cancelable_30s():
     return cancelable_dependency(timeout=30.0)
 
 @app.get("/timeout-operation")
-async def timeout_operation(cancel: Cancelable = Depends(get_cancellable_30s)):
+async def timeout_operation(cancel: Cancelable = Depends(get_cancelable_30s)):
     async with cancel:
         # This operation will timeout after 30 seconds
         return await long_computation()

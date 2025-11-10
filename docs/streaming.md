@@ -102,16 +102,16 @@ async with Cancelable.with_timeout(60.0) as cancel:
 
 ## Chunked Processing
 
-### chunked_cancellable_stream()
+### chunked_cancelable_stream()
 
 Process streams in chunks with cancelation support:
 
 ```python
-from hother.cancelable.utils.streams import chunked_cancellable_stream
+from hother.cancelable.utils.streams import chunked_cancelable_stream
 
 async with Cancelable.with_timeout(300.0) as cancel:
     # Process in chunks of 100 items
-    async for chunk in chunked_cancellable_stream(
+    async for chunk in chunked_cancelable_stream(
         data_stream(),
         cancel,
         chunk_size=100

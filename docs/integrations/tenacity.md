@@ -394,7 +394,7 @@ from hother.cancelable import Cancelable, CancelationToken, OperationRegistry
 user_tokens: dict[str, CancelationToken] = {}
 
 async def process_user_data(user_id: str, items: list):
-    """Process data with retry, cancellable by user or signal."""
+    """Process data with retry, cancelable by user or signal."""
     token = CancelationToken()
     user_tokens[user_id] = token
 

@@ -2,8 +2,7 @@
 
 [![PyPI version](https://img.shields.io/pypi/v/hother-cancelable?color=brightgreen)](https://pypi.org/project/hother-cancelable/)
 [![Python Versions](https://img.shields.io/badge/python-3.12%20%7C%203.13%20%7C%203.14-blue)](https://pypi.org/project/hother-cancelable/)
-[![License](https://img.shields.io/github/license/hotherio/cancelable)](https://github.com/hotherio/cancelable/blob/main/LICENSE)
-[![CI](https://github.com/hotherio/cancelable/actions/workflows/pull_request.yaml/badge.svg)](https://github.com/hotherio/cancelable/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Tests](https://github.com/hotherio/cancelable/actions/workflows/test.yaml/badge.svg?branch=main)](https://github.com/hotherio/cancelable/actions/workflows/test.yaml)
 [![Coverage](https://codecov.io/gh/hotherio/cancelable/branch/main/graph/badge.svg)](https://codecov.io/gh/hotherio/cancelable)
 

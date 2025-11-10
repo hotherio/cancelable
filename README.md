@@ -8,6 +8,10 @@
 
 A comprehensive, production-ready async cancellation system for Python 3.12+ using anyio.
 
+<div align="center">
+  <a href="https://hotherio.github.io/cancelable/">📚 Documentation</a>
+</div>
+
 ## Table of Contents
 
 - [Features](#features)

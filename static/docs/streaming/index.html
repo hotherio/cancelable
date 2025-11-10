@@ -648,9 +648,9 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#chunked_cancellable_stream" class="md-nav__link">
+  <a href="#chunked_cancelable_stream" class="md-nav__link">
     <span class="md-ellipsis">
-      chunked_cancellable_stream()
+      chunked_cancelable_stream()
     </span>
   </a>
   
@@ -1492,9 +1492,9 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#chunked_cancellable_stream" class="md-nav__link">
+  <a href="#chunked_cancelable_stream" class="md-nav__link">
     <span class="md-ellipsis">
-      chunked_cancellable_stream()
+      chunked_cancelable_stream()
     </span>
   </a>
   
@@ -1601,13 +1601,13 @@
 - Graceful termination</p>
 <p><strong>Use case</strong>: When you need more control over stream iteration or prefer class-based APIs.</p>
 <h2 id="chunked-processing">Chunked Processing</h2>
-<h3 id="chunked_cancellable_stream">chunked_cancellable_stream()</h3>
+<h3 id="chunked_cancelable_stream">chunked_cancelable_stream()</h3>
 <p>Process streams in chunks with cancelation support:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hother.cancelable.utils.streams</span><span class="w"> </span><span class="kn">import</span> <span class="n">chunked_cancellable_stream</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">from</span><span class="w"> </span><span class="nn">hother.cancelable.utils.streams</span><span class="w"> </span><span class="kn">import</span> <span class="n">chunked_cancelable_stream</span>
 <a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
 <a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="k">async</span> <span class="k">with</span> <span class="n">Cancelable</span><span class="o">.</span><span class="n">with_timeout</span><span class="p">(</span><span class="mf">300.0</span><span class="p">)</span> <span class="k">as</span> <span class="n">cancel</span><span class="p">:</span>
 <a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>    <span class="c1"># Process in chunks of 100 items</span>
-<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="k">async</span> <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">chunked_cancellable_stream</span><span class="p">(</span>
+<a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>    <span class="k">async</span> <span class="k">for</span> <span class="n">chunk</span> <span class="ow">in</span> <span class="n">chunked_cancelable_stream</span><span class="p">(</span>
 <a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>        <span class="n">data_stream</span><span class="p">(),</span>
 <a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>        <span class="n">cancel</span><span class="p">,</span>
 <a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>        <span class="n">chunk_size</span><span class="o">=</span><span class="mi">100</span>

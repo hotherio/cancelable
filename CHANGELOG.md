@@ -2,6 +2,23 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.5.1] - 2025-11-11
+
+### ⚙️ Miscellaneous Tasks
+
+- Add test workflow for main branch and fix PR validation
+- Remove static/docs from main branch
+
+### 🐛 Bug Fixes
+
+- Restore missing examples directories and fix numbering
+
+### 📚 Documentation
+
+- Change PyPI badge color to bright green
+- Fix badges - remove PR CI, fix license badge, keep coverage badge
+- Add centered documentation link to README
+
 ## [0.5.0] - 2025-11-10
 
 ### ⚙️ Miscellaneous Tasks

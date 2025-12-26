@@ -107,7 +107,7 @@ publish-url = "https://hotherio.github.io/pypi-registry/"
 
 [tool.ruff]
 line-length = 128
-target-version = "py314"
+target-version = "py313"
 
 [tool.ruff.lint]
 extend-select = [

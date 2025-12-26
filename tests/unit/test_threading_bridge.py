@@ -8,6 +8,7 @@ import anyio
 import pytest
 
 from hother.cancelable import Cancelable, CancelationReason, OperationRegistry, OperationStatus, ThreadSafeRegistry
+from hother.cancelable.utils.anyio_bridge import AnyioBridge
 
 
 @pytest.fixture
@@ -27,7 +28,7 @@ class TestThreadSafeRegistry:
     """Test ThreadSafeRegistry functionality."""
 
     @pytest.mark.anyio
-    async def test_singleton(self):
+    async def test_singleton(self) -> None:
         """Test ThreadSafeRegistry singleton."""
         registry1 = ThreadSafeRegistry.get_instance()
         registry2 = ThreadSafeRegistry.get_instance()
@@ -35,7 +36,7 @@ class TestThreadSafeRegistry:
         assert registry1 is registry2
 
     @pytest.mark.anyio
-    async def test_singleton_thread_safety(self, reset_singleton):
+    async def test_singleton_thread_safety(self, reset_singleton: None) -> None:
         """Test that singleton works correctly under concurrent access."""
         # This test forces the race condition where multiple threads
         # pass the outer check but only one creates the instance
@@ -75,7 +76,7 @@ class TestThreadSafeRegistry:
             assert isinstance(instances[0], ThreadSafeRegistry)
 
     @pytest.mark.anyio
-    async def test_singleton_double_check_locking(self, reset_singleton):
+    async def test_singleton_double_check_locking(self, reset_singleton: None) -> None:
         """Test the inner check of double-check locking pattern."""
         # where a thread finds the instance already created inside the lock
 
@@ -134,7 +135,7 @@ class TestThreadSafeRegistry:
         assert isinstance(instances[0], ThreadSafeRegistry)
 
     @pytest.mark.anyio
-    async def test_get_operation_from_thread(self, clean_registry):
+    async def test_get_operation_from_thread(self, clean_registry: OperationRegistry) -> None:
         """Test getting operation from thread."""
         # Setup operation in async context
         cancelable = Cancelable(name="test_op")
@@ -159,7 +160,7 @@ class TestThreadSafeRegistry:
         assert result[0] is cancelable
 
     @pytest.mark.anyio
-    async def test_list_operations_from_thread(self, clean_registry):
+    async def test_list_operations_from_thread(self, clean_registry: OperationRegistry) -> None:
         """Test listing operations from thread."""
         # Create operations in async context
         ops = []
@@ -187,7 +188,7 @@ class TestThreadSafeRegistry:
         assert len(result[0]) == 5
 
     @pytest.mark.anyio
-    async def test_list_operations_with_filter(self, clean_registry):
+    async def test_list_operations_with_filter(self, clean_registry: OperationRegistry) -> None:
         """Test filtering operations from thread."""
         # Create operations with different statuses
         for i in range(5):
@@ -216,7 +217,7 @@ class TestThreadSafeRegistry:
         assert all("running" in op.name for op in result[0])
 
     @pytest.mark.anyio
-    async def test_get_statistics_from_thread(self, clean_registry):
+    async def test_get_statistics_from_thread(self, clean_registry: OperationRegistry) -> None:
         """Test getting statistics from thread."""
         # Create and complete some operations
         for i in range(3):
@@ -243,7 +244,7 @@ class TestThreadSafeRegistry:
         assert stats["history_size"] == 3
 
     @pytest.mark.anyio
-    async def test_get_history_from_thread(self, clean_registry):
+    async def test_get_history_from_thread(self, clean_registry: OperationRegistry) -> None:
         """Test getting history from thread."""
         # Create and complete operations
         for i in range(5):
@@ -266,7 +267,7 @@ class TestThreadSafeRegistry:
         assert len(result[0]) == 3
 
     @pytest.mark.anyio
-    async def test_concurrent_access_from_multiple_threads(self, clean_registry):
+    async def test_concurrent_access_from_multiple_threads(self, clean_registry: OperationRegistry) -> None:
         """Test concurrent access from multiple threads using ThreadSafeRegistry."""
         # Create operations
         for i in range(10):
@@ -301,9 +302,8 @@ class TestThreadSafeRegistry:
         assert len(results) == 500  # 10 threads * 50 iterations
 
     @pytest.mark.anyio
-    async def test_cancel_operation_from_thread(self, clean_registry):
+    async def test_cancel_operation_from_thread(self, clean_registry: OperationRegistry) -> None:
         """Test cancelling operation from thread."""
-        from hother.cancelable.utils.anyio_bridge import AnyioBridge
 
         # Start the bridge
         bridge = AnyioBridge.get_instance()
@@ -345,7 +345,7 @@ class TestThreadSafeRegistry:
             tg.cancel_scope.cancel()
 
     @pytest.mark.anyio
-    async def test_wrapper_vs_direct_consistency(self, clean_registry):
+    async def test_wrapper_vs_direct_consistency(self, clean_registry: OperationRegistry) -> None:
         """Test that ThreadSafeRegistry returns same data as direct sync methods."""
         # Create some operations
         for i in range(5):
@@ -373,9 +373,8 @@ class TestThreadSafeRegistry:
         thread.join(timeout=1.0)
 
     @pytest.mark.anyio
-    async def test_cancel_all_from_thread(self, clean_registry):
+    async def test_cancel_all_from_thread(self, clean_registry: OperationRegistry) -> None:
         """Test cancelling all operations from thread."""
-        from hother.cancelable.utils.anyio_bridge import AnyioBridge
 
         # Start the bridge
         bridge = AnyioBridge.get_instance()

@@ -1,12 +1,12 @@
 # Cancelable
 
 [![PyPI version](https://img.shields.io/pypi/v/hother-cancelable?color=brightgreen)](https://pypi.org/project/hother-cancelable/)
-[![Python Versions](https://img.shields.io/badge/python-3.12%20%7C%203.13%20%7C%203.14-blue)](https://pypi.org/project/hother-cancelable/)
+[![Python Versions](https://img.shields.io/badge/python-3.13%20%7C%203.14-blue)](https://pypi.org/project/hother-cancelable/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Tests](https://github.com/hotherio/cancelable/actions/workflows/test.yaml/badge.svg?branch=main)](https://github.com/hotherio/cancelable/actions/workflows/test.yaml)
 [![Coverage](https://codecov.io/gh/hotherio/cancelable/branch/main/graph/badge.svg)](https://codecov.io/gh/hotherio/cancelable)
 
-A comprehensive, production-ready async cancellation system for Python 3.12+ using anyio.
+A comprehensive, production-ready async cancellation system for Python 3.13+ using anyio.
 
 <div align="center">
   <a href="https://hotherio.github.io/cancelable/">📚 Documentation</a>

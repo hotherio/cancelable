@@ -999,3 +999,30 @@ class TestWithCancelable:
             result = await task()
             assert result == "completed"
             assert progress_messages == ["step 1", "step 2"]
+
+
+class TestCreateCancelableFromConfig:
+    """Test internal _create_cancelable_from_config function."""
+
+    def test_create_cancelable_from_config_existing_cancelable(self):
+        """Test _create_cancelable_from_config returns existing cancelable.
+
+        Covers line 157: Early return when existing_cancelable is provided.
+        """
+        from hother.cancelable.utils.decorators import (
+            _create_cancelable_from_config,
+            _CancelableConfig,
+        )
+
+        existing = Cancelable(name="existing")
+
+        config = _CancelableConfig(
+            existing_cancelable=existing,
+            no_context=False,  # Must be False to call _create_cancelable_from_config
+        )
+
+        result = _create_cancelable_from_config(config, "test_func", None)
+
+        # Should return the exact same instance (line 157)
+        assert result is existing
+        assert result.context.name == "existing"

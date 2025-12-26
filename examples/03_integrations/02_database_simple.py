@@ -97,7 +97,7 @@ async def main():
         await create_test_data(engine, 200)
 
         @cancelable(timeout=10.0, name="batch_processor")
-        async def process_batch(batch_size: int = 50, cancelable: Cancelable):
+        async def process_batch(batch_size: int = 50, *, cancelable: Cancelable):
             async with cancelable_session(engine, cancelable) as session:
                 # Process unprocessed records
                 processed_total = 0

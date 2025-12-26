@@ -15,8 +15,8 @@ Key concepts:
 from typing import Any
 
 import anyio
-from hother.cancelable import Cancelable, with_cancelable, current_operation
 
+from hother.cancelable import Cancelable, current_operation, with_cancelable
 
 # Example 1: Shared context with current_operation()
 # ====================================================

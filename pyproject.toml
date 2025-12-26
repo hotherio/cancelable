@@ -171,15 +171,13 @@ reportUnnecessaryTypeIgnoreComment = true
 reportMissingModuleSource = false
 include = [
     "src/hother/cancelable",
+]
+exclude = [
     "tests",
     "examples",
 ]
 venvPath = "."
 venv = ".venv"
-# Don't error on unused functions in tests (e.g., fixtures)
-executionEnvironments = [
-    { root = "tests", reportUnusedFunction = false, reportPrivateImportUsage = false },
-]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

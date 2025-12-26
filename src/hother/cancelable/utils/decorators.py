@@ -362,7 +362,7 @@ def cancelable_with_signal(
 
     def decorator(func: Callable[P, Awaitable[R]]) -> Callable[P, Awaitable[R]]:
         @wraps(func)
-        async def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+        async def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:  # pyright: ignore[reportReturnType]
             cancel = Cancelable.with_signal(
                 *signals, operation_id=operation_id, name=name or func.__name__, register_globally=register_globally
             )
@@ -374,8 +374,7 @@ def cancelable_with_signal(
                     if inject_param in sig.parameters:
                         kwargs[inject_param] = cancel
 
-                result = await func(*args, **kwargs)
-            return result  # type: ignore[possibly-unbound]
+                return await func(*args, **kwargs)
 
         # Add attribute to access decorator parameters
         wrapper._cancelable_params = {  # type: ignore[attr-defined]
@@ -434,7 +433,7 @@ def cancelable_with_condition(
 
     def decorator(func: Callable[P, Awaitable[R]]) -> Callable[P, Awaitable[R]]:
         @wraps(func)
-        async def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+        async def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:  # pyright: ignore[reportReturnType]
             cancel = Cancelable.with_condition(
                 condition,
                 check_interval=check_interval,
@@ -451,8 +450,7 @@ def cancelable_with_condition(
                     if inject_param in sig.parameters:
                         kwargs[inject_param] = cancel
 
-                result = await func(*args, **kwargs)
-            return result  # type: ignore[possibly-unbound]
+                return await func(*args, **kwargs)
 
         # Add attribute to access decorator parameters
         wrapper._cancelable_params = {  # type: ignore[attr-defined]
@@ -512,7 +510,7 @@ def cancelable_combine(
 
     def decorator(func: Callable[P, Awaitable[R]]) -> Callable[P, Awaitable[R]]:
         @wraps(func)
-        async def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+        async def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:  # pyright: ignore[reportReturnType]
             # Combine all cancelables
             if not cancelables:
                 raise ValueError("At least one cancelable must be provided to cancelable_combine")
@@ -548,8 +546,7 @@ def cancelable_combine(
                     if inject_param in sig.parameters:
                         kwargs[inject_param] = final_cancel
 
-                result = await func(*args, **kwargs)
-            return result  # type: ignore[possibly-unbound]
+                return await func(*args, **kwargs)
 
         return wrapper
 

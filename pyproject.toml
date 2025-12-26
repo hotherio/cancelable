@@ -154,7 +154,12 @@ convention = "google"
 
 [tool.ruff.lint.per-file-ignores]
 "tests/**/*.py" = ["D", "PLR2004", "S101"]  # Ignore docstrings, magic values, and assert in tests
-"examples/**/*.py" = ["D101", "D103", "S", "PLR2004"]  # Ignore docstrings, security checks, and magic values in examples
+"examples/**/*.py" = ["ALL"]  # Examples are demonstration code, ignore all linting rules
+"docs/.hooks/**/*.py" = ["ALL"]  # Ignore all rules in docs hooks
+"src/**/*.py" = ["D200", "D212", "D415", "D301"]  # Ignore minor docstring formatting in src
+"src/hother/cancelable/sources/condition.py" = ["S101"]  # Allow assert for defensive programming
+"src/hother/cancelable/streaming/**/*.py" = ["S311"]  # Allow random in streaming simulators
+"src/hother/cancelable/utils/decorators.py" = ["S101"]  # Allow assert False for unreachable code markers
 
 # Format settings
 [tool.ruff.format]

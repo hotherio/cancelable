@@ -28,11 +28,13 @@ jobs:
         dependency-groups: all
 
     - name: Install lefthook
+      shell: bash
       run: |
         source .venv/bin/activate
         lefthook install
 
     - name: Lint
+      shell: bash
       run: |
         source .venv/bin/activate
         lefthook run pre-commit --all-files
@@ -63,6 +65,7 @@ jobs:
         dependency-groups: doc
 
     - name: Build docs
+      shell: bash
       run: |
         source .venv/bin/activate
         mkdocs build

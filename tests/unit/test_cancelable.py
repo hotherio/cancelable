@@ -1651,8 +1651,8 @@ class TestCancelableFinal100Percent:
 
         Targets lines 417-421: parent cleanup in __del__.
         """
-        import weakref
         import gc
+        import weakref
 
         parent = Cancelable(name="parent")
         child = Cancelable(name="child")
@@ -1834,6 +1834,7 @@ class TestCancelableFinal100Percent:
         Targets lines 590-591: parent token linking.
         """
         import weakref
+
         from hother.cancelable import CancelationToken
 
         parent_token = CancelationToken()
@@ -1996,7 +1997,7 @@ class TestCancelableFinal100Percent:
 
         Targets lines 471-479: source checking when cancel_reason not set.
         """
-        from unittest.mock import Mock, AsyncMock
+        from unittest.mock import AsyncMock, Mock
 
         cancel = Cancelable(name="triggered_source")
 
@@ -2069,6 +2070,7 @@ class TestCancelableFinal100Percent:
         Targets lines 609-612: exception in _safe_link_tokens.
         """
         from unittest.mock import patch
+
         from hother.cancelable.core.token import LinkedCancelationToken
 
         parent = Cancelable(name="parent")
@@ -2248,7 +2250,7 @@ class TestCancelableFinal100Percent:
 
         Targets lines 476-479: source checking in else branch (no deadline).
         """
-        from unittest.mock import Mock, AsyncMock
+        from unittest.mock import AsyncMock, Mock
 
         cancel = Cancelable(name="no_deadline_source")
 
@@ -2279,7 +2281,7 @@ class TestCancelableFinal100Percent:
 
         Targets branch 471->470: check sources when deadline exists but not expired.
         """
-        from unittest.mock import Mock, AsyncMock
+        from unittest.mock import AsyncMock, Mock
 
         cancel = Cancelable.with_timeout(10.0, name="deadline_and_source")
 

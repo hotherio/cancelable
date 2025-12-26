@@ -196,6 +196,7 @@ async def simulated_api_call(
     endpoint: str,
     duration: float,
     fail_rate: float = 0.1,
+    *,
     cancelable: Cancelable,
 ):
     """Simulate an API call."""

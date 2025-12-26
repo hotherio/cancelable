@@ -3,11 +3,12 @@ Tests for ThreadSafeRegistry.
 """
 
 import threading
+from typing import Any
 
 import anyio
 import pytest
 
-from hother.cancelable import Cancelable, CancelationReason, OperationRegistry, OperationStatus, ThreadSafeRegistry
+from hother.cancelable import Cancelable, CancelationReason, OperationContext, OperationRegistry, OperationStatus, ThreadSafeRegistry
 from hother.cancelable.utils.anyio_bridge import AnyioBridge
 
 
@@ -143,10 +144,10 @@ class TestThreadSafeRegistry:
 
         # Access from thread
         thread_registry = ThreadSafeRegistry()
-        result = [None]
-        error = [None]
+        result: list[Cancelable | None] = [None]
+        error: list[Exception | None] = [None]
 
-        def thread_func():
+        def thread_func() -> None:
             try:
                 result[0] = thread_registry.get_operation(cancelable.context.id)
             except Exception as e:
@@ -171,10 +172,10 @@ class TestThreadSafeRegistry:
 
         # Access from thread
         thread_registry = ThreadSafeRegistry()
-        result = [None]
-        error = [None]
+        result: list[list[OperationContext] | None] = [None]
+        error: list[Exception | None] = [None]
 
-        def thread_func():
+        def thread_func() -> None:
             try:
                 result[0] = thread_registry.list_operations()
             except Exception as e:
@@ -203,9 +204,9 @@ class TestThreadSafeRegistry:
 
         # Access from thread with filter
         thread_registry = ThreadSafeRegistry()
-        result = [None]
+        result: list[list[OperationContext] | None] = [None]
 
-        def thread_func():
+        def thread_func() -> None:
             result[0] = thread_registry.list_operations(status=OperationStatus.RUNNING)
 
         thread = threading.Thread(target=thread_func)
@@ -228,9 +229,9 @@ class TestThreadSafeRegistry:
 
         # Access from thread
         thread_registry = ThreadSafeRegistry()
-        result = [None]
+        result: list[dict[str, Any] | None] = [None]
 
-        def thread_func():
+        def thread_func() -> None:
             result[0] = thread_registry.get_statistics()
 
         thread = threading.Thread(target=thread_func)
@@ -255,9 +256,9 @@ class TestThreadSafeRegistry:
 
         # Access from thread with limit
         thread_registry = ThreadSafeRegistry()
-        result = [None]
+        result: list[list[OperationContext] | None] = [None]
 
-        def thread_func():
+        def thread_func() -> None:
             result[0] = thread_registry.get_history(limit=3)
 
         thread = threading.Thread(target=thread_func)

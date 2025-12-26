@@ -3,11 +3,12 @@ Tests for operation registry.
 """
 
 from datetime import UTC, datetime, timedelta
+from typing import Any
 
 import anyio
 import pytest
 
-from hother.cancelable import Cancelable, CancelationReason, OperationRegistry, OperationStatus
+from hother.cancelable import Cancelable, CancelationReason, OperationContext, OperationRegistry, OperationStatus
 
 
 class TestOperationRegistry:
@@ -314,10 +315,10 @@ class TestRegistryThreadSafety:
         await registry.register(cancelable)
 
         # Call from thread
-        result = [None]
-        error = [None]
+        result: list[Cancelable | None] = [None]
+        error: list[Exception | None] = [None]
 
-        def thread_func():
+        def thread_func() -> None:
             try:
                 result[0] = registry.get_operation_sync(cancelable.context.id)
             except Exception as e:
@@ -345,10 +346,10 @@ class TestRegistryThreadSafety:
             ops.append(op)
 
         # Call from thread
-        result = [None]
-        error = [None]
+        result: list[list[OperationContext] | None] = [None]
+        error: list[Exception | None] = [None]
 
-        def thread_func():
+        def thread_func() -> None:
             try:
                 result[0] = registry.list_operations_sync()
             except Exception as e:
@@ -390,9 +391,9 @@ class TestRegistryThreadSafety:
         other.context.status = OperationStatus.COMPLETED
 
         results = {}
-        error = [None]
+        error: list[Exception | None] = [None]
 
-        def thread_func():
+        def thread_func() -> None:
             try:
                 results['status_filter'] = registry.list_operations_sync(status=OperationStatus.RUNNING)
 
@@ -445,10 +446,10 @@ class TestRegistryThreadSafety:
 
             await registry.unregister(op.context.id)
 
-        result = [None]
-        error = [None]
+        result: list[dict[str, Any] | None] = [None]
+        error: list[Exception | None] = [None]
 
-        def thread_func():
+        def thread_func() -> None:
             try:
                 result[0] = registry.get_statistics_sync()
             except Exception as e:
@@ -480,10 +481,10 @@ class TestRegistryThreadSafety:
             await registry.unregister(op.context.id)
 
         # Call from thread
-        result = [None]
-        error = [None]
+        result: list[dict[str, Any] | None] = [None]
+        error: list[Exception | None] = [None]
 
-        def thread_func():
+        def thread_func() -> None:
             try:
                 result[0] = registry.get_statistics_sync()
             except Exception as e:
@@ -513,10 +514,10 @@ class TestRegistryThreadSafety:
             await registry.unregister(op.context.id)
 
         # Call from thread
-        result = [None]
-        error = [None]
+        result: list[list[OperationContext] | None] = [None]
+        error: list[Exception | None] = [None]
 
-        def thread_func():
+        def thread_func() -> None:
             try:
                 result[0] = registry.get_history_sync(limit=2)
             except Exception as e:

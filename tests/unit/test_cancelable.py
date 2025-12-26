@@ -3,11 +3,12 @@ Tests for the main Cancelable class.
 """
 
 from datetime import timedelta
+from typing import Any
 
 import anyio
 import pytest
 
-from hother.cancelable import Cancelable, CancelationReason, CancelationToken, OperationStatus, current_operation
+from hother.cancelable import Cancelable, CancelationReason, CancelationToken, OperationContext, OperationStatus, current_operation
 from tests.conftest import assert_cancelled_within
 
 
@@ -263,7 +264,7 @@ class TestCancelableCallbacks:
         """Test progress reporting and callbacks."""
         messages = []
 
-        def capture_progress(op_id, msg, meta):
+        def capture_progress(op_id: str, msg: Any, meta: dict[str, Any] | None) -> None:
             messages.append((op_id, msg, meta))
 
         cancelable = Cancelable(name="progress_test")
@@ -283,7 +284,7 @@ class TestCancelableCallbacks:
         """Test status change callbacks."""
         events = []
 
-        async def record_event(ctx):
+        async def record_event(ctx: OperationContext) -> None:
             events.append((ctx.status.value, anyio.current_time()))
 
         cancelable = Cancelable(name="status_test").on_start(record_event).on_complete(record_event)
@@ -300,7 +301,7 @@ class TestCancelableCallbacks:
         """Test cancelation callbacks."""
         cancel_info = None
 
-        def on_cancel(ctx):
+        def on_cancel(ctx: OperationContext) -> None:
             nonlocal cancel_info
             cancel_info = {
                 "reason": ctx.cancel_reason,
@@ -325,7 +326,7 @@ class TestCancelableCallbacks:
         """Test error callbacks."""
         error_info = None
 
-        async def on_error(ctx, error):
+        async def on_error(ctx: OperationContext, error: Exception) -> None:
             nonlocal error_info
             error_info = {
                 "type": type(error).__name__,

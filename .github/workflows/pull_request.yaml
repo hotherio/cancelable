@@ -44,9 +44,10 @@ jobs:
   validate:
     name: Validate
     runs-on: ubuntu-latest
+    if: github.event_name == 'pull_request'
     strategy:
       matrix:
-        python-version: ["3.12", "3.13"]
+        python-version: ["3.13", "3.14"]
       fail-fast: false
 
     steps:
@@ -84,6 +85,7 @@ jobs:
   validate-docs:
     name: Validate Docs
     runs-on: ubuntu-24.04
+    if: github.event_name == 'pull_request'
 
     steps:
     - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
@@ -96,5 +98,4 @@ jobs:
     - name: Build docs
       run: |
         source .venv/bin/activate
-        uvx hatch version dev
         mkdocs build

@@ -659,7 +659,11 @@ class Cancelable:
                     # Other errors
                     self.context.error = str(exc_val)
                     self.context.update_status(OperationStatus.FAILED)
-                    await self._trigger_error_callbacks(exc_val)
+
+                    # Only trigger error callbacks for Exception instances, not BaseException
+                    # (e.g., skip KeyboardInterrupt, SystemExit, GeneratorExit)
+                    if isinstance(exc_val, Exception):
+                        await self._trigger_error_callbacks(exc_val)
             else:
                 # Successful completion
                 self.context.update_status(OperationStatus.COMPLETED)
@@ -739,6 +743,23 @@ class Cancelable:
             self._link_state = LinkState.LINKING
 
             try:
+                # Check if token supports linking (only LinkedCancelationToken has link method)
+                if not hasattr(self._token, "link"):
+                    # Log warnings for test expectations
+                    parent = self.parent
+                    if parent:
+                        logger.warning(
+                            f"Cannot link to parent: token {type(self._token).__name__} "
+                            "does not support linking (not a LinkedCancelationToken)"
+                        )
+                    if self._cancellables_to_link is not None:
+                        logger.warning(
+                            f"Cannot link to combined sources: token {type(self._token).__name__} "
+                            "does not support linking (not a LinkedCancelationToken)"
+                        )
+                    self._link_state = LinkState.CANCELLED
+                    return
+
                 # Link to parent token if we have a parent
                 parent = self.parent
                 if parent:

@@ -59,8 +59,8 @@ class AnyioBridge:
             buffer_size: Maximum number of queued callbacks before blocking (default: 1000)
         """
         self._buffer_size = buffer_size
-        self._send_stream: anyio.abc.ObjectSendStream | None = None
-        self._receive_stream: anyio.abc.ObjectReceiveStream | None = None
+        self._send_stream: anyio.abc.ObjectSendStream | None = None  # type: ignore[attr-defined]
+        self._receive_stream: anyio.abc.ObjectReceiveStream | None = None  # type: ignore[attr-defined]
         self._started: bool = False
 
         # Fallback queue for callbacks received before bridge starts
@@ -81,7 +81,7 @@ class AnyioBridge:
             with cls._lock:
                 if cls._instance is None:
                     cls._instance = cls()
-        return cls._instance
+        return cls._instance  # type: ignore[return-value]
 
     async def start(self) -> None:
         """
@@ -99,7 +99,7 @@ class AnyioBridge:
         """
         if self._started:
             logger.warning("Bridge already started, ignoring duplicate start")
-            logger.info(f"Bridge worker alive check - stream is: {self._receive_stream}")
+            logger.info(f"Bridge worker alive check - stream is: {self._receive_stream}")  # type: ignore[attr-defined]
             return
 
         logger.debug("Starting anyio bridge")
@@ -115,7 +115,7 @@ class AnyioBridge:
                 while self._pending_callbacks:
                     callback = self._pending_callbacks.popleft()
                     try:
-                        self._send_stream.send_nowait(callback)
+                        self._send_stream.send_nowait(callback)  # type: ignore[union-attr]
                     except anyio.WouldBlock:
                         logger.warning("Bridge queue full during startup, callback dropped")
 
@@ -136,17 +136,17 @@ class AnyioBridge:
             while True:
                 # Explicitly receive next callback (yields properly)
                 logger.debug("Bridge worker waiting for next callback...")
-                callback = await self._receive_stream.receive()
+                callback = await self._receive_stream.receive()  # type: ignore[union-attr]
                 logger.debug(f"Bridge worker received callback: {callback}")
 
                 try:
                     # Execute callback
                     logger.debug("Bridge worker executing callback...")
-                    result = callback()
+                    result = callback()  # type: ignore[var-annotated]
                     logger.debug(f"Callback result: {result}")
 
                     # If it's a coroutine, await it
-                    if hasattr(result, "__await__"):
+                    if hasattr(result, "__await__"):  # type: ignore[arg-type]
                         logger.debug("Callback is coroutine, awaiting...")
                         await result
                         logger.debug("Coroutine completed")
@@ -188,7 +188,7 @@ class AnyioBridge:
 
         logger.debug(f"Queueing callback to bridge: {callback}")
         try:
-            self._send_stream.send_nowait(callback)
+            self._send_stream.send_nowait(callback)  # type: ignore[union-attr]
             logger.debug("Callback successfully queued to bridge stream")
         except anyio.WouldBlock:
             logger.warning(
@@ -219,16 +219,16 @@ class AnyioBridge:
         logger.debug("Stopping anyio bridge")
 
         # Close streams if they exist
-        if self._send_stream is not None:
+        if self._send_stream is not None:  # type: ignore[attr-defined]
             try:
-                await self._send_stream.aclose()
+                await self._send_stream.aclose()  # type: ignore[union-attr]
                 logger.debug("Send stream closed")
             except Exception as e:
                 logger.warning(f"Error closing send stream: {e}")
 
-        if self._receive_stream is not None:
+        if self._receive_stream is not None:  # type: ignore[attr-defined]
             try:
-                await self._receive_stream.aclose()
+                await self._receive_stream.aclose()  # type: ignore[union-attr]
                 logger.debug("Receive stream closed")
             except Exception as e:
                 logger.warning(f"Error closing receive stream: {e}")

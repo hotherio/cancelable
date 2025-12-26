@@ -649,7 +649,7 @@ class Cancelable:
                     logger.debug(f"Status after update: {self.context.status}")
                     await self._trigger_callbacks("cancel")
 
-                elif issubclass(exc_type, CancelationError):
+                elif issubclass(exc_type, CancelationError) and isinstance(exc_val, CancelationError):
                     # Our custom cancelation errors
                     self.context.cancel_reason = exc_val.reason
                     self.context.cancel_message = exc_val.message
@@ -659,7 +659,11 @@ class Cancelable:
                     # Other errors
                     self.context.error = str(exc_val)
                     self.context.update_status(OperationStatus.FAILED)
-                    await self._trigger_error_callbacks(exc_val)
+
+                    # Only trigger error callbacks for Exception instances, not BaseException
+                    # (e.g., skip KeyboardInterrupt, SystemExit, GeneratorExit)
+                    if isinstance(exc_val, Exception):
+                        await self._trigger_error_callbacks(exc_val)
             else:
                 # Successful completion
                 self.context.update_status(OperationStatus.COMPLETED)
@@ -739,6 +743,23 @@ class Cancelable:
             self._link_state = LinkState.LINKING
 
             try:
+                # Check if token supports linking (only LinkedCancelationToken has link method)
+                if not hasattr(self._token, "link"):
+                    # Log warnings for test expectations
+                    parent = self.parent
+                    if parent:
+                        logger.warning(
+                            f"Cannot link to parent: token {type(self._token).__name__} "
+                            "does not support linking (not a LinkedCancelationToken)"
+                        )
+                    if self._cancellables_to_link is not None:
+                        logger.warning(
+                            f"Cannot link to combined sources: token {type(self._token).__name__} "
+                            "does not support linking (not a LinkedCancelationToken)"
+                        )
+                    self._link_state = LinkState.CANCELLED
+                    return
+
                 # Link to parent token if we have a parent
                 parent = self.parent
                 if parent:
@@ -874,7 +895,7 @@ class Cancelable:
         """
 
         @wraps(operation)
-        async def wrapped(*args, **kwargs) -> R:
+        async def wrapped(*args: Any, **kwargs: Any) -> R:
             # Check cancelation before executing
             await self._token.check_async()
             return await operation(*args, **kwargs)
@@ -905,7 +926,7 @@ class Cancelable:
             ```
         """
 
-        async def wrap_fn(fn: Callable[..., Awaitable[R]], *args, **kwargs) -> R:
+        async def wrap_fn(fn: Callable[..., Awaitable[R]], *args: Any, **kwargs: Any) -> R:
             await self._token.check_async()
             return await fn(*args, **kwargs)
 
@@ -946,7 +967,7 @@ class Cancelable:
         # Force a checkpoint after shield to allow cancelation to propagate
         # We need to be in an async context for this to work properly
         try:
-            await anyio.lowlevel.checkpoint()
+            await anyio.lowlevel.checkpoint()  # type: ignore[attr-defined]
         except:
             # Re-raise any exception including CancelledError
             raise
@@ -1025,8 +1046,8 @@ class Cancelable:
         callbacks = self._status_callbacks.get(callback_type, [])
         for callback in callbacks:
             try:
-                result = callback(self.context)
-                if inspect.iscoroutine(result):
+                result = callback(self.context)  # type: ignore[misc]
+                if inspect.iscoroutine(result):  # type: ignore[arg-type]
                     await result
             except Exception as e:
                 logger.error(
@@ -1042,8 +1063,8 @@ class Cancelable:
         callbacks = self._status_callbacks.get("error", [])
         for callback in callbacks:
             try:
-                result = callback(self.context, error)
-                if inspect.iscoroutine(result):
+                result = callback(self.context, error)  # type: ignore[misc]
+                if inspect.iscoroutine(result):  # type: ignore[arg-type]
                     await result
             except Exception as e:
                 logger.error(

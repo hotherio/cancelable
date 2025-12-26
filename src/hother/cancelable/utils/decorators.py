@@ -88,8 +88,10 @@ def cancelable(
                         kwargs[inject_param] = cancel
 
                 # Call the function
-                result = await func(*args, **kwargs)
-            return result
+                return await func(*args, **kwargs)
+
+            # Unreachable - async with block always completes above
+            assert False, "Unreachable"  # pragma: no cover
 
         # Add attribute to access decorator parameters (dynamic attribute, no type annotation needed)
         wrapper._cancelable_params = {  # type: ignore[attr-defined]
@@ -135,8 +137,10 @@ async def with_timeout(
     )
 
     async with cancelable:
-        result = await coro
-    return result
+        return await coro
+
+    # Unreachable - async with block always completes above
+    assert False, "Unreachable"  # pragma: no cover
 
 
 def with_current_operation() -> Callable[[Callable[P, Awaitable[R]]], Callable[P, Awaitable[R]]]:
@@ -235,8 +239,10 @@ def cancelable_method(
                 if "cancelable" in sig.parameters:
                     kwargs["cancelable"] = cancel
 
-                result = await func(self, *args, **kwargs)
-            return result
+                return await func(self, *args, **kwargs)
+
+            # Unreachable - async with block always completes above
+            assert False, "Unreachable"  # pragma: no cover
 
         # Add attribute to access decorator parameters
         wrapper._cancelable_params = {  # type: ignore[attr-defined]
@@ -304,8 +310,10 @@ def cancelable_with_token(
                     if inject_param in sig.parameters:
                         kwargs[inject_param] = cancel
 
-                result = await func(*args, **kwargs)
-            return result
+                return await func(*args, **kwargs)
+
+            # Unreachable - async with block always completes above
+            assert False, "Unreachable"  # pragma: no cover
 
         # Add attribute to access decorator parameters
         wrapper._cancelable_params = {  # type: ignore[attr-defined]

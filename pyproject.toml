@@ -163,7 +163,7 @@ indent-style = "space"
 docstring-code-format = false
 
 [tool.basedpyright]
-pythonVersion = "3.14"
+pythonVersion = "3.13"
 typeCheckingMode = "strict"
 reportMissingTypeStubs = false
 reportUnnecessaryIsInstance = false

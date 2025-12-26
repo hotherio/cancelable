@@ -1,15 +1,41 @@
 name: Pull Request Validation
 
 on:
-  push:
-    branches:
-    - renovate/**
   pull_request:
     branches:
     - main
     - develop
+    types:
+    - opened
+    - edited
+    - synchronize
 
 jobs:
+  check-pr-title:
+    name: Check PR Title
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: read
+    steps:
+      - uses: amannn/action-semantic-pull-request@48f256284bd46cdaab1048c3721360e808335d50 # v6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          types: |
+            feat
+            fix
+            docs
+            style
+            refactor
+            perf
+            test
+            build
+            ci
+            chore
+            revert
+          requireScope: false
+          validateSingleCommit: true       # also check lone commit if PR has only one
+
   validate:
     name: Validate
     runs-on: ubuntu-latest
@@ -28,20 +54,18 @@ jobs:
         dependency-groups: all
 
     - name: Install lefthook
-      shell: bash
       run: |
         source .venv/bin/activate
         lefthook install
 
     - name: Lint
-      shell: bash
       run: |
         source .venv/bin/activate
         lefthook run pre-commit --all-files
 
     - name: Tests with coverage
       run: |
-        uv run pytest --cov=hother.cancelable --cov-report=term-missing --cov-report=xml
+        uv run pytest --cov=hother.cancelable --cov-report=term-missing --cov-report=xml --junitxml=pytest.xml
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v5
@@ -51,6 +75,12 @@ jobs:
         flags: pr-python-${{ matrix.python-version }}
         name: pr-python-${{ matrix.python-version }}
         fail_ci_if_error: false
+
+    - name: Upload test results to Codecov
+      if: ${{ !cancelled() }}
+      uses: codecov/test-results-action@v1
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
 
   validate-docs:
     name: Validate Docs
@@ -65,7 +95,6 @@ jobs:
         dependency-groups: doc
 
     - name: Build docs
-      shell: bash
       run: |
         source .venv/bin/activate
         mkdocs build

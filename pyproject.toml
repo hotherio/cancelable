@@ -172,13 +172,14 @@ reportMissingModuleSource = false
 include = [
     "src/hother/cancelable",
     "tests",
-    "examples",
 ]
 venvPath = "."
 venv = ".venv"
-# Don't error on unused functions in tests (e.g., fixtures)
+# Use different type checking modes for different parts of the codebase
 executionEnvironments = [
-    { root = "tests", reportUnusedFunction = false, reportPrivateImportUsage = false },
+    { root = "src/hother/cancelable", typeCheckingMode = "strict" },  # Production code: strict
+    { root = "tests", typeCheckingMode = "standard", reportUnusedFunction = false, reportPrivateImportUsage = false },  # Tests: standard
+    { root = "examples", typeCheckingMode = "basic" },  # Examples: basic (demo code)
 ]
 
 [tool.pytest.ini_options]

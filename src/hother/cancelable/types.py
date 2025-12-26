@@ -11,6 +11,7 @@ from collections.abc import Awaitable, Callable
 from typing import TYPE_CHECKING, Any, ParamSpec, Protocol, TypeVar
 
 if TYPE_CHECKING:
+    from hother.cancelable.core.cancelable import Cancelable
     from hother.cancelable.core.models import OperationContext
 
 # Type variables
@@ -99,7 +100,7 @@ ErrorCallbackType = (
 )
 
 
-def ensure_cancelable(cancelable: "Cancelable | None") -> "Cancelable":  # type: ignore[name-defined]
+def ensure_cancelable(cancelable: "Cancelable | None") -> "Cancelable":
     """
     Type guard utility for injected cancelable parameters.
 

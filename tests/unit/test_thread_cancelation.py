@@ -46,16 +46,16 @@ async def bridge():
 class TestAnyioBridge:
     """Test cases for AnyioBridge thread-safe communication."""
 
-    async def test_bridge_singleton(self, bridge):
+    async def test_bridge_singleton(self, bridge: AnyioBridge) -> None:
         """Test that AnyioBridge is a singleton."""
         bridge2 = AnyioBridge.get_instance()
         assert bridge is bridge2
 
-    async def test_bridge_starts_successfully(self, bridge):
+    async def test_bridge_starts_successfully(self, bridge: AnyioBridge) -> None:
         """Test that bridge starts without errors."""
         assert bridge.is_started
 
-    async def test_bridge_executes_callback_from_thread(self, bridge):
+    async def test_bridge_executes_callback_from_thread(self, bridge: AnyioBridge) -> None:
         """Test that bridge executes callbacks scheduled from threads."""
         result = []
 
@@ -75,7 +75,7 @@ class TestAnyioBridge:
 
         assert result == ["executed"]
 
-    async def test_bridge_executes_async_callback_from_thread(self, bridge):
+    async def test_bridge_executes_async_callback_from_thread(self, bridge: AnyioBridge) -> None:
         """Test that bridge executes async callbacks scheduled from threads."""
         result = []
 
@@ -96,7 +96,7 @@ class TestAnyioBridge:
 
         assert result == ["async_executed"]
 
-    async def test_bridge_handles_multiple_callbacks(self, bridge):
+    async def test_bridge_handles_multiple_callbacks(self, bridge: AnyioBridge) -> None:
         """Test that bridge handles multiple callbacks correctly."""
         results = []
 
@@ -119,7 +119,7 @@ class TestAnyioBridge:
 class TestTokenCancelSync:
     """Test cases for CancelationToken.cancel_sync() method."""
 
-    async def test_cancel_sync_from_thread(self, bridge):
+    async def test_cancel_sync_from_thread(self, bridge: AnyioBridge) -> None:
         """Test that cancel_sync() can be called from a thread."""
         token = CancelationToken()
 
@@ -142,7 +142,7 @@ class TestTokenCancelSync:
         assert token.reason == CancelationReason.MANUAL
         assert token.message == "Cancelled from thread"
 
-    async def test_cancel_sync_sets_event(self, bridge):
+    async def test_cancel_sync_sets_event(self, bridge: AnyioBridge) -> None:
         """Test that cancel_sync() sets the anyio event via bridge."""
         token = CancelationToken()
 
@@ -170,7 +170,7 @@ class TestTokenCancelSync:
 
             tg.cancel_scope.cancel()
 
-    async def test_cancel_sync_triggers_callbacks(self, bridge):
+    async def test_cancel_sync_triggers_callbacks(self, bridge: AnyioBridge) -> None:
         """Test that cancel_sync() triggers registered callbacks."""
         token = CancelationToken()
         callback_executed = []
@@ -195,7 +195,7 @@ class TestTokenCancelSync:
 
         assert callback_executed == [True]
 
-    async def test_cancel_sync_idempotent(self, bridge):
+    async def test_cancel_sync_idempotent(self, bridge: AnyioBridge) -> None:
         """Test that cancel_sync() is idempotent."""
         token = CancelationToken()
 
@@ -214,7 +214,7 @@ class TestTokenCancelSync:
 
         assert token.is_cancelled
 
-    async def test_cancel_sync_thread_safe(self, bridge):
+    async def test_cancel_sync_thread_safe(self, bridge: AnyioBridge) -> None:
         """Test that cancel_sync() is thread-safe with multiple threads."""
         token = CancelationToken()
         success_count = []
@@ -242,7 +242,7 @@ class TestTokenCancelSync:
 class TestPynputScenario:
     """Test cases simulating pynput-like keyboard listener scenarios."""
 
-    async def test_keyboard_listener_simulation(self, bridge):
+    async def test_keyboard_listener_simulation(self, bridge: AnyioBridge) -> None:
         """Test simulated keyboard listener cancelling operation."""
         token = CancelationToken()
 
@@ -290,7 +290,7 @@ class TestPynputScenario:
         assert token.reason == CancelationReason.MANUAL
         assert "SPACE" in token.message
 
-    async def test_streaming_with_keyboard_cancelation(self, bridge):
+    async def test_streaming_with_keyboard_cancelation(self, bridge: AnyioBridge) -> None:
         """Test LLM-like streaming with keyboard cancelation."""
         token = CancelationToken()
         chunks_processed = []
@@ -330,7 +330,7 @@ class TestPynputScenario:
 class TestBridgeErrorHandling:
     """Test error handling in bridge and cancel_sync."""
 
-    async def test_bridge_handles_callback_errors(self, bridge):
+    async def test_bridge_handles_callback_errors(self, bridge: AnyioBridge) -> None:
         """Test that bridge handles errors in callbacks gracefully."""
 
         def failing_callback():
@@ -350,7 +350,7 @@ class TestBridgeErrorHandling:
         # Successful callback should still execute
         assert result == ["success"]
 
-    async def test_cancel_sync_with_failing_callback(self, bridge):
+    async def test_cancel_sync_with_failing_callback(self, bridge: AnyioBridge) -> None:
         """Test that cancel_sync continues even if a callback fails."""
         token = CancelationToken()
         successful_callbacks = []

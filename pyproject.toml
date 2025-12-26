@@ -140,6 +140,7 @@ ignore = [
     "D104",     # Missing docstring in public package
     "D105",     # Missing docstring in magic method
     "D107",     # Missing docstring in __init__
+    "ISC001",   # Conflicts with formatter
 ]
 
 mccabe = { max-complexity = 15 }

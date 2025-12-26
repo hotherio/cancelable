@@ -1,5 +1,4 @@
-"""FastAPI integration for request-scoped cancelation.
-"""
+"""FastAPI integration for request-scoped cancelation."""
 
 from collections.abc import AsyncIterator, Callable
 from typing import Any
@@ -18,8 +17,7 @@ logger = get_logger(__name__)
 
 
 class RequestCancelationMiddleware:
-    """FastAPI middleware that provides request-scoped cancelation.
-    """
+    """FastAPI middleware that provides request-scoped cancelation."""
 
     def __init__(self, app: ASGIApp, default_timeout: float | None = None):
         """Initialize middleware.
@@ -153,9 +151,7 @@ def with_cancelation(
                         raise HTTPException(status_code=504, detail="Request timeout")
                     if cancelable.context.cancel_reason == CancelationReason.SIGNAL:
                         raise HTTPException(status_code=499, detail="Client closed connection")
-                    raise HTTPException(
-                        status_code=503, detail=f"Request cancelled: {cancelable.context.cancel_message}"
-                    )
+                    raise HTTPException(status_code=503, detail=f"Request cancelled: {cancelable.context.cancel_message}")
                 raise
 
         return wrapper
@@ -220,8 +216,7 @@ async def cancelable_streaming_response(
 
 # WebSocket support
 class CancelableWebSocket:
-    """WebSocket wrapper with cancelation support.
-    """
+    """WebSocket wrapper with cancelation support."""
 
     def __init__(self, websocket: Any, cancelable: Cancelable):
         self.websocket = websocket

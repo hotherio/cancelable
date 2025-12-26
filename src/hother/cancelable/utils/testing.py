@@ -1,5 +1,4 @@
-"""Testing utilities for async cancelation.
-"""
+"""Testing utilities for async cancelation."""
 
 from collections.abc import AsyncIterator, Callable
 from contextlib import asynccontextmanager
@@ -72,8 +71,7 @@ class MockCancelationToken(CancelationToken):
 
 
 class OperationRecorder:
-    """Records operation events for testing assertions.
-    """
+    """Records operation events for testing assertions."""
 
     def __init__(self):
         self.events: list[dict[str, Any]] = []
@@ -233,9 +231,7 @@ async def run_with_timeout_test(
         duration = anyio.current_time() - start_time
 
         if abs(duration - expected_timeout) > tolerance:
-            raise AssertionError(
-                f"Timeout occurred after {duration:.2f}s, expected {expected_timeout:.2f}s ± {tolerance:.2f}s"
-            )
+            raise AssertionError(f"Timeout occurred after {duration:.2f}s, expected {expected_timeout:.2f}s ± {tolerance:.2f}s")
 
 
 @asynccontextmanager
@@ -272,8 +268,7 @@ async def assert_cancelation_within(
 
 
 class CancelationScenario:
-    """Test scenario builder for cancelation testing.
-    """
+    """Test scenario builder for cancelation testing."""
 
     def __init__(self, name: str):
         self.name = name

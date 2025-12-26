@@ -1,5 +1,4 @@
-"""Main Cancelable class implementation.
-"""
+"""Main Cancelable class implementation."""
 
 from __future__ import annotations
 
@@ -29,9 +28,7 @@ T = TypeVar("T")
 R = TypeVar("R")
 
 # Context variable for current operation
-_current_operation: contextvars.ContextVar[Cancelable | None] = contextvars.ContextVar(
-    "current_operation", default=None
-)
+_current_operation: contextvars.ContextVar[Cancelable | None] = contextvars.ContextVar("current_operation", default=None)
 
 
 class LinkState(StrEnum):
@@ -217,9 +214,7 @@ class Cancelable:
         return instance
 
     @classmethod
-    def with_signal(
-        cls, *signals: int, operation_id: str | None = None, name: str | None = None, **kwargs: Any
-    ) -> Cancelable:
+    def with_signal(cls, *signals: int, operation_id: str | None = None, name: str | None = None, **kwargs: Any) -> Cancelable:
         """Create cancelable with signal handling.
 
         Args:
@@ -486,9 +481,7 @@ class Cancelable:
         # Set up simple token monitoring via callback
         async def on_token_cancel(token: CancelationToken) -> None:
             """Callback when token is cancelled."""
-            logger.error(
-                f"🚨 TOKEN CALLBACK TRIGGERED! Token {token.id} cancelled, cancelling scope for {self.context.id}"
-            )
+            logger.error(f"🚨 TOKEN CALLBACK TRIGGERED! Token {token.id} cancelled, cancelling scope for {self.context.id}")
             if self._scope and not self._scope.cancel_called:
                 logger.error(f"🚨 CANCELLING SCOPE for {self.context.id}")
                 self._scope.cancel()

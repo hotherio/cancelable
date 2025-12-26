@@ -1,5 +1,4 @@
-"""Condition-based cancelation source implementation.
-"""
+"""Condition-based cancelation source implementation."""
 
 import inspect
 from collections.abc import Awaitable, Callable
@@ -130,9 +129,7 @@ class ConditionSource(CancelationSource):
                         logger.debug(f"Condition '{self.condition_name}' met after {check_count} checks")
 
                         # Trigger cancelation through the base class method
-                        await self.trigger_cancelation(
-                            f"Condition '{self.condition_name}' met after {check_count} checks"
-                        )
+                        await self.trigger_cancelation(f"Condition '{self.condition_name}' met after {check_count} checks")
                         break
 
                 except Exception as e:

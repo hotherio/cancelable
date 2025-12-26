@@ -1,5 +1,4 @@
-"""Signal-based cancelation source implementation.
-"""
+"""Signal-based cancelation source implementation."""
 
 from __future__ import annotations
 
@@ -106,9 +105,7 @@ class SignalSource(CancelationSource):
                     "Signal source monitoring started",
                     extra={
                         "source": self.name,
-                        "signals": [
-                            signal.Signals(s).name for s in self.signals if s in signal.Signals._value2member_map_
-                        ],
+                        "signals": [signal.Signals(s).name for s in self.signals if s in signal.Signals._value2member_map_],
                     },
                 )
 

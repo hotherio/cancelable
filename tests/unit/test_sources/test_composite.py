@@ -67,6 +67,7 @@ class TestCompositeSource:
     @pytest.mark.anyio
     async def test_composite_tracks_triggered_source(self):
         """Test that composite tracks which source triggered."""
+
         class ManualSource(CancelationSource):
             def __init__(self, name):
                 super().__init__(CancelationReason.MANUAL, name)
@@ -97,6 +98,7 @@ class TestCompositeSource:
     @pytest.mark.anyio
     async def test_composite_uses_source_reason(self):
         """Test that composite uses the triggering source's reason."""
+
         class CustomSource(CancelationSource):
             async def start_monitoring(self, scope):
                 self.scope = scope
@@ -122,6 +124,7 @@ class TestCompositeSource:
     @pytest.mark.anyio
     async def test_monitor_source_error_handling(self):
         """Test error handling in _monitor_source."""
+
         class FailingSource(CancelationSource):
             async def start_monitoring(self, scope):
                 raise RuntimeError("Source failed to start")
@@ -144,6 +147,7 @@ class TestCompositeSource:
     @pytest.mark.anyio
     async def test_stop_monitoring_with_exception(self):
         """Test that stop_monitoring handles exceptions from sources gracefully."""
+
         class FaultySource(TimeoutSource):
             async def stop_monitoring(self):
                 raise RuntimeError("Simulated stop error")
@@ -254,6 +258,7 @@ class TestAllOfSource:
     @pytest.mark.anyio
     async def test_all_of_start_monitoring(self):
         """Test AllOfSource start_monitoring."""
+
         class ManualSource(CancelationSource):
             def __init__(self, name, delay=0.01):
                 super().__init__(CancelationReason.MANUAL, name)
@@ -287,6 +292,7 @@ class TestAllOfSource:
     @pytest.mark.anyio
     async def test_all_of_waits_for_all_sources(self):
         """Test that AllOfSource waits for all sources before triggering."""
+
         class ManualSource(CancelationSource):
             def __init__(self, name, should_trigger):
                 super().__init__(CancelationReason.MANUAL, name)
@@ -336,6 +342,7 @@ class TestAllOfSource:
     @pytest.mark.anyio
     async def test_all_of_monitor_source_error(self):
         """Test AllOfSource _monitor_source error handling."""
+
         class FailingSource(CancelationSource):
             async def start_monitoring(self, scope):
                 raise RuntimeError("Source failed")
@@ -368,6 +375,7 @@ class TestAllOfSource:
     @pytest.mark.anyio
     async def test_all_of_stop_monitoring_source_error(self):
         """Test AllOfSource handles errors during source.stop_monitoring."""
+
         class FailingStopSource(TimeoutSource):
             async def stop_monitoring(self):
                 raise RuntimeError("Stop failed")
@@ -382,4 +390,3 @@ class TestAllOfSource:
 
         # Stop should not raise, even though one source fails
         await all_of.stop_monitoring()
-

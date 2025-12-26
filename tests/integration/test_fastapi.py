@@ -179,6 +179,7 @@ class TestWithCancelation:
     @pytest.mark.anyio
     async def test_decorator_success(self):
         """Test decorator with successful execution."""
+
         @with_cancelation(timeout=1.0)
         async def test_endpoint(request: Request):
             return {"status": "ok"}
@@ -197,6 +198,7 @@ class TestWithCancelation:
     @pytest.mark.anyio
     async def test_decorator_timeout(self):
         """Test decorator with timeout cancelation."""
+
         @with_cancelation(timeout=0.05, raise_on_cancel=True)
         async def test_endpoint(request: Request):
             await anyio.sleep(1.0)  # Will timeout
@@ -279,6 +281,7 @@ class TestWithCancelation:
     @pytest.mark.anyio
     async def test_decorator_no_raise(self):
         """Test decorator with raise_on_cancel=False."""
+
         @with_cancelation(timeout=0.05, raise_on_cancel=False)
         async def test_endpoint(request: Request):
             await anyio.sleep(1.0)
@@ -302,6 +305,7 @@ class TestCancelableStreamingResponse:
     @pytest.mark.anyio
     async def test_streaming_response_success(self):
         """Test successful streaming response."""
+
         async def generate():
             for i in range(3):
                 await anyio.sleep(0.01)
@@ -309,9 +313,7 @@ class TestCancelableStreamingResponse:
 
         cancelable = Cancelable(name="test_stream")
 
-        response = await cancelable_streaming_response(
-            generate(), cancelable, media_type="text/plain"
-        )
+        response = await cancelable_streaming_response(generate(), cancelable, media_type="text/plain")
 
         # Collect streamed data
         chunks = []
@@ -325,6 +327,7 @@ class TestCancelableStreamingResponse:
     @pytest.mark.anyio
     async def test_streaming_response_cancelled(self):
         """Test streaming response with cancelation."""
+
         async def generate():
             for i in range(100):
                 await anyio.sleep(0.01)
@@ -332,9 +335,7 @@ class TestCancelableStreamingResponse:
 
         cancelable = Cancelable.with_timeout(0.05, name="test_stream")
 
-        response = await cancelable_streaming_response(
-            generate(), cancelable, media_type="text/plain"
-        )
+        response = await cancelable_streaming_response(generate(), cancelable, media_type="text/plain")
 
         chunks = []
         try:
@@ -350,6 +351,7 @@ class TestCancelableStreamingResponse:
     @pytest.mark.anyio
     async def test_streaming_response_sse_cancelled(self):
         """Test SSE streaming with cancelation message."""
+
         async def generate():
             for i in range(100):
                 await anyio.sleep(0.01)
@@ -357,9 +359,7 @@ class TestCancelableStreamingResponse:
 
         cancelable = Cancelable.with_timeout(0.05, name="test_sse")
 
-        response = await cancelable_streaming_response(
-            generate(), cancelable, media_type="text/event-stream"
-        )
+        response = await cancelable_streaming_response(generate(), cancelable, media_type="text/event-stream")
 
         chunks = []
         try:

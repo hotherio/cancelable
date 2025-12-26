@@ -26,7 +26,9 @@ class TestIntegration:
                 downloaded_chunks.append(chunk)
 
                 if (i + 1) % 5 == 0:
-                    await cancelable.report_progress(f"Downloaded {i + 1}/{total_chunks} chunks", {"progress": (i + 1) / total_chunks * 100})
+                    await cancelable.report_progress(
+                        f"Downloaded {i + 1}/{total_chunks} chunks", {"progress": (i + 1) / total_chunks * 100}
+                    )
 
                 # Check for cancelation
                 await cancelable._token.check_async()

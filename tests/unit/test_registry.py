@@ -394,11 +394,11 @@ class TestRegistryThreadSafety:
 
         def thread_func():
             try:
-                results['status_filter'] = registry.list_operations_sync(status=OperationStatus.RUNNING)
+                results["status_filter"] = registry.list_operations_sync(status=OperationStatus.RUNNING)
 
-                results['parent_filter'] = registry.list_operations_sync(parent_id=parent.context.id)
+                results["parent_filter"] = registry.list_operations_sync(parent_id=parent.context.id)
 
-                results['name_filter'] = registry.list_operations_sync(name_pattern="child")
+                results["name_filter"] = registry.list_operations_sync(name_pattern="child")
             except Exception as e:
                 error[0] = e
 
@@ -409,16 +409,16 @@ class TestRegistryThreadSafety:
         assert error[0] is None, f"Thread raised error: {error[0]}"
 
         # Verify status filter worked
-        assert len(results['status_filter']) == 1
-        assert results['status_filter'][0].status == OperationStatus.RUNNING
+        assert len(results["status_filter"]) == 1
+        assert results["status_filter"][0].status == OperationStatus.RUNNING
 
         # Verify parent_id filter worked
-        assert len(results['parent_filter']) == 2
-        assert all(ctx.parent_id == parent.context.id for ctx in results['parent_filter'])
+        assert len(results["parent_filter"]) == 2
+        assert all(ctx.parent_id == parent.context.id for ctx in results["parent_filter"])
 
         # Verify name_pattern filter worked
-        assert len(results['name_filter']) == 2
-        assert all('child' in ctx.name.lower() for ctx in results['name_filter'])
+        assert len(results["name_filter"]) == 2
+        assert all("child" in ctx.name.lower() for ctx in results["name_filter"])
 
     @pytest.mark.anyio
     async def test_sync_statistics_with_successful_operations(self, clean_registry):
@@ -462,8 +462,8 @@ class TestRegistryThreadSafety:
 
         stats = result[0]
         # Lines 449-450 should be executed, calculating average duration
-        assert stats['total_completed'] == 3
-        assert stats['average_duration_seconds'] == 2.0  # (1+2+3)/3
+        assert stats["total_completed"] == 3
+        assert stats["average_duration_seconds"] == 2.0  # (1+2+3)/3
 
     @pytest.mark.anyio
     async def test_sync_get_statistics(self, clean_registry):
@@ -882,11 +882,7 @@ class TestRegistryEdgeCases:
             cancelled = [False]
 
             def thread_func():
-                registry.cancel_operation_sync(
-                    op.context.id,
-                    reason=CancelationReason.MANUAL,
-                    message="Cancelled from thread"
-                )
+                registry.cancel_operation_sync(op.context.id, reason=CancelationReason.MANUAL, message="Cancelled from thread")
                 cancelled[0] = True
 
             thread = threading.Thread(target=thread_func)
@@ -931,9 +927,7 @@ class TestRegistryEdgeCases:
 
             def thread_func():
                 registry.cancel_all_sync(
-                    status=OperationStatus.RUNNING,
-                    reason=CancelationReason.MANUAL,
-                    message="Bulk cancel from thread"
+                    status=OperationStatus.RUNNING, reason=CancelationReason.MANUAL, message="Bulk cancel from thread"
                 )
                 cancelled[0] = True
 

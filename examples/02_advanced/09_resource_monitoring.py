@@ -28,6 +28,7 @@ from hother.cancelable.sources.condition import ResourceConditionSource
 # Check if psutil is available
 try:
     import psutil
+
     _psutil = psutil
     _has_psutil = True
 except ImportError:
@@ -264,9 +265,7 @@ async def main():
         print("Starting data export with conservative resource monitoring")
         print("Thresholds: Memory 75%, CPU 85%, Disk 90%")
         resources = get_current_resources()
-        print(
-            f"Current: Memory {resources['memory']:.1f}%, CPU {resources['cpu']:.1f}%, Disk {resources['disk']:.1f}%\n"
-        )
+        print(f"Current: Memory {resources['memory']:.1f}%, CPU {resources['cpu']:.1f}%, Disk {resources['disk']:.1f}%\n")
 
         try:
             async with cancelable:

@@ -1,5 +1,4 @@
-"""Decorators and convenience functions for async cancelation.
-"""
+"""Decorators and convenience functions for async cancelation."""
 
 import inspect
 from collections.abc import Awaitable, Callable

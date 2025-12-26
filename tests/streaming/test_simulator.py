@@ -23,13 +23,7 @@ class TestStreamConfig:
 
     def test_custom_config(self):
         """Test custom configuration values."""
-        config = StreamConfig(
-            chunk_size=50,
-            stall_probability=0.2,
-            burst_probability=0.3,
-            stall_duration=1.0,
-            burst_size=5
-        )
+        config = StreamConfig(chunk_size=50, stall_probability=0.2, burst_probability=0.3, stall_duration=1.0, burst_size=5)
         assert config.chunk_size == 50
         assert config.stall_probability == 0.2
         assert config.burst_probability == 0.3
@@ -67,11 +61,7 @@ class TestGetRandomChunkSize:
 
     def test_random_chunk_size_variable(self):
         """Test variable chunk size."""
-        config = StreamConfig(
-            chunk_size=100,
-            variable_chunk_size=True,
-            chunk_size_range=(50, 150)
-        )
+        config = StreamConfig(chunk_size=100, variable_chunk_size=True, chunk_size_range=(50, 150))
         chunk_size = get_random_chunk_size(config)
 
         # Should be between 50 and 150
@@ -79,11 +69,7 @@ class TestGetRandomChunkSize:
 
     def test_random_chunk_size_variation(self):
         """Test that random chunk size varies."""
-        config = StreamConfig(
-            chunk_size=100,
-            variable_chunk_size=True,
-            chunk_size_range=(80, 120)
-        )
+        config = StreamConfig(chunk_size=100, variable_chunk_size=True, chunk_size_range=(80, 120))
         sizes = [get_random_chunk_size(config) for _ in range(10)]
 
         # Should have some variation (not all the same)
@@ -104,7 +90,7 @@ class TestGetRandomChunkSize:
             chunk_size=10,
             variable_chunk_size=True,
             chunk_size_range=(5, 10),
-            chunk_size_weights=[10, 5, 3, 1, 0, 0]  # Heavy bias toward smaller sizes
+            chunk_size_weights=[10, 5, 3, 1, 0, 0],  # Heavy bias toward smaller sizes
         )
 
         # Generate many samples to test the weighted selection
@@ -121,7 +107,7 @@ class TestGetRandomChunkSize:
             chunk_size=10,
             variable_chunk_size=True,
             chunk_size_range=(5, 15),  # 11 possible values (5-15)
-            chunk_size_weights=[10, 5]  # Only 2 weights, rest should be filled with 1
+            chunk_size_weights=[10, 5],  # Only 2 weights, rest should be filled with 1
         )
 
         sizes = [get_random_chunk_size(config) for _ in range(50)]
@@ -165,7 +151,7 @@ class TestSimulateStream:
         config = StreamConfig(
             chunk_size=4,
             stall_probability=1.0,  # Always stall
-            stall_duration=0.1
+            stall_duration=0.1,
         )
 
         events = []
@@ -188,7 +174,7 @@ class TestSimulateStream:
         config = StreamConfig(
             chunk_size=3,
             burst_probability=1.0,  # Always burst
-            burst_size=2
+            burst_size=2,
         )
 
         events = []
@@ -321,7 +307,7 @@ class TestSimulateStream:
         config = StreamConfig(
             chunk_size=5,
             stall_probability=1.0,  # Force stalls
-            stall_duration=0.01  # Very short for testing
+            stall_duration=0.01,  # Very short for testing
         )
 
         progress_reports = []
@@ -352,7 +338,7 @@ class TestSimulateStream:
             chunk_size=2,
             burst_probability=1.0,  # Force burst
             burst_size=10,  # Large enough to exceed text length
-            stall_probability=0.0  # No stalls for predictable test
+            stall_probability=0.0,  # No stalls for predictable test
         )
 
         events = []

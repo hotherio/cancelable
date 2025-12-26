@@ -8,7 +8,14 @@ from typing import Any
 import anyio
 import pytest
 
-from hother.cancelable import Cancelable, CancelationReason, CancelationToken, OperationContext, OperationStatus, current_operation
+from hother.cancelable import (
+    Cancelable,
+    CancelationReason,
+    CancelationToken,
+    OperationContext,
+    OperationStatus,
+    current_operation,
+)
 from tests.conftest import assert_cancelled_within
 
 
@@ -149,7 +156,7 @@ class TestCancelableFactories:
             tg.start_soon(cancel_after_delay)
 
             async with assert_cancelled_within(0.2), Cancelable.with_token(token) as cancel:
-                    await anyio.sleep(1.0)
+                await anyio.sleep(1.0)
 
         assert cancel.context.cancel_reason == CancelationReason.MANUAL
         assert cancel.context.cancel_message == "Test cancel"
@@ -227,7 +234,7 @@ class TestCancelableComposition:
             tg.start_soon(cancel_soon)
 
             async with assert_cancelled_within(0.2), combined:
-                    await anyio.sleep(2.0)
+                await anyio.sleep(2.0)
 
         # The combined cancelable might show PARENT because it's linked
         # But we should check the original token
@@ -251,7 +258,7 @@ class TestCancelableComposition:
             tg.start_soon(cancel_token2)
 
             async with assert_cancelled_within(0.2), combined:
-                    await anyio.sleep(1.0)
+                await anyio.sleep(1.0)
 
         assert combined.is_cancelled
 
@@ -648,6 +655,7 @@ class TestCancelableIntegration:
     @pytest.mark.anyio
     async def test_progress_callback_error_handling(self):
         """Test that progress callback errors are handled gracefully."""
+
         # Test that failing callbacks don't crash the operation
         def failing_callback(op_id: str, msg: Any, meta: dict[str, Any] | None) -> None:
             raise ValueError("Callback failed")
@@ -665,6 +673,7 @@ class TestCancelableIntegration:
     @pytest.mark.anyio
     async def test_async_progress_callback_error_handling(self):
         """Test that async progress callback errors are handled gracefully."""
+
         # Test that failing async callbacks don't crash the operation
         async def failing_async_callback(op_id: str, msg: Any, meta: dict[str, Any] | None) -> None:
             raise ValueError("Async callback failed")
@@ -871,6 +880,7 @@ class TestCancelableThreadOperations:
     @pytest.mark.anyio
     async def test_run_in_thread_with_args(self):
         """Test run_in_thread with arguments."""
+
         def thread_func(a, b, c=None):
             return f"{a}-{b}-{c}"
 
@@ -997,6 +1007,7 @@ class TestCancelableStreamFeatures:
     @pytest.mark.anyio
     async def test_stream_buffer_limiting(self):
         """Test that stream buffer is limited to 1000 items."""
+
         async def large_stream():
             for i in range(2000):
                 yield i
@@ -1042,6 +1053,7 @@ class TestCancelableStreamFeatures:
     @pytest.mark.anyio
     async def test_stream_cancelation_with_buffer(self):
         """Test stream cancelation preserves partial results in buffer."""
+
         async def slow_stream():
             for i in range(100):
                 await anyio.sleep(0.01)
@@ -1205,6 +1217,7 @@ class TestCancelableCallbackErrors:
     @pytest.mark.anyio
     async def test_error_callback_exception(self):
         """Test that error callback exceptions are caught."""
+
         def failing_callback(ctx: OperationContext, error: Exception) -> None:
             raise RuntimeError("Error callback failed")
 
@@ -1221,6 +1234,7 @@ class TestCancelableCallbackErrors:
     @pytest.mark.anyio
     async def test_async_complete_callback_exception(self):
         """Test that async complete callback exceptions are caught."""
+
         async def failing_async_callback(ctx: OperationContext) -> None:
             raise RuntimeError("Async complete callback failed")
 
@@ -1267,6 +1281,7 @@ class TestCancelableComprehensiveCoverage:
     @pytest.mark.anyio
     async def test_stream_with_non_cancelation_exception(self):
         """Test stream handling of non-cancelation exceptions."""
+
         async def failing_stream():
             yield 1
             yield 2
@@ -1290,6 +1305,7 @@ class TestCancelableComprehensiveCoverage:
     @pytest.mark.anyio
     async def test_stream_complete_with_buffer(self):
         """Test stream completion with buffered results."""
+
         async def complete_stream():
             for i in range(5):
                 yield i
@@ -1308,6 +1324,7 @@ class TestCancelableComprehensiveCoverage:
     @pytest.mark.anyio
     async def test_stream_buffer_exceeds_1000_items(self):
         """Test stream buffer limiting at exactly 1000 items."""
+
         async def large_stream():
             for i in range(1500):
                 yield i
@@ -1528,11 +1545,7 @@ class TestCancelableComprehensiveCoverage:
                 parent._children.add(child2)
 
                 # Cancel parent with propagation
-                await parent.cancel(
-                    CancelationReason.MANUAL,
-                    "Parent cancel",
-                    propagate_to_children=True
-                )
+                await parent.cancel(CancelationReason.MANUAL, "Parent cancel", propagate_to_children=True)
 
                 # Children should be cancelled
                 assert child1.is_cancelled or child1._token.is_cancelled
@@ -1567,10 +1580,7 @@ class TestCancelableComprehensiveCoverage:
 
         try:
             async with cancel:
-                raise CustomCancelError(
-                    CancelationReason.SIGNAL,
-                    "Custom cancelation"
-                )
+                raise CustomCancelError(CancelationReason.SIGNAL, "Custom cancelation")
         except CustomCancelError:
             pass
 
@@ -1882,6 +1892,7 @@ class TestCancelableFinal100Percent:
 
         Targets lines 650-656: buffer limiting at >1000 items.
         """
+
         async def large_stream():
             for i in range(1001):
                 yield i
@@ -1903,6 +1914,7 @@ class TestCancelableFinal100Percent:
 
         Targets lines 676-683: stream completion with buffer.
         """
+
         async def empty_stream():
             # Stream that completes immediately
             if False:
@@ -2082,7 +2094,7 @@ class TestCancelableFinal100Percent:
             raise RuntimeError("Link failed")
 
         # Patch the LinkedCancelationToken.link method on the class
-        with patch.object(LinkedCancelationToken, 'link', failing_link):
+        with patch.object(LinkedCancelationToken, "link", failing_link):
             # Exception should propagate from __aenter__
             with pytest.raises(RuntimeError, match="Link failed"):
                 async with parent:
@@ -2096,6 +2108,7 @@ class TestCancelableFinal100Percent:
 
         Targets branch 676->683: else clause with count > 0.
         """
+
         async def counter_stream():
             for i in range(5):
                 yield i
@@ -2131,10 +2144,7 @@ class TestCancelableFinal100Percent:
 
         # Now cancel parent with propagate_to_children=True
         # This should:
-        await parent.cancel(
-            reason=CancelationReason.MANUAL,
-            propagate_to_children=True
-        )
+        await parent.cancel(reason=CancelationReason.MANUAL, propagate_to_children=True)
 
         # Both tokens should be cancelled
         assert child1._token.is_cancelled
@@ -2163,7 +2173,7 @@ class TestCancelableFinal100Percent:
             original_update(status)
 
         # Patch update_status method on the OperationContext class
-        with patch.object(type(cancel.context), 'update_status', failing_update_status):
+        with patch.object(type(cancel.context), "update_status", failing_update_status):
             # Should complete without raising despite the error in status update
             async with cancel:
                 pass
@@ -2206,6 +2216,7 @@ class TestCancelableFinal100Percent:
 
         Targets branch 676->683: save buffer when completed normally with buffering.
         """
+
         async def counter():
             for i in range(5):
                 yield i
@@ -2243,7 +2254,6 @@ class TestCancelableFinal100Percent:
             # After exiting shield normally, it should be removed
             # Lines 788-789 should execute
             assert len(cancel._shields) == 0
-
 
     @pytest.mark.anyio
     async def test_source_check_without_deadline(self):
@@ -2328,10 +2338,7 @@ class TestCancelableFinal100Percent:
         await child2._token.cancel(CancelationReason.MANUAL)
 
         # Cancel parent with propagation
-        await parent.cancel(
-            reason=CancelationReason.MANUAL,
-            propagate_to_children=True
-        )
+        await parent.cancel(reason=CancelationReason.MANUAL, propagate_to_children=True)
 
         # All should be cancelled
         assert child1._token.is_cancelled
@@ -2358,7 +2365,6 @@ class TestCancelableFinal100Percent:
                         await anyio.sleep(1.0)
         except anyio.get_cancelled_exc_class():
             pass
-
 
     @pytest.mark.anyio
     async def test_duplicate_token_in_combine_tree(self):
@@ -2397,6 +2403,7 @@ class TestCancelableFinal100Percent:
 
         Targets branch 676->683: skip setting partial_result when count=0 and no buffer.
         """
+
         async def empty_stream():
             # Yield nothing - empty generator
             return
@@ -2430,7 +2437,7 @@ class TestCancelableFinal100Percent:
         # Cancel parent WITHOUT propagating
         await parent.cancel(
             reason=CancelationReason.MANUAL,
-            propagate_to_children=False  # Branch 818->829
+            propagate_to_children=False,  # Branch 818->829
         )
 
         # Parent should be cancelled
@@ -2465,10 +2472,7 @@ class TestCancelableFinal100Percent:
         # Cancel parent with propagation
         # Should cancel child1 (821->822)
         # Should skip child2 since already cancelled (821->820)
-        await parent.cancel(
-            reason=CancelationReason.MANUAL,
-            propagate_to_children=True
-        )
+        await parent.cancel(reason=CancelationReason.MANUAL, propagate_to_children=True)
 
         # Both tokens should be cancelled
         assert child1._token.is_cancelled
@@ -2600,5 +2604,3 @@ class TestCancelableFinal100Percent:
         # Verify error callback was NOT called (line 723 condition False)
         assert not error_callback_called
         assert cancel.context.status == OperationStatus.FAILED
-
-

@@ -185,8 +185,7 @@ class AnyioBridge:
             logger.debug("Callback successfully queued to bridge stream")
         except anyio.WouldBlock:
             logger.warning(
-                f"Bridge queue full ({self._buffer_size} callbacks), "
-                "callback dropped - consider increasing buffer size"
+                f"Bridge queue full ({self._buffer_size} callbacks), " "callback dropped - consider increasing buffer size"
             )
         except Exception as e:
             logger.error(f"Failed to schedule callback: {e}", exc_info=True)

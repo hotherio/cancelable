@@ -1,5 +1,4 @@
-"""Global operation registry for tracking and managing operations.
-"""
+"""Global operation registry for tracking and managing operations."""
 
 import threading
 from datetime import UTC, datetime, timedelta

@@ -81,9 +81,7 @@ async def example_wrap_with_tenacity():
         wrapped_op = cancel.wrap(unreliable_operation)
 
         # Use Tenacity for retry logic
-        async for attempt in AsyncRetrying(
-            stop=stop_after_attempt(5), wait=wait_exponential(multiplier=1, min=1, max=10)
-        ):
+        async for attempt in AsyncRetrying(stop=stop_after_attempt(5), wait=wait_exponential(multiplier=1, min=1, max=10)):
             with attempt:
                 # Report progress
                 attempt_num = attempt.retry_state.attempt_number
@@ -275,9 +273,7 @@ async def example_progress_tracking():
         async for attempt in AsyncRetrying(stop=stop_after_attempt(5), wait=wait_exponential(multiplier=1)):
             with attempt:
                 attempt_num = attempt.retry_state.attempt_number
-                await cancel.report_progress(
-                    f"📊 Attempt {attempt_num}", {"attempt": attempt_num, "stage": "before_execution"}
-                )
+                await cancel.report_progress(f"📊 Attempt {attempt_num}", {"attempt": attempt_num, "stage": "before_execution"})
 
                 result = await wrapped_op(400)
 

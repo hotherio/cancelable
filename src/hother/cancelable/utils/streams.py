@@ -1,5 +1,4 @@
-"""Stream utilities for async cancelation.
-"""
+"""Stream utilities for async cancelation."""
 
 from collections.abc import AsyncIterator, Callable
 from datetime import timedelta

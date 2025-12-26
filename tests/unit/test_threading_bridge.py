@@ -102,7 +102,7 @@ class TestThreadSafeRegistry:
 
         def thread1_func():
             """First thread - creates the instance with delay."""
-            with patch.object(ThreadSafeRegistry, '__init__', slow_init):
+            with patch.object(ThreadSafeRegistry, "__init__", slow_init):
                 instance = ThreadSafeRegistry.get_instance()
                 instances.append(instance)
 
@@ -319,9 +319,7 @@ class TestThreadSafeRegistry:
 
             def thread_func():
                 thread_registry.cancel_operation(
-                    cancelable.context.id,
-                    reason=CancelationReason.MANUAL,
-                    message="Cancelled from thread"
+                    cancelable.context.id, reason=CancelationReason.MANUAL, message="Cancelled from thread"
                 )
                 cancelled[0] = True
 
@@ -392,9 +390,7 @@ class TestThreadSafeRegistry:
 
             def thread_func():
                 thread_registry.cancel_all(
-                    status=OperationStatus.RUNNING,
-                    reason=CancelationReason.MANUAL,
-                    message="Bulk cancel from thread"
+                    status=OperationStatus.RUNNING, reason=CancelationReason.MANUAL, message="Bulk cancel from thread"
                 )
                 cancelled[0] = True
 

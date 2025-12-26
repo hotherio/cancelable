@@ -78,19 +78,12 @@ class ErrorCallback(Protocol):
 
 # Union types for callbacks that can be sync or async
 ProgressCallbackType = (
-    Callable[[str, Any, dict[str, Any] | None], None]
-    | Callable[[str, Any, dict[str, Any] | None], Awaitable[None]]
+    Callable[[str, Any, dict[str, Any] | None], None] | Callable[[str, Any, dict[str, Any] | None], Awaitable[None]]
 )
 
-StatusCallbackType = (
-    Callable[["OperationContext"], None]
-    | Callable[["OperationContext"], Awaitable[None]]
-)
+StatusCallbackType = Callable[["OperationContext"], None] | Callable[["OperationContext"], Awaitable[None]]
 
-ErrorCallbackType = (
-    Callable[["OperationContext", Exception], None]
-    | Callable[["OperationContext", Exception], Awaitable[None]]
-)
+ErrorCallbackType = Callable[["OperationContext", Exception], None] | Callable[["OperationContext", Exception], Awaitable[None]]
 
 
 def ensure_cancelable(cancelable: Cancelable | None) -> Cancelable:

@@ -12,6 +12,7 @@ from hother.cancelable import Cancelable, CancelationToken
 # Check for optional dependencies at module level
 try:
     import fastapi
+
     _has_fastapi = True
 except ImportError:
     _has_fastapi = False
@@ -121,4 +122,3 @@ class TestFastAPIIntegration:
 
         assert text == "test message"
         assert json_data == {"key": "value"}
-

@@ -67,9 +67,10 @@ class TestAnyioBridge:
         bridge.call_soon_threadsafe(lambda: called.append("pending2"))
 
         # Mock the streams and worker to avoid infinite loop
-        with patch('anyio.create_memory_object_stream') as mock_stream, \
-             patch.object(bridge, '_worker', new_callable=AsyncMock) as mock_worker:
-
+        with (
+            patch("anyio.create_memory_object_stream") as mock_stream,
+            patch.object(bridge, "_worker", new_callable=AsyncMock) as mock_worker,
+        ):
             mock_send, mock_receive = MagicMock(), MagicMock()
             mock_stream.return_value = (mock_send, mock_receive)
 
@@ -100,9 +101,7 @@ class TestAnyioBridge:
         bridge = AnyioBridge()
 
         # Mock the streams
-        with patch('anyio.create_memory_object_stream') as mock_stream, \
-             patch.object(bridge, '_worker', new_callable=AsyncMock):
-
+        with patch("anyio.create_memory_object_stream") as mock_stream, patch.object(bridge, "_worker", new_callable=AsyncMock):
             mock_send, mock_receive = MagicMock(), MagicMock()
             mock_stream.return_value = (mock_send, mock_receive)
 
@@ -130,9 +129,7 @@ class TestAnyioBridge:
         """Test behavior when bridge queue is full."""
         bridge = AnyioBridge()
 
-        with patch('anyio.create_memory_object_stream') as mock_stream, \
-             patch.object(bridge, '_worker', new_callable=AsyncMock):
-
+        with patch("anyio.create_memory_object_stream") as mock_stream, patch.object(bridge, "_worker", new_callable=AsyncMock):
             mock_send, mock_receive = MagicMock(), MagicMock()
             mock_send.send_nowait.side_effect = anyio.WouldBlock()
             mock_stream.return_value = (mock_send, mock_receive)
@@ -161,7 +158,7 @@ class TestAnyioBridge:
         AnyioBridge._instance = None
 
         # Mock the instance
-        with patch.object(AnyioBridge, 'get_instance') as mock_get_instance:
+        with patch.object(AnyioBridge, "get_instance") as mock_get_instance:
             mock_bridge = MagicMock()
             mock_get_instance.return_value = mock_bridge
 
@@ -192,9 +189,7 @@ class TestAnyioBridge:
         """Test warning when calling start() on already started bridge."""
         bridge = AnyioBridge()
 
-        with patch('anyio.create_memory_object_stream') as mock_stream, \
-             patch.object(bridge, '_worker', new_callable=AsyncMock):
-
+        with patch("anyio.create_memory_object_stream") as mock_stream, patch.object(bridge, "_worker", new_callable=AsyncMock):
             mock_send, mock_receive = MagicMock(), MagicMock()
             mock_stream.return_value = (mock_send, mock_receive)
 
@@ -232,12 +227,16 @@ class TestAnyioBridge:
         for i in range(5):
             bridge.call_soon_threadsafe(lambda: None)
 
-        with patch('anyio.create_memory_object_stream') as mock_stream, \
-             patch.object(bridge, '_worker', new_callable=AsyncMock):
-
+        with patch("anyio.create_memory_object_stream") as mock_stream, patch.object(bridge, "_worker", new_callable=AsyncMock):
             mock_send, mock_receive = MagicMock(), MagicMock()
             # Make send_nowait raise WouldBlock after first callback
-            mock_send.send_nowait.side_effect = [None, anyio.WouldBlock(), anyio.WouldBlock(), anyio.WouldBlock(), anyio.WouldBlock()]
+            mock_send.send_nowait.side_effect = [
+                None,
+                anyio.WouldBlock(),
+                anyio.WouldBlock(),
+                anyio.WouldBlock(),
+                anyio.WouldBlock(),
+            ]
             mock_stream.return_value = (mock_send, mock_receive)
 
             # Start bridge - should handle WouldBlock gracefully
@@ -259,9 +258,7 @@ class TestAnyioBridge:
         """Test exception handling in call_soon_threadsafe."""
         bridge = AnyioBridge()
 
-        with patch('anyio.create_memory_object_stream') as mock_stream, \
-             patch.object(bridge, '_worker', new_callable=AsyncMock):
-
+        with patch("anyio.create_memory_object_stream") as mock_stream, patch.object(bridge, "_worker", new_callable=AsyncMock):
             mock_send, mock_receive = MagicMock(), MagicMock()
             # Make send_nowait raise a different exception (not WouldBlock)
             mock_send.send_nowait.side_effect = RuntimeError("Simulated send error")
@@ -356,7 +353,7 @@ class TestAnyioBridge:
 
         def thread1_func():
             """First thread - creates the instance with delay."""
-            with patch.object(AnyioBridge, '__init__', slow_init):
+            with patch.object(AnyioBridge, "__init__", slow_init):
                 instance = AnyioBridge.get_instance()
                 instances.append(instance)
 
@@ -394,9 +391,7 @@ class TestAnyioBridge:
         bridge = AnyioBridge()
 
         # Create and start bridge
-        with patch('anyio.create_memory_object_stream') as mock_stream, \
-             patch.object(bridge, '_worker', new_callable=AsyncMock):
-
+        with patch("anyio.create_memory_object_stream") as mock_stream, patch.object(bridge, "_worker", new_callable=AsyncMock):
             mock_send, mock_receive = AsyncMock(), AsyncMock()
             mock_stream.return_value = (mock_send, mock_receive)
 
@@ -431,9 +426,7 @@ class TestAnyioBridge:
         """Test that stop() handles exceptions during stream closing."""
         bridge = AnyioBridge()
 
-        with patch('anyio.create_memory_object_stream') as mock_stream, \
-             patch.object(bridge, '_worker', new_callable=AsyncMock):
-
+        with patch("anyio.create_memory_object_stream") as mock_stream, patch.object(bridge, "_worker", new_callable=AsyncMock):
             mock_send, mock_receive = AsyncMock(), AsyncMock()
             # Make streams raise exceptions on aclose
             mock_send.aclose.side_effect = RuntimeError("Send stream close error")

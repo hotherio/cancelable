@@ -235,8 +235,6 @@ class TestUtilityFunctions:
         assert len(collected) > 0
         assert len(collected) < len(items)
 
-
-
     @pytest.mark.anyio
     async def test_run_with_timeout_test_timeout(self):
         """Test run_with_timeout_test with timeout."""
@@ -332,10 +330,7 @@ class TestCancelationScenario:
         scenario = CancelationScenario("test_run")
 
         # Build scenario: delay then cancel
-        scenario.add_delay(0.05).add_cancelation(
-            reason=CancelationReason.MANUAL,
-            message="Test cancel"
-        )
+        scenario.add_delay(0.05).add_cancelation(reason=CancelationReason.MANUAL, message="Test cancel")
 
         # NOTE: The scenario catches CancelledError, so the operation completes normally
         # even though it was cancelled. The test is checking that the scenario runs.
@@ -408,10 +403,7 @@ class TestCancelationScenario:
         scenario = CancelationScenario("immediate_cancel")
 
         # Add cancelation with no delay first
-        scenario.add_cancelation(
-            reason=CancelationReason.MANUAL,
-            message="Immediate cancel"
-        )
+        scenario.add_cancelation(reason=CancelationReason.MANUAL, message="Immediate cancel")
 
         async def long_operation():
             await anyio.sleep(1.0)

@@ -69,7 +69,9 @@ async def main():
                     print("Token cancel call completed")
     except asyncio.CancelledError:
         print("  Operation was cancelled")
-        print(f"  Reason: {final_cancellable.context.cancel_reason.value if final_cancellable.context.cancel_reason else 'unknown'}")
+        print(
+            f"  Reason: {final_cancellable.context.cancel_reason.value if final_cancellable.context.cancel_reason else 'unknown'}"
+        )
         print(f"  Message: {final_cancellable.context.cancel_message or 'no message'}")
     # --8<-- [end:example]
 

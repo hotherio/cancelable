@@ -1,5 +1,4 @@
-"""Base class for cancelation sources.
-"""
+"""Base class for cancelation sources."""
 
 from abc import ABC, abstractmethod
 from collections.abc import Awaitable, Callable

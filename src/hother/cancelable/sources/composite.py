@@ -1,6 +1,4 @@
-"""Composite cancelation source for combining multiple sources.
-"""
-
+"""Composite cancelation source for combining multiple sources."""
 
 import anyio
 

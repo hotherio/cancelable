@@ -125,9 +125,7 @@ class TestTokenCancelSync:
 
         # Cancel from thread
         def cancel_in_thread():
-            result = token.cancel_sync(
-                reason=CancelationReason.MANUAL, message="Cancelled from thread"
-            )
+            result = token.cancel_sync(reason=CancelationReason.MANUAL, message="Cancelled from thread")
             assert result is True
 
         thread = threading.Thread(target=cancel_in_thread)
@@ -257,9 +255,7 @@ class TestPynputScenario:
                 """Simulates key press callback from pynput thread."""
                 if key == "SPACE":
                     # Cancel token from keyboard thread
-                    self.token.cancel_sync(
-                        reason=CancelationReason.MANUAL, message="User pressed SPACE"
-                    )
+                    self.token.cancel_sync(reason=CancelationReason.MANUAL, message="User pressed SPACE")
 
             def start(self):
                 """Start simulated listener thread."""

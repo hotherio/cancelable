@@ -41,7 +41,7 @@ def strip_leading_docstring(code: str) -> str:
     """
     # Match triple-quoted strings at the start (with optional shebang/encoding)
     pattern = r'^(#!.*?\n)?(# -\*- coding:.*?\n)?(\s*"""[\s\S]*?"""\s*\n|\s*\'\'\'[\s\S]*?\'\'\'\s*\n)?'
-    return re.sub(pattern, r'\1\2', code, count=1)
+    return re.sub(pattern, r"\1\2", code, count=1)
 
 
 def format_code_block(
@@ -73,9 +73,9 @@ def format_code_block(
 
     # Add source link
     if start_line and end_line:
-        result += f'_[View source on GitHub (lines {start_line}-{end_line})]({github_link})_'
+        result += f"_[View source on GitHub (lines {start_line}-{end_line})]({github_link})_"
     else:
-        result += f'_[View source on GitHub]({github_link})_'
+        result += f"_[View source on GitHub]({github_link})_"
 
     return result
 

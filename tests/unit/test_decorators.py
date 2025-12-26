@@ -31,6 +31,7 @@ class TestCancelableDecorator:
     @pytest.mark.anyio
     async def test_basic_decorator(self):
         """Test basic usage of @cancelable decorator."""
+
         @cancelable()
         async def simple_task():
             await anyio.sleep(0.01)
@@ -42,6 +43,7 @@ class TestCancelableDecorator:
     @pytest.mark.anyio
     async def test_decorator_with_timeout(self):
         """Test @cancelable with timeout parameter."""
+
         @cancelable(timeout=1.0)
         async def timed_task():
             await anyio.sleep(0.01)
@@ -53,6 +55,7 @@ class TestCancelableDecorator:
     @pytest.mark.anyio
     async def test_decorator_without_timeout(self):
         """Test @cancelable without timeout."""
+
         @cancelable()
         async def no_timeout_task():
             return "done"
@@ -79,6 +82,7 @@ class TestCancelableDecorator:
     @pytest.mark.anyio
     async def test_decorator_without_inject_param(self):
         """Test @cancelable with injection disabled."""
+
         @cancelable(inject_param=None)
         async def task_no_injection():
             return "done"
@@ -89,6 +93,7 @@ class TestCancelableDecorator:
     @pytest.mark.anyio
     async def test_decorator_inject_param_not_in_signature(self):
         """Test that decorator doesn't inject if param not in signature."""
+
         @cancelable(inject_param="cancelable")
         async def task_without_param(data: str):
             return data.upper()
@@ -99,6 +104,7 @@ class TestCancelableDecorator:
     @pytest.mark.anyio
     async def test_decorator_with_custom_name(self):
         """Test @cancelable with custom operation name."""
+
         @cancelable(name="custom_operation")
         async def task():
             return "done"
@@ -109,6 +115,7 @@ class TestCancelableDecorator:
     @pytest.mark.anyio
     async def test_decorator_with_operation_id(self):
         """Test @cancelable with custom operation ID."""
+
         @cancelable(operation_id="op-12345")
         async def task():
             return "done"
@@ -119,6 +126,7 @@ class TestCancelableDecorator:
     @pytest.mark.anyio
     async def test_decorator_with_register_globally(self):
         """Test @cancelable with global registration."""
+
         @cancelable(register_globally=True)
         async def task():
             return "done"
@@ -129,6 +137,7 @@ class TestCancelableDecorator:
     @pytest.mark.anyio
     async def test_decorator_preserves_metadata(self):
         """Test that decorator preserves function metadata."""
+
         @cancelable(timeout=5.0, name="test_op")
         async def documented_task():
             """This is a documented function."""
@@ -144,6 +153,7 @@ class TestCancelableDecorator:
     @pytest.mark.anyio
     async def test_decorator_with_args_and_kwargs(self):
         """Test @cancelable with function arguments."""
+
         @cancelable()
         async def task_with_args(x: int, y: int, z: int = 0, cancelable: Cancelable = None):
             return x + y + z
@@ -158,6 +168,7 @@ class TestWithTimeout:
     @pytest.mark.anyio
     async def test_with_timeout_basic(self):
         """Test basic timeout functionality."""
+
         async def quick_task():
             await anyio.sleep(0.01)
             return "completed"
@@ -168,6 +179,7 @@ class TestWithTimeout:
     @pytest.mark.anyio
     async def test_with_timeout_with_operation_id(self):
         """Test with_timeout with custom operation ID."""
+
         async def task():
             return "done"
 
@@ -177,6 +189,7 @@ class TestWithTimeout:
     @pytest.mark.anyio
     async def test_with_timeout_with_name(self):
         """Test with_timeout with custom name."""
+
         async def task():
             return "done"
 
@@ -208,6 +221,7 @@ class TestWithCurrentOperation:
     @pytest.mark.anyio
     async def test_current_operation_no_operation_param(self):
         """Test decorator with function that doesn't have operation parameter."""
+
         @with_current_operation()
         async def task_without_param(data: str):
             return data.upper()
@@ -237,6 +251,7 @@ class TestCancelableMethod:
     @pytest.mark.anyio
     async def test_method_decorator_basic(self):
         """Test basic @cancelable_method usage."""
+
         class Worker:
             @cancelable_method()
             async def process(self):
@@ -249,6 +264,7 @@ class TestCancelableMethod:
     @pytest.mark.anyio
     async def test_method_decorator_with_timeout(self):
         """Test @cancelable_method with timeout."""
+
         class Worker:
             @cancelable_method(timeout=1.0)
             async def process(self):
@@ -262,6 +278,7 @@ class TestCancelableMethod:
     @pytest.mark.anyio
     async def test_method_decorator_without_timeout(self):
         """Test @cancelable_method without timeout."""
+
         class Worker:
             @cancelable_method()
             async def process(self):
@@ -291,6 +308,7 @@ class TestCancelableMethod:
     @pytest.mark.anyio
     async def test_method_decorator_without_cancelable_param(self):
         """Test @cancelable_method when method doesn't have cancelable param."""
+
         class Worker:
             @cancelable_method()
             async def process(self, data: str):
@@ -303,6 +321,7 @@ class TestCancelableMethod:
     @pytest.mark.anyio
     async def test_method_decorator_uses_class_name(self):
         """Test that method decorator includes class name."""
+
         class DataProcessor:
             @cancelable_method()
             async def transform(self, cancelable: Cancelable):
@@ -316,6 +335,7 @@ class TestCancelableMethod:
     @pytest.mark.anyio
     async def test_method_decorator_with_custom_name(self):
         """Test @cancelable_method with custom name."""
+
         class Worker:
             @cancelable_method(name="custom_method")
             async def process(self, cancelable: Cancelable):
@@ -328,6 +348,7 @@ class TestCancelableMethod:
     @pytest.mark.anyio
     async def test_method_decorator_with_register_globally(self):
         """Test @cancelable_method with global registration."""
+
         class Worker:
             @cancelable_method(register_globally=True)
             async def process(self):
@@ -340,6 +361,7 @@ class TestCancelableMethod:
     @pytest.mark.anyio
     async def test_method_decorator_with_args(self):
         """Test @cancelable_method with method arguments."""
+
         class Calculator:
             @cancelable_method()
             async def add(self, x: int, y: int, z: int = 0):
@@ -503,9 +525,7 @@ class TestCancelableWithCondition:
         """Test basic condition-based cancelation."""
         should_cancel = False
 
-        @cancelable_with_condition(
-            lambda: should_cancel, check_interval=0.01, condition_name="test_condition"
-        )
+        @cancelable_with_condition(lambda: should_cancel, check_interval=0.01, condition_name="test_condition")
         async def task(cancelable: Cancelable):
             await anyio.sleep(0.01)
             return "completed"
@@ -518,9 +538,7 @@ class TestCancelableWithCondition:
         """Test that condition triggers cancelation."""
         should_cancel = False
 
-        @cancelable_with_condition(
-            lambda: should_cancel, check_interval=0.01, condition_name="cancel_check"
-        )
+        @cancelable_with_condition(lambda: should_cancel, check_interval=0.01, condition_name="cancel_check")
         async def task(cancelable: Cancelable):
             # Loop for a bit to allow condition check
             for _ in range(20):
@@ -621,9 +639,7 @@ class TestCancelableCombine:
         """Test that combined sources work correctly."""
         token = CancelationToken()
 
-        @cancelable_combine(
-            Cancelable.with_timeout(10.0), Cancelable.with_token(token), name="multi_cancel"
-        )
+        @cancelable_combine(Cancelable.with_timeout(10.0), Cancelable.with_token(token), name="multi_cancel")
         async def task(cancelable: Cancelable):
             await anyio.sleep(0.01)
             return "completed"
@@ -798,6 +814,7 @@ class TestWithCancelable:
             nonlocal result_value
             # Access via current_operation
             from hother.cancelable import current_operation
+
             ctx = current_operation()
             assert ctx is not None
             assert ctx.context.name == "test_operation"
@@ -899,6 +916,7 @@ class TestWithCancelable:
         @with_cancelable(cancel)
         async def task1():
             from hother.cancelable import current_operation
+
             ctx = current_operation()
             assert ctx.context.name == "shared_context"
             results.append("task1")
@@ -907,6 +925,7 @@ class TestWithCancelable:
         @with_cancelable(cancel)
         async def task2():
             from hother.cancelable import current_operation
+
             ctx = current_operation()
             assert ctx.context.name == "shared_context"
             results.append("task2")

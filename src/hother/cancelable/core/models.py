@@ -1,5 +1,4 @@
-"""Pydantic models for operation context and status tracking.
-"""
+"""Pydantic models for operation context and status tracking."""
 
 import uuid
 from datetime import UTC, datetime, timedelta

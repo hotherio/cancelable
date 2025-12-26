@@ -42,9 +42,7 @@ async def main():
     async with asyncio.TaskGroup() as tg:
         tg.create_task(create_stop_file_after_delay())
 
-        async with Cancelable.with_condition(
-            check_stop_file, condition_name="file_exists", name="file_watcher"
-        ) as cancel:
+        async with Cancelable.with_condition(check_stop_file, condition_name="file_exists", name="file_watcher") as cancel:
             print(f"  Started file watcher: {cancel.context.id}")
             print("  Waiting for stop file to appear...")
 
@@ -83,9 +81,7 @@ async def main():
         return bool(db_state.get("error", False))
 
     # Create condition-based cancelables
-    complete_cancel = Cancelable.with_condition(
-        check_db_complete, condition_name="db_complete", name="complete_monitor"
-    )
+    complete_cancel = Cancelable.with_condition(check_db_complete, condition_name="db_complete", name="complete_monitor")
     error_cancel = Cancelable.with_condition(check_db_error, condition_name="db_error", name="error_monitor")
 
     # Combine conditions (cancel if either complete or error)
@@ -140,9 +136,7 @@ async def main():
         return system_state["active_connections"] < 10 and system_state["cpu_usage"] < 20.0
 
     # Create condition-based cancelables
-    health_cancel = Cancelable.with_condition(
-        check_system_health, condition_name="system_health", name="health_monitor"
-    )
+    health_cancel = Cancelable.with_condition(check_system_health, condition_name="system_health", name="health_monitor")
     quiet_cancel = Cancelable.with_condition(check_quiet_period, condition_name="quiet_period", name="quiet_monitor")
 
     # Cancel if system becomes unhealthy OR enters quiet period
@@ -193,9 +187,7 @@ async def main():
         return bool(progress_state["target_reached"])
 
     # Create sources
-    condition_cancel = Cancelable.with_condition(
-        check_target_reached, condition_name="target_check", name="target_monitor"
-    )
+    condition_cancel = Cancelable.with_condition(check_target_reached, condition_name="target_check", name="target_monitor")
     timeout_cancel = Cancelable.with_timeout(5.0, name="processing_timeout")
 
     # Combine condition and timeout

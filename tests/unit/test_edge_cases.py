@@ -42,9 +42,7 @@ class TestContextVariableThreadSafety:
             assert main_context.context.name == "context_test"
 
             # Run multiple thread checks
-            thread_results = await asyncio.gather(*[
-                cancel.run_in_thread(check_context_in_thread, i) for i in range(5)
-            ])
+            thread_results = await asyncio.gather(*[cancel.run_in_thread(check_context_in_thread, i) for i in range(5)])
 
             # All thread operations should succeed
             assert all(thread_results)
@@ -235,9 +233,7 @@ class TestMemoryLeakPrevention:
 
         # Create operations that use threads
         async with Cancelable(name="thread_test") as cancel:
-            results = await asyncio.gather(*[
-                cancel.run_in_thread(dummy_thread_work) for _ in range(10)
-            ])
+            results = await asyncio.gather(*[cancel.run_in_thread(dummy_thread_work) for _ in range(10)])
 
             assert len(results) == 10
             assert all(r == "completed" for r in results)

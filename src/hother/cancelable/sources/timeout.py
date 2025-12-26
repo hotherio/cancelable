@@ -1,5 +1,4 @@
-"""Timeout-based cancelation source implementation.
-"""
+"""Timeout-based cancelation source implementation."""
 
 from datetime import timedelta
 
@@ -13,8 +12,7 @@ logger = get_logger(__name__)
 
 
 class TimeoutSource(CancelationSource):
-    """Cancelation source that triggers after a specified timeout.
-    """
+    """Cancelation source that triggers after a specified timeout."""
 
     def __init__(self, timeout: float | timedelta, name: str | None = None):
         """Initialize timeout source.

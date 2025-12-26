@@ -300,7 +300,9 @@ class TestCancelablePerformance:
         with_callback_times = []
         for _ in range(iterations):
             start = time.perf_counter()
-            async with Cancelable().on_progress(progress_callback).on_start(async_callback).on_complete(async_callback) as cancel:
+            async with (
+                Cancelable().on_progress(progress_callback).on_start(async_callback).on_complete(async_callback) as cancel
+            ):
                 await cancel.report_progress("test")
             with_callback_times.append(time.perf_counter() - start)
 

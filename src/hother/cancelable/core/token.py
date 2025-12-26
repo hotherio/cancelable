@@ -1,5 +1,4 @@
-"""Thread-safe cancelation token implementation.
-"""
+"""Thread-safe cancelation token implementation."""
 
 from __future__ import annotations
 

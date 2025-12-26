@@ -267,6 +267,7 @@ class TestCompositeSource:
         """Test that composite propagates reason from triggered source."""
         # Create sources with different reasons
         check_count = 0
+
         def condition():
             nonlocal check_count
             check_count += 1
@@ -298,6 +299,7 @@ class TestCompositeSource:
     @pytest.mark.anyio
     async def test_composite_stop_monitoring_with_errors(self):
         """Test composite handles errors when stopping sources."""
+
         # Create a mock source that raises error on stop
         class FailingSource(CancelationSource):
             def __init__(self):
@@ -323,6 +325,7 @@ class TestCompositeSource:
     @pytest.mark.anyio
     async def test_composite_monitor_source_exception(self):
         """Test composite handles exception in source monitoring."""
+
         # Create a source that raises during start_monitoring
         class ExceptionSource(CancelationSource):
             def __init__(self):
@@ -388,6 +391,7 @@ class TestCompositeSource:
             def condition():
                 counts[idx] += 1
                 return counts[idx] >= threshold
+
             return condition
 
         source1 = ConditionSource(make_condition(0, 2), check_interval=0.05)
@@ -519,6 +523,7 @@ class TestAllOfSource:
             def condition():
                 counts[idx] += 1
                 return counts[idx] >= threshold
+
             return condition
 
         # Different thresholds mean they trigger at different times
@@ -569,6 +574,7 @@ class TestAllOfSource:
     @pytest.mark.anyio
     async def test_all_of_monitor_source_exception(self):
         """Test AllOfSource handles exception in source monitoring."""
+
         # Create a source that raises during start_monitoring
         class ExceptionSource(CancelationSource):
             def __init__(self):
@@ -593,7 +599,3 @@ class TestAllOfSource:
         await anyio.sleep(0.1)
 
         await all_of.stop_monitoring()
-
-
-
-

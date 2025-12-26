@@ -79,7 +79,7 @@ dev = [
     "coverage[toml]>=7.10.7",
     "pretty_errors>=1.2.25",
     "ruff>=0.8.6",
-    "basedpyright>=1.23.0",
+    "basedpyright>=1.36.0",
     "twine>=6.0.0",
     "lefthook>=1.13.0",
     "pyyaml>=6.0.2",
@@ -107,7 +107,7 @@ publish-url = "https://hotherio.github.io/pypi-registry/"
 
 [tool.ruff]
 line-length = 128
-target-version = "py313"
+target-version = "py314"
 
 [tool.ruff.lint]
 extend-select = [
@@ -163,7 +163,7 @@ indent-style = "space"
 docstring-code-format = false
 
 [tool.basedpyright]
-pythonVersion = "3.13"
+pythonVersion = "3.14"
 typeCheckingMode = "strict"
 reportMissingTypeStubs = false
 reportUnnecessaryIsInstance = false

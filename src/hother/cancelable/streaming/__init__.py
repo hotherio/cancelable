@@ -1,5 +1,4 @@
-"""
-Stream processing utilities for async operations.
+"""Stream processing utilities for async operations.
 
 This module provides tools for simulating and testing cancellable stream processing:
 

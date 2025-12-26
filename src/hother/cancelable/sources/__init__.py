@@ -1,5 +1,4 @@
-"""
-Cancellation source implementations.
+"""Cancellation source implementations.
 
 This module provides various ways to trigger cancellation of async operations:
 

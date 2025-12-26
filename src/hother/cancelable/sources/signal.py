@@ -1,5 +1,4 @@
-"""
-Signal-based cancelation source implementation.
+"""Signal-based cancelation source implementation.
 """
 
 from __future__ import annotations
@@ -17,8 +16,7 @@ logger = get_logger(__name__)
 
 
 class SignalSource(CancelationSource):
-    """
-    Cancelation source that monitors OS signals.
+    """Cancelation source that monitors OS signals.
 
     Uses anyio's native signal handling for clean integration.
     Supports graceful shutdown via SIGINT, SIGTERM, etc.
@@ -27,8 +25,7 @@ class SignalSource(CancelationSource):
     """
 
     def __init__(self, *signals: int, name: str | None = None) -> None:
-        """
-        Initialize signal source.
+        """Initialize signal source.
 
         Args:
             *signals: Signal numbers to monitor (e.g., signal.SIGINT)
@@ -52,8 +49,7 @@ class SignalSource(CancelationSource):
         self._task_group: anyio.abc.TaskGroup | None = None
 
     async def start_monitoring(self, scope: anyio.CancelScope) -> None:
-        """
-        Start monitoring for signals.
+        """Start monitoring for signals.
 
         Args:
             scope: Cancel scope to trigger when signal is received
@@ -98,8 +94,7 @@ class SignalSource(CancelationSource):
         )
 
     async def _monitor_signals(self) -> None:
-        """
-        Monitor for signals using anyio's native signal handling.
+        """Monitor for signals using anyio's native signal handling.
 
         This runs in a background task and waits for any of the configured signals.
         When a signal is received, it triggers cancelation and exits.

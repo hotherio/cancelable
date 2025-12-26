@@ -153,8 +153,8 @@ combine-as-imports = true
 convention = "google"
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**/*.py" = ["D", "PLR2004"]  # Ignore docstrings and magic values in tests
-"examples/**/*.py" = ["D101", "D103"]
+"tests/**/*.py" = ["D", "PLR2004", "S101"]  # Ignore docstrings, magic values, and assert in tests
+"examples/**/*.py" = ["D101", "D103", "S", "PLR2004"]  # Ignore docstrings, security checks, and magic values in examples
 
 # Format settings
 [tool.ruff.format]

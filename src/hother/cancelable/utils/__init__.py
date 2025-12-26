@@ -1,5 +1,4 @@
-"""
-Utility modules for the async cancellation system.
+"""Utility modules for the async cancellation system.
 
 This module provides helper functions, decorators, bridges, and testing tools:
 

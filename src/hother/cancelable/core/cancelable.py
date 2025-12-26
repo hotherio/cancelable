@@ -1,5 +1,4 @@
-"""
-Main Cancelable class implementation.
+"""Main Cancelable class implementation.
 """
 
 from __future__ import annotations
@@ -45,8 +44,7 @@ class LinkState(StrEnum):
 
 
 class Cancelable:
-    """
-    Main cancelation helper with composable cancelation sources.
+    """Main cancelation helper with composable cancelation sources.
 
     Provides a unified interface for handling cancelation from multiple sources
     including timeouts, tokens, signals, and conditions.
@@ -60,8 +58,7 @@ class Cancelable:
         metadata: dict[str, Any] | None = None,
         register_globally: bool = False,
     ):
-        """
-        Initialize a new cancelable operation.
+        """Initialize a new cancelable operation.
 
         Args:
             operation_id: Unique operation identifier (auto-generated if not provided)
@@ -123,8 +120,7 @@ class Cancelable:
 
     @property
     def token(self) -> LinkedCancelationToken:
-        """
-        Get the cancellation token for this operation.
+        """Get the cancellation token for this operation.
 
         Returns:
             The LinkedCancelationToken managing this operation's cancellation state.
@@ -132,8 +128,7 @@ class Cancelable:
         return self._token
 
     def add_source(self, source: CancelationSource) -> Cancelable:
-        """
-        Add a cancelation source to this operation.
+        """Add a cancelation source to this operation.
 
         This allows adding custom or composite sources (like AllOfSource) to an existing
         Cancelable instance.
@@ -161,8 +156,7 @@ class Cancelable:
     def with_timeout(
         cls, timeout: float | timedelta, operation_id: str | None = None, name: str | None = None, **kwargs: Any
     ) -> Cancelable:
-        """
-        Create cancelable with timeout.
+        """Create cancelable with timeout.
 
         Args:
             timeout: Timeout duration in seconds or timedelta
@@ -186,8 +180,7 @@ class Cancelable:
     def with_token(
         cls, token: CancelationToken, operation_id: str | None = None, name: str | None = None, **kwargs: Any
     ) -> Cancelable:
-        """
-        Create a Cancelable operation using an existing cancellation token.
+        """Create a Cancelable operation using an existing cancellation token.
 
         This factory method allows you to create a cancellable operation that shares
         a cancellation token with other operations, enabling coordinated cancellation.
@@ -227,8 +220,7 @@ class Cancelable:
     def with_signal(
         cls, *signals: int, operation_id: str | None = None, name: str | None = None, **kwargs: Any
     ) -> Cancelable:
-        """
-        Create cancelable with signal handling.
+        """Create cancelable with signal handling.
 
         Args:
             *signals: Signal numbers to handle
@@ -255,8 +247,7 @@ class Cancelable:
         name: str | None = None,
         **kwargs: Any,
     ) -> Cancelable:
-        """
-        Create cancelable with condition checking.
+        """Create cancelable with condition checking.
 
         Args:
             condition: Callable that returns True when cancelation should occur
@@ -277,8 +268,7 @@ class Cancelable:
 
     # Composition
     def combine(self, *others: Cancelable) -> Cancelable:
-        """
-        Combine multiple Cancelable operations into a single coordinated operation.
+        """Combine multiple Cancelable operations into a single coordinated operation.
 
         Creates a new Cancelable that will be cancelled if ANY of the combined
         operations is cancelled. All cancellation sources from the combined
@@ -348,8 +338,7 @@ class Cancelable:
         self,
         callback: ProgressCallbackType,
     ) -> Cancelable:
-        """
-        Register a callback to be invoked when progress is reported.
+        """Register a callback to be invoked when progress is reported.
 
         The callback will be called whenever `report_progress()` is invoked
         on this operation. Both sync and async callbacks are supported.
@@ -377,8 +366,7 @@ class Cancelable:
         return self
 
     def on_start(self, callback: StatusCallbackType) -> Cancelable:
-        """
-        Register a callback to be invoked when the operation starts.
+        """Register a callback to be invoked when the operation starts.
 
         The callback is triggered when entering the async context (on `__aenter__`).
 
@@ -392,8 +380,7 @@ class Cancelable:
         return self
 
     def on_complete(self, callback: StatusCallbackType) -> Cancelable:
-        """
-        Register a callback to be invoked when the operation completes successfully.
+        """Register a callback to be invoked when the operation completes successfully.
 
         The callback is triggered when exiting the context without cancellation or error.
 
@@ -407,8 +394,7 @@ class Cancelable:
         return self
 
     def on_cancel(self, callback: StatusCallbackType) -> Cancelable:
-        """
-        Register a callback to be invoked when the operation is cancelled.
+        """Register a callback to be invoked when the operation is cancelled.
 
         The callback is triggered when the operation is cancelled by any source
         (timeout, signal, token, condition, or parent cancellation).
@@ -426,8 +412,7 @@ class Cancelable:
         self,
         callback: ErrorCallbackType,
     ) -> Cancelable:
-        """
-        Register a callback to be invoked when the operation encounters an error.
+        """Register a callback to be invoked when the operation encounters an error.
 
         The callback is triggered when an exception (other than CancelledError)
         is raised within the operation context.
@@ -444,8 +429,7 @@ class Cancelable:
 
     # Progress reporting
     async def report_progress(self, message: Any, metadata: dict[str, Any] | None = None) -> None:
-        """
-        Report progress to all registered callbacks.
+        """Report progress to all registered callbacks.
 
         Args:
             message: Progress message
@@ -465,8 +449,7 @@ class Cancelable:
                 )
 
     async def check_cancelation(self) -> None:
-        """
-        Check if operation is cancelled and raise if so.
+        """Check if operation is cancelled and raise if so.
 
         This is a public API for checking cancellation state.
         Use this instead of accessing `_token` directly.
@@ -536,8 +519,7 @@ class Cancelable:
         return self._parent_ref() if self._parent_ref else None
 
     async def run_in_thread(self, func: Callable[..., T], *args: Any, **kwargs: Any) -> T:
-        """
-        Run function in thread with proper context propagation.
+        """Run function in thread with proper context propagation.
 
         This method solves the context variable thread safety issue by ensuring
         that context variables (including _current_operation) are properly
@@ -801,8 +783,7 @@ class Cancelable:
         report_interval: int | None = None,
         buffer_partial: bool = True,
     ) -> AsyncIterator[T]:
-        """
-        Wrap async iterator with cancelation support.
+        """Wrap async iterator with cancelation support.
 
         Args:
             async_iter: Async iterator to wrap
@@ -864,8 +845,7 @@ class Cancelable:
 
     # Function wrapper
     def wrap(self, operation: Callable[..., Awaitable[R]]) -> Callable[..., Awaitable[R]]:
-        """
-        Wrap an async operation to automatically check for cancelation before execution.
+        """Wrap an async operation to automatically check for cancelation before execution.
 
         This is useful for retry loops and other patterns where you want automatic
         cancelation checking without manually accessing the token.
@@ -904,8 +884,7 @@ class Cancelable:
 
     @asynccontextmanager
     async def wrapping(self) -> AsyncIterator[Callable[..., Awaitable[R]]]:
-        """
-        Async context manager that yields a wrap function for scoped operation wrapping.
+        """Async context manager that yields a wrap function for scoped operation wrapping.
 
         The yielded wrap function checks cancelation before executing any operation.
         This is useful for retry loops where you want all operations in a scope to
@@ -935,8 +914,7 @@ class Cancelable:
     # Shielding
     @asynccontextmanager
     async def shield(self) -> AsyncIterator[Cancelable]:
-        """
-        Shield a section from cancelation.
+        """Shield a section from cancelation.
 
         Creates a child operation that is protected from cancelation but still
         participates in the operation hierarchy for monitoring and tracking.
@@ -979,8 +957,7 @@ class Cancelable:
         message: str | None = None,
         propagate_to_children: bool = True,
     ) -> None:
-        """
-        Cancel the operation.
+        """Cancel the operation.
 
         Args:
             reason: Reason for cancelation

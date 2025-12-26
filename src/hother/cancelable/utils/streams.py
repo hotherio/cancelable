@@ -1,5 +1,4 @@
-"""
-Stream utilities for async cancelation.
+"""Stream utilities for async cancelation.
 """
 
 from collections.abc import AsyncIterator, Callable
@@ -29,8 +28,7 @@ async def cancelable_stream(
     operation_id: str | None = None,
     name: str | None = None,
 ) -> AsyncIterator[T]:
-    """
-    Make any async iterator cancelable with various options.
+    """Make any async iterator cancelable with various options.
 
     Args:
         stream: Async iterator to wrap
@@ -99,8 +97,7 @@ async def cancelable_stream(
 
 
 class CancelableAsyncIterator(AsyncIterator[T]):
-    """
-    Wrapper class that makes any async iterator cancelable.
+    """Wrapper class that makes any async iterator cancelable.
 
     This provides a class-based alternative to the cancelable_stream function.
     """
@@ -112,8 +109,7 @@ class CancelableAsyncIterator(AsyncIterator[T]):
         report_interval: int | None = None,
         buffer_partial: bool = False,
     ):
-        """
-        Initialize cancelable iterator.
+        """Initialize cancelable iterator.
 
         Args:
             iterator: Async iterator to wrap
@@ -200,8 +196,7 @@ async def chunked_cancelable_stream(
     chunk_size: int,
     cancelable: Cancelable,
 ) -> AsyncIterator[list[T]]:
-    """
-    Process stream in chunks with cancelation support.
+    """Process stream in chunks with cancelation support.
 
     Args:
         stream: Source async iterator

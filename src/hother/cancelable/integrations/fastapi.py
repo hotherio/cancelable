@@ -1,5 +1,4 @@
-"""
-FastAPI integration for request-scoped cancelation.
+"""FastAPI integration for request-scoped cancelation.
 """
 
 from collections.abc import AsyncIterator, Callable
@@ -19,13 +18,11 @@ logger = get_logger(__name__)
 
 
 class RequestCancelationMiddleware:
-    """
-    FastAPI middleware that provides request-scoped cancelation.
+    """FastAPI middleware that provides request-scoped cancelation.
     """
 
     def __init__(self, app: ASGIApp, default_timeout: float | None = None):
-        """
-        Initialize middleware.
+        """Initialize middleware.
 
         Args:
             app: ASGI application
@@ -58,8 +55,7 @@ class RequestCancelationMiddleware:
 
 
 def get_request_token(request: Request) -> CancelationToken:
-    """
-    Get cancelation token from request.
+    """Get cancelation token from request.
 
     Args:
         request: FastAPI request
@@ -80,8 +76,7 @@ async def cancelable_dependency(
     request: Request,
     timeout: float | None = None,
 ) -> Cancelable:
-    """
-    FastAPI dependency that provides a cancelable for the request.
+    """FastAPI dependency that provides a cancelable for the request.
 
     Args:
         request: FastAPI request
@@ -126,8 +121,7 @@ def with_cancelation(
     timeout: float | None = None,
     raise_on_cancel: bool = True,
 ) -> Callable[[Callable[..., Any]], Callable[..., Any]]:
-    """
-    Decorator for FastAPI endpoints with automatic cancelation.
+    """Decorator for FastAPI endpoints with automatic cancelation.
 
     Args:
         timeout: Optional timeout for the endpoint
@@ -175,8 +169,7 @@ async def cancelable_streaming_response(
     media_type: str = "text/plain",
     chunk_size: int | None = None,
 ) -> StreamingResponse:
-    """
-    Create a streaming response with cancelation support.
+    """Create a streaming response with cancelation support.
 
     Args:
         generator: Async generator producing response chunks
@@ -227,8 +220,7 @@ async def cancelable_streaming_response(
 
 # WebSocket support
 class CancelableWebSocket:
-    """
-    WebSocket wrapper with cancelation support.
+    """WebSocket wrapper with cancelation support.
     """
 
     def __init__(self, websocket: Any, cancelable: Cancelable):

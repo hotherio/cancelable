@@ -1,5 +1,4 @@
-"""
-Condition-based cancelation source implementation.
+"""Condition-based cancelation source implementation.
 """
 
 import inspect
@@ -16,8 +15,7 @@ logger = get_logger(__name__)
 
 
 class ConditionSource(CancelationSource):
-    """
-    Cancelation source that monitors a condition function.
+    """Cancelation source that monitors a condition function.
 
     Cancels when the condition function returns True.
     """
@@ -29,8 +27,7 @@ class ConditionSource(CancelationSource):
         condition_name: str | None = None,
         name: str | None = None,
     ):
-        """
-        Initialize condition source.
+        """Initialize condition source.
 
         Args:
             condition: Function that returns True when cancelation should occur
@@ -55,8 +52,7 @@ class ConditionSource(CancelationSource):
         self._is_async = inspect.iscoroutinefunction(condition)
 
     async def start_monitoring(self, scope: anyio.CancelScope) -> None:
-        """
-        Start monitoring the condition.
+        """Start monitoring the condition.
 
         Args:
             scope: Cancel scope to trigger when condition is met
@@ -171,8 +167,7 @@ class ConditionSource(CancelationSource):
 
 
 class ResourceConditionSource(ConditionSource):
-    """
-    Specialized condition source for monitoring system resources.
+    """Specialized condition source for monitoring system resources.
 
     Useful for cancelling operations when resources are constrained.
     """
@@ -185,8 +180,7 @@ class ResourceConditionSource(ConditionSource):
         check_interval: float = 5.0,
         name: str | None = None,
     ):
-        """
-        Initialize resource condition source.
+        """Initialize resource condition source.
 
         Args:
             memory_threshold: Cancel if memory usage exceeds this percentage

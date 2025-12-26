@@ -1,5 +1,4 @@
-"""
-Base class for cancelation sources.
+"""Base class for cancelation sources.
 """
 
 from abc import ABC, abstractmethod
@@ -14,16 +13,14 @@ logger = get_logger(__name__)
 
 
 class CancelationSource(ABC):
-    """
-    Abstract base class for cancelation sources.
+    """Abstract base class for cancelation sources.
 
     A cancelation source monitors for a specific condition and triggers
     cancelation when that condition is met.
     """
 
     def __init__(self, reason: CancelationReason, name: str | None = None):
-        """
-        Initialize cancelation source.
+        """Initialize cancelation source.
 
         Args:
             reason: The cancelation reason this source will use
@@ -38,8 +35,7 @@ class CancelationSource(ABC):
 
     @abstractmethod
     async def start_monitoring(self, scope: anyio.CancelScope) -> None:
-        """
-        Start monitoring for cancelation condition.
+        """Start monitoring for cancelation condition.
 
         Args:
             scope: The cancel scope to trigger when condition is met
@@ -54,8 +50,7 @@ class CancelationSource(ABC):
             self._monitoring_task = None
 
     def set_cancel_callback(self, callback: Callable[[CancelationReason, str], None | Awaitable[None]]) -> None:
-        """
-        Set callback to be called when cancelation is triggered.
+        """Set callback to be called when cancelation is triggered.
 
         Args:
             callback: Callback function that accepts reason and message (can be sync or async)
@@ -63,8 +58,7 @@ class CancelationSource(ABC):
         self._cancel_callback = callback
 
     async def trigger_cancelation(self, message: str | None = None) -> None:
-        """
-        Trigger cancelation with the configured reason.
+        """Trigger cancelation with the configured reason.
 
         Args:
             message: Optional cancelation message

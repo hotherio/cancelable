@@ -1,5 +1,4 @@
-"""
-Context bridge utilities for thread-safe context variable propagation.
+"""Context bridge utilities for thread-safe context variable propagation.
 
 This module provides utilities to safely propagate context variables between
 async tasks and OS threads, solving the context variable thread safety issue.
@@ -15,8 +14,7 @@ T = TypeVar("T")
 
 
 class ContextBridge:
-    """
-    Thread-safe context variable bridge for async-to-thread communication.
+    """Thread-safe context variable bridge for async-to-thread communication.
 
     This class solves the issue where context variables don't propagate
     to OS threads created by ThreadPoolExecutor, breaking operation tracking
@@ -25,8 +23,7 @@ class ContextBridge:
 
     @staticmethod
     def copy_context() -> dict[contextvars.ContextVar[Any], Any]:
-        """
-        Copy current context variables to a dict for thread transport.
+        """Copy current context variables to a dict for thread transport.
 
         Returns:
             Dictionary mapping context variables to their current values
@@ -36,8 +33,7 @@ class ContextBridge:
 
     @staticmethod
     def restore_context(context_dict: dict[contextvars.ContextVar[Any], Any]) -> None:
-        """
-        Restore context variables from a dictionary.
+        """Restore context variables from a dictionary.
 
         Args:
             context_dict: Dictionary mapping context variables to values
@@ -49,8 +45,7 @@ class ContextBridge:
     async def run_in_thread_with_context(
         func: Callable[..., T], *args: Any, executor: ThreadPoolExecutor | None = None, **kwargs: Any
     ) -> T:
-        """
-        Run function in thread with context variables propagated.
+        """Run function in thread with context variables propagated.
 
         This method safely copies context variables to the thread, runs the
         function, and returns the result.

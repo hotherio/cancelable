@@ -1,5 +1,4 @@
-"""
-Type definitions and protocols for hother.cancelable.
+"""Type definitions and protocols for hother.cancelable.
 
 This module provides Protocol classes and type definitions to enable
 proper static type checking without suppressions.
@@ -21,8 +20,7 @@ T = TypeVar("T")  # Generic type
 
 
 class ProgressCallback(Protocol):
-    """
-    Protocol for progress callback functions.
+    """Protocol for progress callback functions.
 
     Accepts both sync and async callbacks for progress reporting.
     """
@@ -33,8 +31,7 @@ class ProgressCallback(Protocol):
         message: Any,
         metadata: dict[str, Any] | None = None,
     ) -> None | Awaitable[None]:
-        """
-        Called when operation reports progress.
+        """Called when operation reports progress.
 
         Args:
             operation_id: ID of the operation reporting progress
@@ -45,15 +42,13 @@ class ProgressCallback(Protocol):
 
 
 class StatusCallback(Protocol):
-    """
-    Protocol for status change callback functions.
+    """Protocol for status change callback functions.
 
     Called when operation status changes (started, completed, cancelled).
     """
 
     def __call__(self, context: OperationContext) -> None | Awaitable[None]:
-        """
-        Called when operation status changes.
+        """Called when operation status changes.
 
         Args:
             context: The operation context with updated status
@@ -62,8 +57,7 @@ class StatusCallback(Protocol):
 
 
 class ErrorCallback(Protocol):
-    """
-    Protocol for error callback functions.
+    """Protocol for error callback functions.
 
     Called when operation encounters an error.
     """
@@ -73,8 +67,7 @@ class ErrorCallback(Protocol):
         context: OperationContext,
         error: Exception,
     ) -> None | Awaitable[None]:
-        """
-        Called when operation encounters an error.
+        """Called when operation encounters an error.
 
         Args:
             context: The operation context
@@ -100,9 +93,8 @@ ErrorCallbackType = (
 )
 
 
-def ensure_cancelable(cancelable: "Cancelable | None") -> "Cancelable":
-    """
-    Type guard utility for injected cancelable parameters.
+def ensure_cancelable(cancelable: Cancelable | None) -> Cancelable:
+    """Type guard utility for injected cancelable parameters.
 
     Use this when decorated with @cancelable to narrow the type
     from `Cancelable | None` to `Cancelable`.

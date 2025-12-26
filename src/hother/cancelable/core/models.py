@@ -1,5 +1,4 @@
-"""
-Pydantic models for operation context and status tracking.
+"""Pydantic models for operation context and status tracking.
 """
 
 import uuid
@@ -38,8 +37,7 @@ class CancelationReason(str, Enum):
 
 
 class OperationContext(BaseModel):
-    """
-    Complete operation context with metadata and status tracking.
+    """Complete operation context with metadata and status tracking.
 
     Attributes:
         id: Unique operation identifier
@@ -123,8 +121,7 @@ class OperationContext(BaseModel):
         }
 
     def update_status(self, status: OperationStatus) -> None:
-        """
-        Update operation status with appropriate logging.
+        """Update operation status with appropriate logging.
 
         Args:
             status: New operation status

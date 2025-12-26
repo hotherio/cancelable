@@ -1,5 +1,4 @@
-"""
-Thread-safe wrapper for OperationRegistry.
+"""Thread-safe wrapper for OperationRegistry.
 
 Provides synchronous API for accessing the registry from threads.
 """
@@ -8,7 +7,7 @@ from __future__ import annotations
 
 import threading
 from datetime import datetime
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 from hother.cancelable.core.models import CancelationReason, OperationContext, OperationStatus
 from hother.cancelable.core.registry import OperationRegistry
@@ -18,8 +17,7 @@ if TYPE_CHECKING:
 
 
 class ThreadSafeRegistry:
-    """
-    Thread-safe wrapper for OperationRegistry.
+    """Thread-safe wrapper for OperationRegistry.
 
     Provides synchronous API for accessing the registry from threads.
     All methods are thread-safe and can be called from any thread.
@@ -55,9 +53,8 @@ class ThreadSafeRegistry:
         """Initialize thread-safe registry wrapper."""
         self._registry = OperationRegistry.get_instance()
 
-    def get_operation(self, operation_id: str) -> Optional["Cancelable"]:
-        """
-        Get operation by ID.
+    def get_operation(self, operation_id: str) -> Cancelable | None:
+        """Get operation by ID.
 
         Args:
             operation_id: Operation ID to look up
@@ -73,8 +70,7 @@ class ThreadSafeRegistry:
         parent_id: str | None = None,
         name_pattern: str | None = None,
     ) -> list[OperationContext]:
-        """
-        List operations with optional filtering.
+        """List operations with optional filtering.
 
         Args:
             status: Filter by operation status
@@ -87,8 +83,7 @@ class ThreadSafeRegistry:
         return self._registry.list_operations_sync(status, parent_id, name_pattern)
 
     def get_statistics(self) -> dict[str, Any]:
-        """
-        Get registry statistics.
+        """Get registry statistics.
 
         Returns:
             Dictionary with operation statistics containing:
@@ -107,8 +102,7 @@ class ThreadSafeRegistry:
         status: OperationStatus | None = None,
         since: datetime | None = None,
     ) -> list[OperationContext]:
-        """
-        Get operation history.
+        """Get operation history.
 
         Args:
             limit: Maximum number of operations to return
@@ -126,8 +120,7 @@ class ThreadSafeRegistry:
         reason: CancelationReason = CancelationReason.MANUAL,
         message: str | None = None,
     ) -> None:
-        """
-        Cancel a specific operation.
+        """Cancel a specific operation.
 
         Schedules cancelation to be executed asynchronously and returns immediately.
 
@@ -148,8 +141,7 @@ class ThreadSafeRegistry:
         reason: CancelationReason = CancelationReason.MANUAL,
         message: str | None = None,
     ) -> None:
-        """
-        Cancel all operations with optional status filter.
+        """Cancel all operations with optional status filter.
 
         Schedules cancelation to be executed asynchronously and returns immediately.
 
@@ -166,13 +158,12 @@ class ThreadSafeRegistry:
 
     # Singleton pattern (optional - users can create instances directly or use singleton)
 
-    _instance: "ThreadSafeRegistry | None" = None
+    _instance: ThreadSafeRegistry | None = None
     _lock = threading.Lock()
 
     @classmethod
-    def get_instance(cls) -> "ThreadSafeRegistry":
-        """
-        Get singleton instance of thread-safe registry.
+    def get_instance(cls) -> ThreadSafeRegistry:
+        """Get singleton instance of thread-safe registry.
 
         Thread-safe lazy initialization.
 

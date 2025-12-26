@@ -3,11 +3,12 @@ Tests for the main Cancelable class.
 """
 
 from datetime import timedelta
+from typing import Any
 
 import anyio
 import pytest
 
-from hother.cancelable import Cancelable, CancelationReason, CancelationToken, OperationStatus, current_operation
+from hother.cancelable import Cancelable, CancelationReason, CancelationToken, OperationContext, OperationStatus, current_operation
 from tests.conftest import assert_cancelled_within
 
 
@@ -176,7 +177,7 @@ class TestCancelableFactories:
         """Test async condition-based cancelable."""
         checks = 0
 
-        async def async_condition():
+        async def async_condition() -> bool:
             nonlocal checks
             checks += 1
             await anyio.sleep(0.01)  # Simulate async work
@@ -398,7 +399,7 @@ class TestCancelableStreams:
 
         progress_reports = []
 
-        def capture_progress(op_id, msg, meta):
+        def capture_progress(op_id: str, msg: Any, meta: dict[str, Any] | None) -> None:
             if "Processed" in msg:
                 progress_reports.append(meta["count"])
 
@@ -648,7 +649,7 @@ class TestCancelableIntegration:
     async def test_progress_callback_error_handling(self):
         """Test that progress callback errors are handled gracefully."""
         # Test that failing callbacks don't crash the operation
-        def failing_callback(op_id, msg, meta):
+        def failing_callback(op_id: str, msg: Any, meta: dict[str, Any] | None) -> None:
             raise ValueError("Callback failed")
 
         async with Cancelable(name="progress_test") as cancel:
@@ -665,7 +666,7 @@ class TestCancelableIntegration:
     async def test_async_progress_callback_error_handling(self):
         """Test that async progress callback errors are handled gracefully."""
         # Test that failing async callbacks don't crash the operation
-        async def failing_async_callback(op_id, msg, meta):
+        async def failing_async_callback(op_id: str, msg: Any, meta: dict[str, Any] | None) -> None:
             raise ValueError("Async callback failed")
 
         async with Cancelable(name="async_progress_test") as cancel:
@@ -1019,7 +1020,7 @@ class TestCancelableStreamFeatures:
         """Test stream with progress reporting callback."""
         progress_messages = []
 
-        def on_progress(op_id, message, metadata):
+        def on_progress(op_id: str, message: Any, metadata: dict[str, Any] | None) -> None:
             progress_messages.append((message, metadata))
 
         async def counted_stream():
@@ -1065,7 +1066,7 @@ class TestCancelableStreamFeatures:
         """Test that stream progress includes metadata."""
         progress_calls = []
 
-        def on_progress(op_id, message, metadata):
+        def on_progress(op_id: str, message: Any, metadata: dict[str, Any] | None) -> None:
             progress_calls.append(metadata)
 
         async def metadata_stream():
@@ -1204,7 +1205,7 @@ class TestCancelableCallbackErrors:
     @pytest.mark.anyio
     async def test_error_callback_exception(self):
         """Test that error callback exceptions are caught."""
-        def failing_callback(op_id, error):
+        def failing_callback(ctx: OperationContext, error: Exception) -> None:
             raise RuntimeError("Error callback failed")
 
         cancel = Cancelable(name="error_callback_test")
@@ -1220,7 +1221,7 @@ class TestCancelableCallbackErrors:
     @pytest.mark.anyio
     async def test_async_complete_callback_exception(self):
         """Test that async complete callback exceptions are caught."""
-        async def failing_async_callback(op_id):
+        async def failing_async_callback(ctx: OperationContext) -> None:
             raise RuntimeError("Async complete callback failed")
 
         cancel = Cancelable(name="async_complete_error")
@@ -1604,7 +1605,7 @@ class TestCancelableComprehensiveCoverage:
         """Test async error callback."""
         callback_called = False
 
-        async def async_error_callback(context, error):
+        async def async_error_callback(context: OperationContext, error: Exception) -> None:
             nonlocal callback_called
             callback_called = True
             await anyio.sleep(0.001)
@@ -1946,7 +1947,7 @@ class TestCancelableFinal100Percent:
         callback_called = False
         error_received = None
 
-        async def async_error_handler(context, error):
+        async def async_error_handler(context: OperationContext, error: Exception) -> None:
             nonlocal callback_called, error_received
             callback_called = True
             error_received = error
@@ -2179,7 +2180,7 @@ class TestCancelableFinal100Percent:
         callback_called = [False]
         error_received = [None]
 
-        def sync_error_handler(context, error):
+        def sync_error_handler(context: OperationContext, error: Exception) -> None:
             """Synchronous error callback - NOT async."""
             callback_called[0] = True
             error_received[0] = error
@@ -2586,7 +2587,7 @@ class TestCancelableFinal100Percent:
         cancel = Cancelable(name="test")
         error_callback_called = False
 
-        def on_error(ctx, error):
+        def on_error(ctx: OperationContext, error: Exception) -> None:
             nonlocal error_callback_called
             error_callback_called = True
 

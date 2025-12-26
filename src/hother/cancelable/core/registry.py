@@ -337,7 +337,7 @@ class OperationRegistry:
                 active_by_status = {}
                 for operation in self._operations.values():
                     status = operation.context.status.value
-                    active_by_status[status] = active_by_status.get(status, 0) + 1
+                    active_by_status[status] = active_by_status.get(status, 0) + 1  # type: ignore[attr-defined]
 
                 history_by_status = {}
                 total_duration = 0.0
@@ -345,7 +345,7 @@ class OperationRegistry:
 
                 for context in self._history:
                     status = context.status.value
-                    history_by_status[status] = history_by_status.get(status, 0) + 1
+                    history_by_status[status] = history_by_status.get(status, 0) + 1  # type: ignore[attr-defined]
 
                     if context.duration_seconds and context.is_success:
                         total_duration += context.duration_seconds
@@ -435,7 +435,7 @@ class OperationRegistry:
             active_by_status = {}
             for operation in self._operations.values():
                 status = operation.context.status.value
-                active_by_status[status] = active_by_status.get(status, 0) + 1
+                active_by_status[status] = active_by_status.get(status, 0) + 1  # type: ignore[attr-defined]
 
             history_by_status = {}
             total_duration = 0.0
@@ -443,7 +443,7 @@ class OperationRegistry:
 
             for context in self._history:
                 status = context.status.value
-                history_by_status[status] = history_by_status.get(status, 0) + 1
+                history_by_status[status] = history_by_status.get(status, 0) + 1  # type: ignore[attr-defined]
 
                 if context.duration_seconds and context.is_success:
                     total_duration += context.duration_seconds

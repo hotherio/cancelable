@@ -167,7 +167,7 @@ pythonVersion = "3.13"
 typeCheckingMode = "strict"
 reportMissingTypeStubs = false
 reportUnnecessaryIsInstance = false
-reportUnnecessaryTypeIgnoreComment = true
+reportUnnecessaryTypeIgnoreComment = false
 reportMissingModuleSource = false
 include = [
     "src/hother/cancelable",

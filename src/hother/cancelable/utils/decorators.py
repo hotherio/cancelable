@@ -87,8 +87,11 @@ def cancelable(
                     if inject_param in sig.parameters:
                         kwargs[inject_param] = cancel
 
-                # Call the function and return inside context
+                # Call the function
                 return await func(*args, **kwargs)
+
+            # Unreachable - async with block always completes above
+            assert False, "Unreachable"  # pragma: no cover
 
         # Add attribute to access decorator parameters (dynamic attribute, no type annotation needed)
         wrapper._cancelable_params = {  # type: ignore[attr-defined]
@@ -135,6 +138,9 @@ async def with_timeout(
 
     async with cancelable:
         return await coro
+
+    # Unreachable - async with block always completes above
+    assert False, "Unreachable"  # pragma: no cover
 
 
 def with_current_operation() -> Callable[[Callable[P, Awaitable[R]]], Callable[P, Awaitable[R]]]:
@@ -235,6 +241,9 @@ def cancelable_method(
 
                 return await func(self, *args, **kwargs)
 
+            # Unreachable - async with block always completes above
+            assert False, "Unreachable"  # pragma: no cover
+
         # Add attribute to access decorator parameters
         wrapper._cancelable_params = {  # type: ignore[attr-defined]
             "timeout": timeout,
@@ -302,6 +311,9 @@ def cancelable_with_token(
                         kwargs[inject_param] = cancel
 
                 return await func(*args, **kwargs)
+
+            # Unreachable - async with block always completes above
+            assert False, "Unreachable"  # pragma: no cover
 
         # Add attribute to access decorator parameters
         wrapper._cancelable_params = {  # type: ignore[attr-defined]

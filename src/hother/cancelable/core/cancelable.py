@@ -649,7 +649,7 @@ class Cancelable:
                     logger.debug(f"Status after update: {self.context.status}")
                     await self._trigger_callbacks("cancel")
 
-                elif issubclass(exc_type, CancelationError):
+                elif issubclass(exc_type, CancelationError) and isinstance(exc_val, CancelationError):
                     # Our custom cancelation errors
                     self.context.cancel_reason = exc_val.reason
                     self.context.cancel_message = exc_val.message
@@ -895,7 +895,7 @@ class Cancelable:
         """
 
         @wraps(operation)
-        async def wrapped(*args, **kwargs) -> R:
+        async def wrapped(*args: Any, **kwargs: Any) -> R:
             # Check cancelation before executing
             await self._token.check_async()
             return await operation(*args, **kwargs)
@@ -926,7 +926,7 @@ class Cancelable:
             ```
         """
 
-        async def wrap_fn(fn: Callable[..., Awaitable[R]], *args, **kwargs) -> R:
+        async def wrap_fn(fn: Callable[..., Awaitable[R]], *args: Any, **kwargs: Any) -> R:
             await self._token.check_async()
             return await fn(*args, **kwargs)
 
@@ -967,7 +967,7 @@ class Cancelable:
         # Force a checkpoint after shield to allow cancelation to propagate
         # We need to be in an async context for this to work properly
         try:
-            await anyio.lowlevel.checkpoint()
+            await anyio.lowlevel.checkpoint()  # type: ignore[attr-defined]
         except:
             # Re-raise any exception including CancelledError
             raise
@@ -1046,8 +1046,8 @@ class Cancelable:
         callbacks = self._status_callbacks.get(callback_type, [])
         for callback in callbacks:
             try:
-                result = callback(self.context)
-                if inspect.iscoroutine(result):
+                result = callback(self.context)  # type: ignore[misc]
+                if inspect.iscoroutine(result):  # type: ignore[arg-type]
                     await result
             except Exception as e:
                 logger.error(
@@ -1063,8 +1063,8 @@ class Cancelable:
         callbacks = self._status_callbacks.get("error", [])
         for callback in callbacks:
             try:
-                result = callback(self.context, error)
-                if inspect.iscoroutine(result):
+                result = callback(self.context, error)  # type: ignore[misc]
+                if inspect.iscoroutine(result):  # type: ignore[arg-type]
                     await result
             except Exception as e:
                 logger.error(

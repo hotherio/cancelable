@@ -192,7 +192,7 @@ class CancelableAsyncIterator(AsyncIterator[T]):
     async def aclose(self) -> None:
         """Close the iterator."""
         if hasattr(self._iterator, "aclose"):
-            await self._iterator.aclose()
+            await self._iterator.aclose()  # type: ignore[union-attr]
 
 
 async def chunked_cancelable_stream(

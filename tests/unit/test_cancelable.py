@@ -2531,4 +2531,71 @@ class TestCancelableFinal100Percent:
         assert cancel.context.cancel_reason == CancelationReason.CONDITION
         assert source.triggered
 
+    @pytest.mark.anyio
+    async def test_parent_token_not_linkable_warning(self, caplog):
+        """Test warning when child has non-LinkedCancelationToken with parent.
+
+        Covers line 810: Warning when parent exists but token isn't LinkedCancelationToken.
+        """
+        import logging
+
+        caplog.set_level(logging.WARNING)
+
+        parent = Cancelable(name="parent")
+        regular_token = CancelationToken()
+        child = Cancelable.with_token(regular_token, name="child", parent=parent)
+
+        async with parent:
+            async with child:
+                pass  # Line 810 should log warning
+
+        # Verify warning was logged
+        assert any("Cannot link to parent" in record.message for record in caplog.records)
+
+    @pytest.mark.anyio
+    async def test_combined_cancelables_not_linkable_warning(self, caplog):
+        """Test warning when combined cancelable has non-LinkedCancelationToken.
+
+        Covers line 828: Warning when combined source linking cannot occur.
+        """
+        import logging
+
+        caplog.set_level(logging.WARNING)
+
+        cancelable1 = Cancelable.with_timeout(5.0)
+        cancelable2 = Cancelable.with_timeout(10.0)
+
+        combined = cancelable1.combine(cancelable2)
+        # Manually replace token to trigger warning path
+        combined._token = CancelationToken()
+
+        async with combined:
+            pass  # Line 828 should log warning
+
+        # Verify warning was logged
+        assert any("Cannot link to combined sources" in record.message for record in caplog.records)
+
+    @pytest.mark.anyio
+    async def test_base_exception_not_exception_type(self):
+        """Test handling of BaseException that is not Exception subclass.
+
+        Covers branch 723→734: False path where isinstance(exc_val, Exception) is False.
+        """
+        cancel = Cancelable(name="test")
+        error_callback_called = False
+
+        def on_error(ctx, error):
+            nonlocal error_callback_called
+            error_callback_called = True
+
+        cancel.on_error(on_error)
+
+        with pytest.raises(KeyboardInterrupt):
+            async with cancel:
+                raise KeyboardInterrupt()  # BaseException but not Exception
+
+        # Verify error callback was NOT called (line 723 condition False)
+        assert not error_callback_called
+        assert cancel.context.status == OperationStatus.FAILED
+
 

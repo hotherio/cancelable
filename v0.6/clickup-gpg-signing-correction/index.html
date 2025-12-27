@@ -1232,9 +1232,9 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#critical-finding-gpg-docker-psr-not-possible" class="md-nav__link">
+  <a href="#current-implementation-gpg-signing-without-docker" class="md-nav__link">
     <span class="md-ellipsis">
-      Critical Finding: GPG + Docker PSR = Not Possible
+      Current Implementation: GPG Signing Without Docker
     </span>
   </a>
   
@@ -1250,28 +1250,19 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#ssh-signing-with-docker-action-recommended" class="md-nav__link">
+  <a href="#gpg-signing-without-docker-current-implementation" class="md-nav__link">
     <span class="md-ellipsis">
-      SSH Signing with Docker Action (RECOMMENDED)
+      GPG Signing Without Docker (CURRENT IMPLEMENTATION)
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="SSH Signing with Docker Action (RECOMMENDED)">
+    <nav class="md-nav" aria-label="GPG Signing Without Docker (CURRENT IMPLEMENTATION)">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#setup-steps" class="md-nav__link">
+  <a href="#workflow-configuration-currently-used" class="md-nav__link">
     <span class="md-ellipsis">
-      Setup Steps
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#workflow-configuration" class="md-nav__link">
-    <span class="md-ellipsis">
-      Workflow Configuration
+      Workflow Configuration (Currently Used)
     </span>
   </a>
   
@@ -1283,55 +1274,22 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#gpg-signing-not-with-docker" class="md-nav__link">
+  <a href="#comparison-gpg-vs-ssh-vs-unsigned" class="md-nav__link">
     <span class="md-ellipsis">
-      GPG Signing (NOT with Docker)
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="GPG Signing (NOT with Docker)">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#when-to-use-this-approach" class="md-nav__link">
-    <span class="md-ellipsis">
-      When to use this approach:
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#workflow-configuration_1" class="md-nav__link">
-    <span class="md-ellipsis">
-      Workflow Configuration
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#comparison-ssh-vs-gpg-vs-unsigned" class="md-nav__link">
-    <span class="md-ellipsis">
-      Comparison: SSH vs GPG vs Unsigned
+      Comparison: GPG vs SSH vs Unsigned
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#why-gpg-doesnt-work-with-docker-psr" class="md-nav__link">
+  <a href="#why-neither-gpg-nor-ssh-work-well-with-docker-psr" class="md-nav__link">
     <span class="md-ellipsis">
-      Why GPG Doesn't Work with Docker PSR
+      Why Neither GPG nor SSH Work Well with Docker PSR
     </span>
   </a>
   
-    <nav class="md-nav" aria-label="Why GPG Doesn't Work with Docker PSR">
+    <nav class="md-nav" aria-label="Why Neither GPG nor SSH Work Well with Docker PSR">
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
@@ -1442,114 +1400,69 @@
 
 
 <h1 id="commit-and-tag-signing-with-python-semantic-release">Commit and Tag Signing with python-semantic-release</h1>
-<h2 id="critical-finding-gpg-docker-psr-not-possible">Critical Finding: GPG + Docker PSR = Not Possible</h2>
-<p><strong>Important:</strong> GPG signing does <strong>NOT</strong> work with the python-semantic-release Docker action because:
+<h2 id="current-implementation-gpg-signing-without-docker">Current Implementation: GPG Signing Without Docker</h2>
+<p><strong>Implementation:</strong> We are using GPG signing by running python-semantic-release directly on the GitHub runner (not in Docker container).</p>
+<p><strong>Why this approach:</strong>
 1. The Docker container does not have GPG installed (only git and openssh-client)
-2. The PSR action only supports SSH signing parameters, not GPG
-3. Docker container isolation prevents access to host GPG agent</p>
-<p><strong>Solution:</strong> Use SSH signing with Docker-based PSR (recommended) or run PSR directly on the host for GPG signing.</p>
+2. The PSR action only supports SSH signing parameters, but SSH signing had libcrypto compatibility issues
+3. Running PSR directly on the host allows full GPG functionality with verified signatures</p>
 <hr>
 <h2 id="overview">Overview</h2>
 <p>Python-semantic-release supports signing through:
-- <strong>SSH signing</strong> - Works with Docker action (recommended)
-- <strong>GPG signing</strong> - Only works when running PSR directly on the host (not in Docker)</p>
+- <strong>GPG signing</strong> - Works when running PSR directly on the host (current implementation)
+- <strong>SSH signing</strong> - Works with Docker action but has libcrypto compatibility issues</p>
 <hr>
-<h2 id="ssh-signing-with-docker-action-recommended">SSH Signing with Docker Action (RECOMMENDED)</h2>
-<p>This is the correct approach for signed commits/tags with Docker-based PSR.</p>
-<h3 id="setup-steps">Setup Steps</h3>
-<ol>
-<li>
-<p><strong>Generate SSH signing key pair:</strong>
-   </p><div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>ssh-keygen<span class="w"> </span>-t<span class="w"> </span>ed25519<span class="w"> </span>-f<span class="w"> </span>hother_signing_key<span class="w"> </span>-N<span class="w"> </span><span class="s2">""</span><span class="w"> </span>-C<span class="w"> </span><span class="s2">"github-bot@hother.io"</span>
-</code></pre></div><p></p>
-</li>
-<li>
-<p><strong>Add SSH public key to GitHub:</strong>
-   - Go to: Settings → SSH and GPG keys → New SSH key
-   - Select "Signing Key" as key type
-   - Paste public key content
-   - Title: "HOTHER_BOT Signing Key"</p>
-</li>
-<li>
-<p><strong>Add secrets to GitHub repository:</strong>
-   - <code>SSH_PRIVATE_SIGNING_KEY</code>: Content of private key file
-   - <code>SSH_PUBLIC_SIGNING_KEY</code>: Content of public key file (.pub)</p>
-</li>
-</ol>
-<h3 id="workflow-configuration">Workflow Configuration</h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Checkout code</span>
-<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@v5</span>
-<a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">  </span><span class="nt">with</span><span class="p">:</span>
-<a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span><span class="nt">fetch-depth</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
-<a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span><span class="nt">token</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ secrets.GITHUB_TOKEN }}</span>
-<a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>
-<a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Configure Git</span>
-<a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">  </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
-<a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span><span class="no">git config user.email "github-bot@hother.io"</span>
-<a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">    </span><span class="no">git config user.name "Hother Bot"</span>
-<a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a><span class="w">    </span><span class="no">git config core.autocrlf false</span>
-<a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>
-<a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Python Semantic Release</span>
-<a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a><span class="w">  </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">release</span>
-<a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a><span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">python-semantic-release/python-semantic-release@v10.5.3</span>
-<a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a><span class="w">  </span><span class="nt">with</span><span class="p">:</span>
-<a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a><span class="w">    </span><span class="nt">github_token</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ secrets.GITHUB_TOKEN }}</span>
-<a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a><span class="w">    </span><span class="nt">git_committer_name</span><span class="p">:</span><span class="w"> </span><span class="s">"Hother</span><span class="nv"> </span><span class="s">Bot"</span>
-<a id="__codelineno-1-19" name="__codelineno-1-19" href="#__codelineno-1-19"></a><span class="w">    </span><span class="nt">git_committer_email</span><span class="p">:</span><span class="w"> </span><span class="s">"github-bot@hother.io"</span>
-<a id="__codelineno-1-20" name="__codelineno-1-20" href="#__codelineno-1-20"></a><span class="w">    </span><span class="nt">ssh_public_signing_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ secrets.SSH_PUBLIC_SIGNING_KEY }}</span>
-<a id="__codelineno-1-21" name="__codelineno-1-21" href="#__codelineno-1-21"></a><span class="w">    </span><span class="nt">ssh_private_signing_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ secrets.SSH_PRIVATE_SIGNING_KEY }}</span>
-<a id="__codelineno-1-22" name="__codelineno-1-22" href="#__codelineno-1-22"></a>
-<a id="__codelineno-1-23" name="__codelineno-1-23" href="#__codelineno-1-23"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Publish to PyPI</span>
-<a id="__codelineno-1-24" name="__codelineno-1-24" href="#__codelineno-1-24"></a><span class="w">  </span><span class="nt">if</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">steps.release.outputs.released == 'true'</span>
-<a id="__codelineno-1-25" name="__codelineno-1-25" href="#__codelineno-1-25"></a><span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pypa/gh-action-pypi-publish@release/v1</span>
-</code></pre></div>
-<p><strong>How it works:</strong>
-1. SSH keys added to GitHub as signing keys
-2. PSR Docker action receives SSH keys via secrets
-3. Container uses openssh-client (already installed) to sign commits/tags
-4. GitHub verifies signatures and shows "Verified" badge</p>
-<hr>
-<h2 id="gpg-signing-not-with-docker">GPG Signing (NOT with Docker)</h2>
-<p>If you absolutely need GPG signing, you must run PSR directly on the GitHub runner (not in a Docker container).</p>
-<h3 id="when-to-use-this-approach">When to use this approach:</h3>
-<ul>
-<li>GPG keys already established and required</li>
-<li>Cannot migrate to SSH signing</li>
-<li>Willing to give up Docker action benefits</li>
-</ul>
-<h3 id="workflow-configuration_1">Workflow Configuration</h3>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Checkout code</span>
-<a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@v5</span>
-<a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">  </span><span class="nt">with</span><span class="p">:</span>
-<a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span><span class="nt">fetch-depth</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
-<a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">    </span><span class="nt">token</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ secrets.GITHUB_TOKEN }}</span>
-<a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>
-<a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Import GPG key</span>
-<a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">crazy-max/ghaction-import-gpg@v6</span>
-<a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">  </span><span class="nt">with</span><span class="p">:</span>
-<a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">    </span><span class="nt">gpg_private_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ secrets.HOTHER_BOT_GPG_KEY }}</span>
-<a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">    </span><span class="nt">passphrase</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ secrets.HOTHER_BOT_GPG_PASSPHRASE }}</span>
-<a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">    </span><span class="nt">git_user_signingkey</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">    </span><span class="nt">git_commit_gpgsign</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">    </span><span class="nt">git_tag_gpgsign</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
-<a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>
-<a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Set up Python</span>
-<a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a><span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/setup-python@v5</span>
-<a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a><span class="w">  </span><span class="nt">with</span><span class="p">:</span>
-<a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a><span class="w">    </span><span class="nt">python-version</span><span class="p">:</span><span class="w"> </span><span class="s">'3.13'</span>
-<a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>
-<a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Install python-semantic-release</span>
-<a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a><span class="w">  </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pip install python-semantic-release</span>
-<a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>
-<a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Configure Git</span>
-<a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a><span class="w">  </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
-<a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a><span class="w">    </span><span class="no">git config user.email "github-bot@hother.io"</span>
-<a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a><span class="w">    </span><span class="no">git config user.name "Hother Bot"</span>
-<a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a>
-<a id="__codelineno-2-29" name="__codelineno-2-29" href="#__codelineno-2-29"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Run Semantic Release</span>
-<a id="__codelineno-2-30" name="__codelineno-2-30" href="#__codelineno-2-30"></a><span class="w">  </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">semantic-release version</span>
-<a id="__codelineno-2-31" name="__codelineno-2-31" href="#__codelineno-2-31"></a><span class="w">  </span><span class="nt">env</span><span class="p">:</span>
-<a id="__codelineno-2-32" name="__codelineno-2-32" href="#__codelineno-2-32"></a><span class="w">    </span><span class="nt">GH_TOKEN</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ secrets.GITHUB_TOKEN }}</span>
+<h2 id="gpg-signing-without-docker-current-implementation">GPG Signing Without Docker (CURRENT IMPLEMENTATION)</h2>
+<p>This is our current approach - running PSR directly on the GitHub runner with GPG signing enabled.</p>
+<h3 id="workflow-configuration-currently-used">Workflow Configuration (Currently Used)</h3>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Checkout code</span>
+<a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/checkout@v5</span>
+<a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">  </span><span class="nt">with</span><span class="p">:</span>
+<a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span><span class="nt">fetch-depth</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0</span>
+<a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="nt">token</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ secrets.GITHUB_TOKEN }}</span>
+<a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>
+<a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Set up Python</span>
+<a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">actions/setup-python@v5</span>
+<a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">  </span><span class="nt">with</span><span class="p">:</span>
+<a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">    </span><span class="nt">python-version</span><span class="p">:</span><span class="w"> </span><span class="s">'3.13'</span>
+<a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
+<a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Install python-semantic-release</span>
+<a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">  </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pip install python-semantic-release</span>
+<a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>
+<a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Import GPG key</span>
+<a id="__codelineno-0-16" name="__codelineno-0-16" href="#__codelineno-0-16"></a><span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">crazy-max/ghaction-import-gpg@v6</span>
+<a id="__codelineno-0-17" name="__codelineno-0-17" href="#__codelineno-0-17"></a><span class="w">  </span><span class="nt">with</span><span class="p">:</span>
+<a id="__codelineno-0-18" name="__codelineno-0-18" href="#__codelineno-0-18"></a><span class="w">    </span><span class="nt">gpg_private_key</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ secrets.HOTHER_BOT_GPG_KEY }}</span>
+<a id="__codelineno-0-19" name="__codelineno-0-19" href="#__codelineno-0-19"></a><span class="w">    </span><span class="nt">passphrase</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ secrets.HOTHER_BOT_GPG_PASSPHRASE }}</span>
+<a id="__codelineno-0-20" name="__codelineno-0-20" href="#__codelineno-0-20"></a><span class="w">    </span><span class="nt">git_user_signingkey</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<a id="__codelineno-0-21" name="__codelineno-0-21" href="#__codelineno-0-21"></a><span class="w">    </span><span class="nt">git_commit_gpgsign</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<a id="__codelineno-0-22" name="__codelineno-0-22" href="#__codelineno-0-22"></a><span class="w">    </span><span class="nt">git_tag_gpgsign</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">true</span>
+<a id="__codelineno-0-23" name="__codelineno-0-23" href="#__codelineno-0-23"></a>
+<a id="__codelineno-0-24" name="__codelineno-0-24" href="#__codelineno-0-24"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Configure Git</span>
+<a id="__codelineno-0-25" name="__codelineno-0-25" href="#__codelineno-0-25"></a><span class="w">  </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<a id="__codelineno-0-26" name="__codelineno-0-26" href="#__codelineno-0-26"></a><span class="w">    </span><span class="no">git config user.email "github-bot@hother.io"</span>
+<a id="__codelineno-0-27" name="__codelineno-0-27" href="#__codelineno-0-27"></a><span class="w">    </span><span class="no">git config user.name "Hother Bot"</span>
+<a id="__codelineno-0-28" name="__codelineno-0-28" href="#__codelineno-0-28"></a><span class="w">    </span><span class="no">git config core.autocrlf false</span>
+<a id="__codelineno-0-29" name="__codelineno-0-29" href="#__codelineno-0-29"></a>
+<a id="__codelineno-0-30" name="__codelineno-0-30" href="#__codelineno-0-30"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Run Semantic Release</span>
+<a id="__codelineno-0-31" name="__codelineno-0-31" href="#__codelineno-0-31"></a><span class="w">  </span><span class="nt">id</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">release</span>
+<a id="__codelineno-0-32" name="__codelineno-0-32" href="#__codelineno-0-32"></a><span class="w">  </span><span class="nt">run</span><span class="p">:</span><span class="w"> </span><span class="p p-Indicator">|</span>
+<a id="__codelineno-0-33" name="__codelineno-0-33" href="#__codelineno-0-33"></a><span class="w">    </span><span class="no">semantic-release version</span>
+<a id="__codelineno-0-34" name="__codelineno-0-34" href="#__codelineno-0-34"></a><span class="w">    </span><span class="no">if [ $? -eq 0 ]; then</span>
+<a id="__codelineno-0-35" name="__codelineno-0-35" href="#__codelineno-0-35"></a><span class="w">      </span><span class="no">echo "released=true" &gt;&gt; $GITHUB_OUTPUT</span>
+<a id="__codelineno-0-36" name="__codelineno-0-36" href="#__codelineno-0-36"></a><span class="w">      </span><span class="no">LATEST_TAG=$(git describe --tags --abbrev=0 2&gt;/dev/null || echo "")</span>
+<a id="__codelineno-0-37" name="__codelineno-0-37" href="#__codelineno-0-37"></a><span class="w">      </span><span class="no">echo "tag=$LATEST_TAG" &gt;&gt; $GITHUB_OUTPUT</span>
+<a id="__codelineno-0-38" name="__codelineno-0-38" href="#__codelineno-0-38"></a><span class="w">      </span><span class="no">VERSION=${LATEST_TAG#v}</span>
+<a id="__codelineno-0-39" name="__codelineno-0-39" href="#__codelineno-0-39"></a><span class="w">      </span><span class="no">echo "version=$VERSION" &gt;&gt; $GITHUB_OUTPUT</span>
+<a id="__codelineno-0-40" name="__codelineno-0-40" href="#__codelineno-0-40"></a><span class="w">    </span><span class="no">else</span>
+<a id="__codelineno-0-41" name="__codelineno-0-41" href="#__codelineno-0-41"></a><span class="w">      </span><span class="no">echo "released=false" &gt;&gt; $GITHUB_OUTPUT</span>
+<a id="__codelineno-0-42" name="__codelineno-0-42" href="#__codelineno-0-42"></a><span class="w">    </span><span class="no">fi</span>
+<a id="__codelineno-0-43" name="__codelineno-0-43" href="#__codelineno-0-43"></a><span class="w">  </span><span class="nt">env</span><span class="p">:</span>
+<a id="__codelineno-0-44" name="__codelineno-0-44" href="#__codelineno-0-44"></a><span class="w">    </span><span class="nt">GH_TOKEN</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">${{ secrets.GITHUB_TOKEN }}</span>
+<a id="__codelineno-0-45" name="__codelineno-0-45" href="#__codelineno-0-45"></a>
+<a id="__codelineno-0-46" name="__codelineno-0-46" href="#__codelineno-0-46"></a><span class="p p-Indicator">-</span><span class="w"> </span><span class="nt">name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">Publish to PyPI</span>
+<a id="__codelineno-0-47" name="__codelineno-0-47" href="#__codelineno-0-47"></a><span class="w">  </span><span class="nt">if</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">steps.release.outputs.released == 'true'</span>
+<a id="__codelineno-0-48" name="__codelineno-0-48" href="#__codelineno-0-48"></a><span class="w">  </span><span class="nt">uses</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">pypa/gh-action-pypi-publish@release/v1</span>
 </code></pre></div>
 <p><strong>Why this works:</strong>
 - Runs directly on GitHub runner (not in Docker)
@@ -1557,73 +1470,79 @@
 - <code>crazy-max/ghaction-import-gpg</code> configures GPG
 - Full access to GPG agent on the host</p>
 <hr>
-<h2 id="comparison-ssh-vs-gpg-vs-unsigned">Comparison: SSH vs GPG vs Unsigned</h2>
+<h2 id="comparison-gpg-vs-ssh-vs-unsigned">Comparison: GPG vs SSH vs Unsigned</h2>
 <table>
 <thead>
 <tr>
 <th>Feature</th>
+<th>GPG (Direct) ✅ Current</th>
 <th>SSH (Docker)</th>
-<th>GPG (Direct)</th>
 <th>Unsigned</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td><strong>Uses Docker action</strong></td>
-<td>✅ Yes</td>
 <td>❌ No</td>
+<td>✅ Yes</td>
 <td>✅ Yes</td>
 </tr>
 <tr>
 <td><strong>Setup complexity</strong></td>
-<td>Low</td>
 <td>Medium</td>
+<td>Low (but has libcrypto issues)</td>
 <td>Lowest</td>
 </tr>
 <tr>
 <td><strong>Key expiration</strong></td>
-<td>❌ No</td>
 <td>✅ Yes</td>
+<td>❌ No</td>
 <td>N/A</td>
 </tr>
 <tr>
 <td><strong>Key revocation</strong></td>
-<td>❌ No</td>
 <td>✅ Yes</td>
+<td>❌ No</td>
 <td>N/A</td>
 </tr>
 <tr>
 <td><strong>GitHub verified badge</strong></td>
 <td>✅</td>
-<td>✅</td>
+<td>✅ (when working)</td>
 <td>❌</td>
 </tr>
 <tr>
 <td><strong>Key management</strong></td>
-<td>Simpler</td>
 <td>More complex</td>
+<td>Simpler</td>
 <td>None</td>
 </tr>
 <tr>
 <td><strong>Performance</strong></td>
-<td>Slower (Docker)</td>
 <td>Faster (Direct)</td>
 <td>Slower (Docker)</td>
+<td>Slower (Docker)</td>
+</tr>
+<tr>
+<td><strong>Compatibility</strong></td>
+<td>✅ Works</td>
+<td>❌ libcrypto errors</td>
+<td>✅ Works</td>
 </tr>
 </tbody>
 </table>
 <hr>
-<h2 id="why-gpg-doesnt-work-with-docker-psr">Why GPG Doesn't Work with Docker PSR</h2>
+<h2 id="why-neither-gpg-nor-ssh-work-well-with-docker-psr">Why Neither GPG nor SSH Work Well with Docker PSR</h2>
 <h3 id="technical-explanation">Technical Explanation</h3>
 <ol>
 <li>
-<p><strong>Missing GPG binary in container:</strong>
+<p><strong>GPG: Missing GPG binary in container</strong>
    - PSR Dockerfile installs: git, git-lfs, openssh-client, build tools
    - Notably missing: gnupg, gnupg2
    - Error: <code>error: cannot run gpg: No such file or directory</code></p>
 </li>
 <li>
-<p><strong>PSR action only supports SSH:</strong>
+<p><strong>GPG: PSR action only supports SSH signing parameters</strong>
    - From <a href="https://github.com/python-semantic-release/python-semantic-release/blob/master/action.yml">action.yml</a>:</p>
 <ul>
 <li><code>ssh_public_signing_key</code> ✅</li>
@@ -1632,15 +1551,22 @@
 </ul>
 </li>
 <li>
+<p><strong>SSH: libcrypto compatibility issues</strong>
+   - Error: <code>Error loading key "/github/home/.ssh/signing_key": error in libcrypto</code>
+   - Occurs with both ed25519 and RSA keys
+   - Related to OpenSSL version in container vs key format
+   - PSR v10.5.3 includes SSH signing fixes but libcrypto errors persist</p>
+</li>
+<li>
 <p><strong>Container isolation:</strong>
    - Even if Git config is mounted, GPG binary isn't in container
-   - Would require: mounting ~/.gnupg, setting GNUPGHOME, handling UID/GID
-   - PSR Docker action doesn't expose these mount options</p>
+   - SSH key loading has compatibility issues with container's libcrypto
+   - Would require specific OpenSSL/libcrypto versions</p>
 </li>
 </ol>
 <h3 id="common-misconception">Common Misconception</h3>
 <p><strong>Myth:</strong> "GitHub Actions automatically mounts Git config to Docker containers, so GPG should work."</p>
-<p><strong>Reality:</strong> While Git <em>config</em> may be mounted, the GPG <em>binary</em> and <em>agent</em> are not accessible inside the container. The PSR Docker image simply doesn't include GPG.</p>
+<p><strong>Reality:</strong> While Git <em>config</em> may be mounted, the GPG <em>binary</em> and <em>agent</em> are not accessible inside the container. The PSR Docker image simply doesn't include GPG. SSH signing is supported but has libcrypto compatibility issues.</p>
 <hr>
 <h2 id="troubleshooting">Troubleshooting</h2>
 <h3 id="error-cannot-run-gpg-no-such-file-or-directory">"error: cannot run gpg: No such file or directory"</h3>
@@ -1652,8 +1578,8 @@
 2. Secrets configured: <code>SSH_PRIVATE_SIGNING_KEY</code>, <code>SSH_PUBLIC_SIGNING_KEY</code>
 3. Both secrets contain the full key content (including headers/footers)</p>
 <p><strong>Verify in workflow logs:</strong>
-</p><div class="highlight"><pre><span></span><code><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Should see PSR using SSH signing</span>
-<a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>python-semantic-release<span class="w"> </span>version
+</p><div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="c1"># Should see PSR using SSH signing</span>
+<a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>python-semantic-release<span class="w"> </span>version
 </code></pre></div><p></p>
 <h3 id="ssh-key-not-recognized">SSH key not recognized</h3>
 <p><strong>Solution:</strong>
@@ -1679,19 +1605,21 @@
 <h2 id="key-takeaways">Key Takeaways</h2>
 <ol>
 <li><strong>GPG + Docker PSR = IMPOSSIBLE</strong> (container lacks GPG binary)</li>
-<li><strong>SSH signing IS the solution</strong> for Docker-based PSR</li>
-<li><strong>SSH advantages:</strong>
-   - Works with Docker action out of the box
-   - Simpler key management (no expiration)
-   - Same "Verified" badge on GitHub
-   - Modern, well-supported approach</li>
-<li><strong>If GPG is required:</strong>
-   - Must run PSR directly on runner (not Docker)
-   - Slower setup but GPG works perfectly</li>
-<li><strong>Docker action benefits preserved with SSH:</strong>
-   - Consistent environment
-   - Official supported approach
-   - No custom Python/dependency setup</li>
+<li><strong>SSH + Docker PSR = PROBLEMATIC</strong> (libcrypto compatibility errors)</li>
+<li><strong>GPG without Docker = CURRENT SOLUTION:</strong>
+   - Run PSR directly on GitHub runner
+   - Full GPG functionality with verified signatures
+   - Better performance (no Docker overhead)
+   - Proven to work reliably</li>
+<li><strong>Trade-offs accepted:</strong>
+   - No Docker container isolation for PSR
+   - Manual Python/PSR installation in workflow
+   - Slightly more complex workflow setup</li>
+<li><strong>Benefits achieved:</strong>
+   - ✅ Signed commits and tags
+   - ✅ "Verified" badge on GitHub
+   - ✅ Reliable, consistent releases
+   - ✅ Better performance than Docker</li>
 </ol>
 <hr>
 <h2 id="references">References</h2>

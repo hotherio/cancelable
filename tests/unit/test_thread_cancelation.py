@@ -12,14 +12,12 @@ from __future__ import annotations
 
 import threading
 import time
-from typing import Any
 
 import anyio
 import pytest
 
 from hother.cancelable import AnyioBridge, CancelationToken, call_soon_threadsafe
 from hother.cancelable.core.models import CancelationReason
-
 
 pytestmark = pytest.mark.anyio
 

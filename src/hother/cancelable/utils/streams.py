@@ -10,7 +10,7 @@ from hother.cancelable.core.cancelable import Cancelable
 from hother.cancelable.utils.logging import get_logger
 
 if TYPE_CHECKING:
-    from ..core.token import CancelationToken
+    from hother.cancelable.core.token import CancelationToken
 
 logger = get_logger(__name__)
 

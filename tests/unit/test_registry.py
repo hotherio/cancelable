@@ -866,8 +866,9 @@ class TestRegistryEdgeCases:
         Targets line 522 in cancel_operation_sync() - the actual async
         cancelation call via bridge.
         """
-        from hother.cancelable.utils.anyio_bridge import AnyioBridge
         import threading
+
+        from hother.cancelable.utils.anyio_bridge import AnyioBridge
 
         registry = clean_registry
 
@@ -908,8 +909,9 @@ class TestRegistryEdgeCases:
         Targets line 550 in cancel_all_sync() - the actual async
         cancelation call via bridge.
         """
-        from hother.cancelable.utils.anyio_bridge import AnyioBridge
         import threading
+
+        from hother.cancelable.utils.anyio_bridge import AnyioBridge
 
         registry = clean_registry
 

@@ -201,7 +201,7 @@ class TestCancelableFactories:
                 # Wait for condition to trigger (should take ~0.15s)
                 await anyio.sleep(1.0)
                 # Should not reach here
-                assert False, "Should have been cancelled"
+                raise AssertionError("Should have been cancelled")
         except anyio.get_cancelled_exc_class():
             # Expected - condition triggered
             duration = anyio.current_time() - start_time
@@ -483,11 +483,10 @@ class TestCancelableShielding:
     @pytest.mark.anyio
     async def test_shield_status(self):
         """Test shield status tracking."""
-        async with Cancelable() as parent:
-            async with parent.shield() as shielded:
-                assert shielded.context.status == OperationStatus.SHIELDED
-                assert shielded.context.metadata.get("shielded") is True
-                assert shielded.context.parent_id == parent.context.id
+        async with Cancelable() as parent, parent.shield() as shielded:
+            assert shielded.context.status == OperationStatus.SHIELDED
+            assert shielded.context.metadata.get("shielded") is True
+            assert shielded.context.parent_id == parent.context.id
 
 
 class TestCancelableWrapping:
@@ -552,11 +551,10 @@ class TestCancelableWrapping:
 
         cancelable = Cancelable.with_timeout(1.0)
 
-        async with cancelable:
-            async with cancelable.wrapping() as wrap:
-                result = await wrap(async_function, 21)
-                assert result == 42
-                assert call_count == 1
+        async with cancelable, cancelable.wrapping() as wrap:
+            result = await wrap(async_function, 21)
+            assert result == 42
+            assert call_count == 1
 
         assert cancelable.is_completed
 
@@ -1118,9 +1116,8 @@ class TestCancelableEdgeCases:
         cancel = Cancelable(name="shield_no_cancel")
 
         result = None
-        async with cancel:
-            async with cancel.shield():
-                result = "completed"
+        async with cancel, cancel.shield():
+            result = "completed"
 
         assert result == "completed"
 
@@ -1187,9 +1184,8 @@ class TestCancelableShieldEdgeCases:
         cancel = Cancelable(name="shield_exception")
 
         try:
-            async with cancel:
-                async with cancel.shield():
-                    raise ValueError("Test error")
+            async with cancel, cancel.shield():
+                raise ValueError("Test error")
         except ValueError:
             pass
 
@@ -1362,9 +1358,8 @@ class TestCancelableComprehensiveCoverage:
     @pytest.mark.anyio
     async def test_token_linking_exception(self):
         """Test exception during token linking."""
-        from unittest.mock import AsyncMock, patch
 
-        cancel = Cancelable(name="link_fail")
+        Cancelable(name="link_fail")
 
         # Create a scenario where linking might fail
         # This is hard to trigger naturally, so we test recovery
@@ -1675,7 +1670,7 @@ class TestCancelableFinal100Percent:
         assert child in parent._children
 
         # Delete child and trigger garbage collection
-        child_id = id(child)
+        id(child)
         del child
         gc.collect()
         await anyio.sleep(0.01)
@@ -1784,10 +1779,9 @@ class TestCancelableFinal100Percent:
         shield_entered = False
 
         try:
-            async with cancel:
-                async with cancel.shield():
-                    shield_entered = True
-                    await anyio.sleep(0.2)  # Will timeout
+            async with cancel, cancel.shield():
+                shield_entered = True
+                await anyio.sleep(0.2)  # Will timeout
         except anyio.get_cancelled_exc_class():
             pass
 
@@ -1855,11 +1849,10 @@ class TestCancelableFinal100Percent:
         child._parent_ref = weakref.ref(parent)
 
         try:
-            async with parent:
-                async with child:
-                    # Trigger parent cancelation
-                    await parent_token.cancel(CancelationReason.MANUAL, "Parent cancelled")
-                    await anyio.sleep(0.05)
+            async with parent, child:
+                # Trigger parent cancelation
+                await parent_token.cancel(CancelationReason.MANUAL, "Parent cancelled")
+                await anyio.sleep(0.05)
         except anyio.get_cancelled_exc_class():
             pass
 
@@ -1939,11 +1932,8 @@ class TestCancelableFinal100Percent:
         """
         cancel = Cancelable(name="shield_list")
 
-        shield_scope = None
-
         async with cancel:
-            async with cancel.shield() as shielded:
-                shield_scope = shielded
+            async with cancel.shield():
                 # Verify shield is in list
                 assert len(cancel._shields) == 1
 
@@ -1988,7 +1978,7 @@ class TestCancelableFinal100Percent:
 
         Targets lines 438-441: exception handling in scope exit.
         """
-        from unittest.mock import Mock, patch
+        from unittest.mock import Mock
 
         cancel = Cancelable(name="scope_exit_error")
 
@@ -1999,7 +1989,6 @@ class TestCancelableFinal100Percent:
 
         async with cancel:
             # Replace the scope with our mock
-            original_scope = cancel._scope
             cancel._scope = mock_scope
 
         # The error from scope exit should propagate
@@ -2045,15 +2034,13 @@ class TestCancelableFinal100Percent:
         Targets line 519: shield.cancel() in cleanup.
         """
         cancel = Cancelable.with_timeout(0.1, name="shield_cleanup")
-        shield_cleaned = False
 
         try:
-            async with cancel:
-                async with cancel.shield() as shielded:
-                    # Verify shield is tracked
-                    assert len(cancel._shields) > 0
-                    # Wait for timeout
-                    await anyio.sleep(1.0)
+            async with cancel, cancel.shield():
+                # Verify shield is tracked
+                assert len(cancel._shields) > 0
+                # Wait for timeout
+                await anyio.sleep(1.0)
         except anyio.get_cancelled_exc_class():
             pass
 
@@ -2245,7 +2232,7 @@ class TestCancelableFinal100Percent:
 
         async with cancel:
             # Enter shield context
-            async with cancel.shield() as shielded:
+            async with cancel.shield():
                 # Shield should be in the shields list
                 assert len(cancel._shields) > 0
                 # Do some work
@@ -2552,9 +2539,8 @@ class TestCancelableFinal100Percent:
         regular_token = CancelationToken()
         child = Cancelable.with_token(regular_token, name="child", parent=parent)
 
-        async with parent:
-            async with child:
-                pass  # Line 810 should log warning
+        async with parent, child:
+            pass  # Line 810 should log warning
 
         # Verify warning was logged
         assert any("Cannot link to parent" in record.message for record in caplog.records)

@@ -2,9 +2,7 @@
 Unit tests for context_bridge.py utilities.
 """
 
-import asyncio
 import contextvars
-import threading
 from concurrent.futures import ThreadPoolExecutor
 
 import pytest

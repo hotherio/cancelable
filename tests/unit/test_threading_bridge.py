@@ -15,7 +15,6 @@ from hother.cancelable.utils.anyio_bridge import AnyioBridge
 def reset_singleton():
     """Reset ThreadSafeRegistry singleton before test."""
     # Save original instance
-    original = ThreadSafeRegistry._instance
     # Reset for test
     ThreadSafeRegistry._instance = None
     yield
@@ -42,7 +41,7 @@ class TestThreadSafeRegistry:
         # pass the outer check but only one creates the instance
 
         # Run multiple iterations to increase chance of hitting the race condition
-        for iteration in range(10):
+        for _iteration in range(10):
             # Reset singleton for each iteration
             ThreadSafeRegistry._instance = None
 
@@ -88,7 +87,7 @@ class TestThreadSafeRegistry:
 
         instances = []
         thread1_in_lock = threading.Event()
-        thread2_can_enter = threading.Event()
+        threading.Event()
 
         # Save the original __init__
         original_init = ThreadSafeRegistry.__init__
@@ -283,7 +282,7 @@ class TestThreadSafeRegistry:
             try:
                 for _ in range(50):
                     ops = thread_registry.list_operations()
-                    stats = thread_registry.get_statistics()
+                    thread_registry.get_statistics()
                     history = thread_registry.get_history(limit=5)
                     results.append((thread_id, len(ops), len(history)))
             except Exception as e:

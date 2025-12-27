@@ -2,7 +2,6 @@
 Integration tests for FastAPI integration.
 """
 
-from typing import Any
 from unittest.mock import AsyncMock, MagicMock, Mock
 
 import anyio
@@ -77,7 +76,7 @@ class TestRequestCancelationMiddleware:
     @pytest.mark.anyio
     async def test_middleware_client_disconnect(self):
         """Test middleware handles client disconnect."""
-        app = AsyncMock()
+        AsyncMock()
 
         # Make app wait so disconnect can be detected
         async def slow_app(scope, receive, send):
@@ -371,7 +370,7 @@ class TestCancelableStreamingResponse:
 
         # Last chunk should be cancelation message for SSE
         if chunks:
-            last_chunk = chunks[-1].decode() if isinstance(chunks[-1], bytes) else chunks[-1]
+            chunks[-1].decode() if isinstance(chunks[-1], bytes) else chunks[-1]
             # May or may not have cancelation message depending on timing
             assert len(chunks) > 0
 

@@ -2,8 +2,6 @@
 Unit tests for custom exception classes in hother.cancelable.core.exceptions.
 """
 
-import pytest
-
 from hother.cancelable.core.exceptions import (
     CancelationError,
     ConditionCancelation,

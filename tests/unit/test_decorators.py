@@ -2,15 +2,16 @@
 Unit tests for decorator utilities.
 """
 
-import anyio
-import pytest
 import signal
 import sys
 
+import anyio
+import pytest
+
 from hother.cancelable import (
     Cancelable,
-    CancelationToken,
     CancelationReason,
+    CancelationToken,
 )
 from hother.cancelable.utils.decorators import (
     cancelable,

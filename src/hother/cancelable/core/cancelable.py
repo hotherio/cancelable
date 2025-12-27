@@ -164,7 +164,7 @@ class Cancelable:
         Returns:
             Configured Cancelable instance
         """
-        from ..sources.timeout import TimeoutSource
+        from hother.cancelable.sources.timeout import TimeoutSource
 
         if isinstance(timeout, timedelta):
             timeout = timeout.total_seconds()
@@ -226,7 +226,7 @@ class Cancelable:
         Returns:
             Configured Cancelable instance
         """
-        from ..sources.signal import SignalSource
+        from hother.cancelable.sources.signal import SignalSource
 
         instance = cls(operation_id=operation_id, name=name or "signal_based", **kwargs)
         instance._sources.append(SignalSource(*signals))
@@ -255,7 +255,7 @@ class Cancelable:
         Returns:
             Configured Cancelable instance
         """
-        from ..sources.condition import ConditionSource
+        from hother.cancelable.sources.condition import ConditionSource
 
         instance = cls(operation_id=operation_id, name=name or "condition_based", **kwargs)
         instance._sources.append(ConditionSource(condition, check_interval, condition_name))

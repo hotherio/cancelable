@@ -43,9 +43,6 @@ def get_logger(name: str | None = None) -> logging.Logger:
         import inspect
 
         frame = inspect.currentframe()
-        if frame and frame.f_back:
-            name = frame.f_back.f_globals.get("__name__", "cancelable")
-        else:
-            name = "cancelable"
+        name = frame.f_back.f_globals.get("__name__", "cancelable") if frame and frame.f_back else "cancelable"
 
     return logging.getLogger(name)

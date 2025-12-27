@@ -424,7 +424,6 @@ class TestConditionSourceEdgeCases:
     @pytest.mark.anyio
     async def test_stop_monitoring_with_task_group_error(self):
         """Test stop_monitoring handles task group exit errors."""
-        from unittest.mock import AsyncMock, MagicMock
 
         def simple_condition():
             return False
@@ -435,7 +434,6 @@ class TestConditionSourceEdgeCases:
         await source.start_monitoring(scope)
 
         # Mock the task group to raise an error on exit
-        original_exit = source._task_group.__aexit__
 
         async def failing_exit(*args):
             raise RuntimeError("Task group exit failed")
@@ -512,7 +510,6 @@ class TestConditionSourceEdgeCases:
         This test targets lines 162-163 in condition.py by triggering an exception
         in the monitoring loop infrastructure (outside condition checking).
         """
-        from unittest.mock import AsyncMock
 
         condition_called = False
 
@@ -571,7 +568,6 @@ class TestResourceConditionSourceDiskThreshold:
 
         Targets branch 248->260: disk check performed, threshold not exceeded, returns False.
         """
-        from hother.cancelable import Cancelable
 
         # Create source that ONLY monitors disk (no memory or CPU thresholds)
         source = ResourceConditionSource(

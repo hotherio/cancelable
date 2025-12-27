@@ -367,7 +367,7 @@ class TestScalability:
             async def process_until_count():
                 nonlocal processed
                 async with Cancelable() as cancel:
-                    async for item in cancel.stream(large_stream()):
+                    async for _item in cancel.stream(large_stream()):
                         processed += 1
                         if processed >= cancel_at:
                             await cancel.cancel()

@@ -5,7 +5,6 @@ Shared test fixtures and utilities for the cancelable test suite.
 import asyncio
 import time
 from contextlib import asynccontextmanager
-from typing import Optional
 
 import pytest
 

@@ -164,7 +164,7 @@ class TestIntegration:
             await cancelable.report_progress("Saving data")
             saved_count = 0
 
-            for item in data:
+            for _item in data:
                 await anyio.sleep(0.01)
                 # Simulate save
                 saved_count += 1

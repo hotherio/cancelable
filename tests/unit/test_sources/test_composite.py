@@ -5,7 +5,6 @@ Unit tests for composite cancelation source.
 import anyio
 import pytest
 
-from hother.cancelable import Cancelable
 from hother.cancelable.core.models import CancelationReason
 from hother.cancelable.sources.base import CancelationSource
 from hother.cancelable.sources.composite import AllOfSource, AnyOfSource, CompositeSource

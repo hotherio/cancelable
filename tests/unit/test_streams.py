@@ -2,9 +2,10 @@
 Unit tests for stream utilities.
 """
 
+from typing import Any
+
 import anyio
 import pytest
-from typing import Any
 
 from hother.cancelable import Cancelable, CancelationToken
 from hother.cancelable.utils.streams import (
@@ -105,7 +106,6 @@ class TestCancelableStream:
 
         def on_progress(count, item):
             callback_calls.append((count, item))
-            return None
 
         cancel = Cancelable(name="test_progress")
 
@@ -484,8 +484,8 @@ class TestStreamEdgeCases:
         This covers the defensive branch 82->exit where the condition
         (meta and "count" in meta and "latest_item" in meta) fails.
         """
+
         from hother.cancelable.utils.streams import cancelable_stream
-        from unittest.mock import AsyncMock
 
         callback_calls = []
 

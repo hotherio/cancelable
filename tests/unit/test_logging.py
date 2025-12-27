@@ -46,7 +46,7 @@ class TestGetLogger:
         parent_logger = get_logger("hother.cancelable")
         child_logger = get_logger("hother.cancelable.core")
 
-        assert child_logger.parent == parent_logger or child_logger.parent == parent_logger.parent
+        assert child_logger.parent in (parent_logger, parent_logger.parent)
 
     def test_null_handler_present(self):
         """Test that NullHandler is added to prevent 'No handler found' warnings."""

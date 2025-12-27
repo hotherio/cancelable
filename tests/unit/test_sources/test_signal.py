@@ -1,7 +1,6 @@
 """Unit tests for signal cancelation source."""
 
 import signal
-import os
 
 import anyio
 import pytest
@@ -81,7 +80,6 @@ class TestSignalSource:
         await source.start_monitoring(scope)
 
         # Mock the task group's __aexit__ to raise an exception
-        original_aexit = source._task_group.__aexit__
 
         async def mock_aexit(*args):
             raise RuntimeError("Simulated task group cleanup error")

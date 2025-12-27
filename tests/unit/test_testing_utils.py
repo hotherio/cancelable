@@ -4,13 +4,10 @@ Unit tests for testing utilities in hother.cancelable.utils.testing.
 These tests ensure the testing utilities themselves work correctly.
 """
 
-import asyncio
-from datetime import UTC, datetime
-from unittest.mock import AsyncMock, MagicMock
-
-import pytest
+from datetime import datetime
 
 import anyio
+import pytest
 
 from hother.cancelable import Cancelable
 from hother.cancelable.core.models import CancelationReason, OperationStatus
@@ -296,7 +293,7 @@ class TestAssertCancelationWithin:
     @pytest.mark.anyio
     async def test_no_cancelation(self):
         """Test when no cancelation occurs."""
-        token = MockCancelationToken()
+        MockCancelationToken()
 
         with pytest.raises(AssertionError, match="Expected cancelation"):
             async with assert_cancelation_within(min_time=0.01, max_time=0.05):

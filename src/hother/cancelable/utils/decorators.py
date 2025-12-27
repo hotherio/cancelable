@@ -72,10 +72,7 @@ def cancelable(
                 "register_globally": register_globally,
             }
 
-            if timeout:
-                cancel = Cancelable.with_timeout(timeout, **cancel_kwargs)
-            else:
-                cancel = Cancelable(**cancel_kwargs)
+            cancel = Cancelable.with_timeout(timeout, **cancel_kwargs) if timeout else Cancelable(**cancel_kwargs)
 
             async with cancel:
                 # Inject cancelable if requested
@@ -88,7 +85,7 @@ def cancelable(
                 return await func(*args, **kwargs)
 
             # Unreachable - async with block always completes above
-            assert False, "Unreachable"  # pragma: no cover
+            raise AssertionError("Unreachable")  # pragma: no cover
 
         # Add attribute to access decorator parameters (dynamic attribute, no type annotation needed)
         wrapper._cancelable_params = {  # type: ignore[attr-defined]
@@ -136,7 +133,7 @@ async def with_timeout(
         return await coro
 
     # Unreachable - async with block always completes above
-    assert False, "Unreachable"  # pragma: no cover
+    raise AssertionError("Unreachable")  # pragma: no cover
 
 
 def with_current_operation() -> Callable[[Callable[P, Awaitable[R]]], Callable[P, Awaitable[R]]]:
@@ -222,10 +219,7 @@ def cancelable_method(
                 "register_globally": register_globally,
             }
 
-            if timeout:
-                cancel = Cancelable.with_timeout(timeout, **cancel_kwargs)
-            else:
-                cancel = Cancelable(**cancel_kwargs)
+            cancel = Cancelable.with_timeout(timeout, **cancel_kwargs) if timeout else Cancelable(**cancel_kwargs)
 
             async with cancel:
                 # Inject cancelable
@@ -236,7 +230,7 @@ def cancelable_method(
                 return await func(self, *args, **kwargs)
 
             # Unreachable - async with block always completes above
-            assert False, "Unreachable"  # pragma: no cover
+            raise AssertionError("Unreachable")  # pragma: no cover
 
         # Add attribute to access decorator parameters
         wrapper._cancelable_params = {  # type: ignore[attr-defined]
@@ -306,7 +300,7 @@ def cancelable_with_token(
                 return await func(*args, **kwargs)
 
             # Unreachable - async with block always completes above
-            assert False, "Unreachable"  # pragma: no cover
+            raise AssertionError("Unreachable")  # pragma: no cover
 
         # Add attribute to access decorator parameters
         wrapper._cancelable_params = {  # type: ignore[attr-defined]
@@ -518,10 +512,7 @@ def cancelable_combine(
             # Note: We use the provided cancelables as-is since they may have
             # internal state and sources already configured
             first = cancelables[0]
-            if len(cancelables) > 1:
-                cancel = first.combine(*cancelables[1:])
-            else:
-                cancel = first
+            cancel = first.combine(*cancelables[1:]) if len(cancelables) > 1 else first
 
             # Determine the effective name
             # Always prefer explicit name, then function name (for decorator consistency)

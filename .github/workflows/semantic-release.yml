@@ -35,7 +35,7 @@ jobs:
           gpg_private_key: ${{ secrets.HOTHER_BOT_GPG_KEY }}
           passphrase: ${{ secrets.HOTHER_BOT_GPG_PASSPHRASE }}
           git_user_signingkey: true
-          git_commit_gpgsign: false
+          git_commit_gpgsign: true
           git_tag_gpgsign: true
 
       - name: Configure Git
@@ -46,19 +46,27 @@ jobs:
           git config user.email "$GIT_EMAIL"
           git config user.name "$GIT_NAME"
           git config core.autocrlf false
-          git config commit.gpgsign false
+          git config commit.gpgsign true
           git config tag.gpgsign true
 
       - name: Setup Python and uv
         uses: ./.github/actions/setup-python-uv
 
-      - name: Python Semantic Release
+      - name: Install python-semantic-release
+        run: uv pip install python-semantic-release
+
+      - name: Run semantic-release
         id: release
-        uses: python-semantic-release/python-semantic-release@v10.5.3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          git_committer_name: ${{ steps.import-gpg.outputs.name }}
-          git_committer_email: ${{ steps.import-gpg.outputs.email }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Run version and publish in same step to maintain atomicity
+          uv run semantic-release version --skip-build
+
+          # Capture outputs for later steps
+          echo "released=$(git describe --exact-match --tags HEAD &>/dev/null && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
+          echo "version=$(git describe --tags --abbrev=0 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
+          echo "tag=$(git describe --tags --abbrev=0 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
 
       - name: Publish to PyPI
         if: steps.release.outputs.released == 'true'

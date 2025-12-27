@@ -237,7 +237,9 @@ async def simulated_data_processing(
         processed += batch
 
         if cancelable:
-            await cancelable.report_progress(f"Processed {processed}/{record_count} records", {"progress_percent": (processed / record_count) * 100})
+            await cancelable.report_progress(
+                f"Processed {processed}/{record_count} records", {"progress_percent": (processed / record_count) * 100}
+            )
 
     return {"dataset_id": dataset_id, "records_processed": processed}
 
@@ -261,7 +263,9 @@ async def simulated_file_download(
 
         progress = (downloaded / size_mb) * 100
         if cancelable:
-            await cancelable.report_progress(f"Downloading: {progress:.1f}%", {"downloaded_mb": downloaded, "total_mb": size_mb})
+            await cancelable.report_progress(
+                f"Downloading: {progress:.1f}%", {"downloaded_mb": downloaded, "total_mb": size_mb}
+            )
 
     return {"file_id": file_id, "size_mb": size_mb}
 

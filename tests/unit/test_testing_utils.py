@@ -4,13 +4,10 @@ Unit tests for testing utilities in hother.cancelable.utils.testing.
 These tests ensure the testing utilities themselves work correctly.
 """
 
-import asyncio
-from datetime import UTC, datetime
-from unittest.mock import AsyncMock, MagicMock
-
-import pytest
+from datetime import datetime
 
 import anyio
+import pytest
 
 from hother.cancelable import Cancelable
 from hother.cancelable.core.models import CancelationReason, OperationStatus
@@ -235,8 +232,6 @@ class TestUtilityFunctions:
         assert len(collected) > 0
         assert len(collected) < len(items)
 
-
-
     @pytest.mark.anyio
     async def test_run_with_timeout_test_timeout(self):
         """Test run_with_timeout_test with timeout."""
@@ -298,7 +293,7 @@ class TestAssertCancelationWithin:
     @pytest.mark.anyio
     async def test_no_cancelation(self):
         """Test when no cancelation occurs."""
-        token = MockCancelationToken()
+        MockCancelationToken()
 
         with pytest.raises(AssertionError, match="Expected cancelation"):
             async with assert_cancelation_within(min_time=0.01, max_time=0.05):
@@ -332,10 +327,7 @@ class TestCancelationScenario:
         scenario = CancelationScenario("test_run")
 
         # Build scenario: delay then cancel
-        scenario.add_delay(0.05).add_cancelation(
-            reason=CancelationReason.MANUAL,
-            message="Test cancel"
-        )
+        scenario.add_delay(0.05).add_cancelation(reason=CancelationReason.MANUAL, message="Test cancel")
 
         # NOTE: The scenario catches CancelledError, so the operation completes normally
         # even though it was cancelled. The test is checking that the scenario runs.
@@ -408,10 +400,7 @@ class TestCancelationScenario:
         scenario = CancelationScenario("immediate_cancel")
 
         # Add cancelation with no delay first
-        scenario.add_cancelation(
-            reason=CancelationReason.MANUAL,
-            message="Immediate cancel"
-        )
+        scenario.add_cancelation(reason=CancelationReason.MANUAL, message="Immediate cancel")
 
         async def long_operation():
             await anyio.sleep(1.0)

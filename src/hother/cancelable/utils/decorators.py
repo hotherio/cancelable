@@ -1,6 +1,4 @@
-"""
-Decorators and convenience functions for async cancelation.
-"""
+"""Decorators and convenience functions for async cancelation."""
 
 import inspect
 from collections.abc import Awaitable, Callable
@@ -28,8 +26,7 @@ def cancelable(
     register_globally: bool = False,
     inject_param: str | None = "cancelable",
 ) -> Callable[[Callable[P, Awaitable[R]]], Callable[P, Awaitable[R]]]:
-    """
-    Decorator to make async function cancelable.
+    """Decorator to make async function cancelable.
 
     The decorator automatically creates a Cancelable context and injects it
     via the specified parameter name (default: 'cancelable'). The decorated
@@ -75,10 +72,7 @@ def cancelable(
                 "register_globally": register_globally,
             }
 
-            if timeout:
-                cancel = Cancelable.with_timeout(timeout, **cancel_kwargs)
-            else:
-                cancel = Cancelable(**cancel_kwargs)
+            cancel = Cancelable.with_timeout(timeout, **cancel_kwargs) if timeout else Cancelable(**cancel_kwargs)
 
             async with cancel:
                 # Inject cancelable if requested
@@ -91,7 +85,7 @@ def cancelable(
                 return await func(*args, **kwargs)
 
             # Unreachable - async with block always completes above
-            assert False, "Unreachable"  # pragma: no cover
+            raise AssertionError("Unreachable")  # pragma: no cover
 
         # Add attribute to access decorator parameters (dynamic attribute, no type annotation needed)
         wrapper._cancelable_params = {  # type: ignore[attr-defined]
@@ -112,8 +106,7 @@ async def with_timeout(
     operation_id: str | None = None,
     name: str | None = None,
 ) -> T:
-    """
-    Run coroutine with timeout.
+    """Run coroutine with timeout.
 
     Args:
         timeout: Timeout duration
@@ -140,12 +133,11 @@ async def with_timeout(
         return await coro
 
     # Unreachable - async with block always completes above
-    assert False, "Unreachable"  # pragma: no cover
+    raise AssertionError("Unreachable")  # pragma: no cover
 
 
 def with_current_operation() -> Callable[[Callable[P, Awaitable[R]]], Callable[P, Awaitable[R]]]:
-    """
-    Decorator that injects current operation into function.
+    """Decorator that injects current operation into function.
 
     The function must have a parameter named 'operation'. The decorator
     will inject the current operation context if available (may be None
@@ -186,8 +178,7 @@ def cancelable_method(
     name: str | None = None,
     register_globally: bool = False,
 ) -> Callable[[Callable[..., Awaitable[R]]], Callable[..., Awaitable[R]]]:
-    """
-    Decorator for async methods that should be cancelable.
+    """Decorator for async methods that should be cancelable.
 
     Similar to @cancelable but designed for class methods. The decorator
     automatically creates a Cancelable context and injects it as a
@@ -228,10 +219,7 @@ def cancelable_method(
                 "register_globally": register_globally,
             }
 
-            if timeout:
-                cancel = Cancelable.with_timeout(timeout, **cancel_kwargs)
-            else:
-                cancel = Cancelable(**cancel_kwargs)
+            cancel = Cancelable.with_timeout(timeout, **cancel_kwargs) if timeout else Cancelable(**cancel_kwargs)
 
             async with cancel:
                 # Inject cancelable
@@ -242,7 +230,7 @@ def cancelable_method(
                 return await func(self, *args, **kwargs)
 
             # Unreachable - async with block always completes above
-            assert False, "Unreachable"  # pragma: no cover
+            raise AssertionError("Unreachable")  # pragma: no cover
 
         # Add attribute to access decorator parameters
         wrapper._cancelable_params = {  # type: ignore[attr-defined]
@@ -263,8 +251,7 @@ def cancelable_with_token(
     register_globally: bool = False,
     inject_param: str | None = "cancelable",
 ) -> Callable[[Callable[P, Awaitable[R]]], Callable[P, Awaitable[R]]]:
-    """
-    Decorator for token-based cancelation.
+    """Decorator for token-based cancelation.
 
     Creates a cancelable operation that can be cancelled via the provided token.
     Useful for operations that need to be cancelled from other tasks or threads.
@@ -313,7 +300,7 @@ def cancelable_with_token(
                 return await func(*args, **kwargs)
 
             # Unreachable - async with block always completes above
-            assert False, "Unreachable"  # pragma: no cover
+            raise AssertionError("Unreachable")  # pragma: no cover
 
         # Add attribute to access decorator parameters
         wrapper._cancelable_params = {  # type: ignore[attr-defined]
@@ -336,8 +323,7 @@ def cancelable_with_signal(
     register_globally: bool = False,
     inject_param: str | None = "cancelable",
 ) -> Callable[[Callable[P, Awaitable[R]]], Callable[P, Awaitable[R]]]:
-    """
-    Decorator for signal-based cancelation.
+    """Decorator for signal-based cancelation.
 
     Creates a cancelable operation that responds to OS signals (Unix only).
     Useful for graceful shutdown of long-running services.
@@ -369,7 +355,7 @@ def cancelable_with_signal(
 
     def decorator(func: Callable[P, Awaitable[R]]) -> Callable[P, Awaitable[R]]:
         @wraps(func)
-        async def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+        async def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:  # pyright: ignore[reportReturnType]
             cancel = Cancelable.with_signal(
                 *signals, operation_id=operation_id, name=name or func.__name__, register_globally=register_globally
             )
@@ -381,8 +367,7 @@ def cancelable_with_signal(
                     if inject_param in sig.parameters:
                         kwargs[inject_param] = cancel
 
-                result = await func(*args, **kwargs)
-            return result  # type: ignore[possibly-unbound]
+                return await func(*args, **kwargs)
 
         # Add attribute to access decorator parameters
         wrapper._cancelable_params = {  # type: ignore[attr-defined]
@@ -407,8 +392,7 @@ def cancelable_with_condition(
     register_globally: bool = False,
     inject_param: str | None = "cancelable",
 ) -> Callable[[Callable[P, Awaitable[R]]], Callable[P, Awaitable[R]]]:
-    """
-    Decorator for condition-based cancelation.
+    """Decorator for condition-based cancelation.
 
     Creates a cancelable operation that cancels when a condition becomes True.
     Useful for resource-based cancelation (disk full, memory limit, etc.).
@@ -442,7 +426,7 @@ def cancelable_with_condition(
 
     def decorator(func: Callable[P, Awaitable[R]]) -> Callable[P, Awaitable[R]]:
         @wraps(func)
-        async def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+        async def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:  # pyright: ignore[reportReturnType]
             cancel = Cancelable.with_condition(
                 condition,
                 check_interval=check_interval,
@@ -459,8 +443,7 @@ def cancelable_with_condition(
                     if inject_param in sig.parameters:
                         kwargs[inject_param] = cancel
 
-                result = await func(*args, **kwargs)
-            return result  # type: ignore[possibly-unbound]
+                return await func(*args, **kwargs)
 
         # Add attribute to access decorator parameters
         wrapper._cancelable_params = {  # type: ignore[attr-defined]
@@ -485,8 +468,7 @@ def cancelable_combine(
     register_globally: bool = False,
     inject_param: str | None = "cancelable",
 ) -> Callable[[Callable[P, Awaitable[R]]], Callable[P, Awaitable[R]]]:
-    """
-    Decorator for combining multiple cancelation sources.
+    """Decorator for combining multiple cancelation sources.
 
     Creates a cancelable operation that cancels when ANY of the provided
     cancelables trigger. Useful for operations with multiple cancelation conditions.
@@ -521,7 +503,7 @@ def cancelable_combine(
 
     def decorator(func: Callable[P, Awaitable[R]]) -> Callable[P, Awaitable[R]]:
         @wraps(func)
-        async def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:
+        async def wrapper(*args: P.args, **kwargs: P.kwargs) -> R:  # pyright: ignore[reportReturnType]
             # Combine all cancelables
             if not cancelables:
                 raise ValueError("At least one cancelable must be provided to cancelable_combine")
@@ -530,10 +512,7 @@ def cancelable_combine(
             # Note: We use the provided cancelables as-is since they may have
             # internal state and sources already configured
             first = cancelables[0]
-            if len(cancelables) > 1:
-                cancel = first.combine(*cancelables[1:])
-            else:
-                cancel = first
+            cancel = first.combine(*cancelables[1:]) if len(cancelables) > 1 else first
 
             # Determine the effective name
             # Always prefer explicit name, then function name (for decorator consistency)
@@ -557,8 +536,7 @@ def cancelable_combine(
                     if inject_param in sig.parameters:
                         kwargs[inject_param] = final_cancel
 
-                result = await func(*args, **kwargs)
-            return result  # type: ignore[possibly-unbound]
+                return await func(*args, **kwargs)
 
         return wrapper
 
@@ -570,8 +548,7 @@ def with_cancelable(
     inject: bool = False,
     inject_param: str = "cancelable",
 ) -> Callable[[Callable[P, Awaitable[R]]], Callable[P, Awaitable[R]]]:
-    """
-    Decorator that wraps a function with an existing Cancelable instance.
+    """Decorator that wraps a function with an existing Cancelable instance.
 
     This decorator allows you to use a pre-configured Cancelable context
     with your async function. Unlike @cancelable which creates a new context,

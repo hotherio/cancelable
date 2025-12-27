@@ -72,7 +72,7 @@ def render_example_files(markdown: str) -> str:
         Markdown with #! directives replaced by code blocks
     """
     # Pattern: #! followed by file path (at start of line)
-    pattern = r'^#!\s*(.+\.py)\s*$'
+    pattern = r"^#!\s*(.+\.py)\s*$"
 
     def replace_directive(match: re.Match) -> str:
         """Replace a single #! directive with rendered code."""
@@ -128,29 +128,29 @@ def create_package_manager_tabs(markdown: str) -> str:
         Markdown with tabbed package manager commands
     """
     # Pattern: bash code blocks containing pip install or uv add
-    pattern = r'```bash\n((?:pip install|uv (?:add|pip install))[^\n]+)\n```'
+    pattern = r"```bash\n((?:pip install|uv (?:add|pip install))[^\n]+)\n```"
 
     def create_tabs(match: re.Match) -> str:
         """Create tabbed alternatives for a package manager command."""
         command = match.group(1).strip()
 
         # Extract package name
-        if 'pip install' in command:
-            package = command.replace('pip install', '').strip()
-        elif 'uv add' in command:
-            package = command.replace('uv add', '').strip()
-        elif 'uv pip install' in command:
-            package = command.replace('uv pip install', '').strip()
+        if "pip install" in command:
+            package = command.replace("pip install", "").strip()
+        elif "uv add" in command:
+            package = command.replace("uv add", "").strip()
+        elif "uv pip install" in command:
+            package = command.replace("uv pip install", "").strip()
         else:
             # Don't modify if we can't parse it
             return match.group(0)
 
         # Skip if it's a complex command (contains && or other operators)
-        if any(op in command for op in ['&&', '||', ';', '|']):
+        if any(op in command for op in ["&&", "||", ";", "|"]):
             return match.group(0)
 
         # Generate tabbed interface (uv first as default)
-        return f'''=== "uv"
+        return f"""=== "uv"
     ```bash
     uv add {package}
     ```
@@ -158,7 +158,7 @@ def create_package_manager_tabs(markdown: str) -> str:
 === "pip"
     ```bash
     pip install {package}
-    ```'''
+    ```"""
 
     # Replace all package manager commands
     return re.sub(pattern, create_tabs, markdown, flags=re.MULTILINE)

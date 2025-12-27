@@ -1,7 +1,4 @@
-"""
-Composite cancelation source for combining multiple sources.
-"""
-
+"""Composite cancelation source for combining multiple sources."""
 
 import anyio
 
@@ -13,8 +10,7 @@ logger = get_logger(__name__)
 
 
 class CompositeSource(CancelationSource):
-    """
-    Cancelation source that combines multiple other sources.
+    """Cancelation source that combines multiple other sources.
 
     Triggers when any of the component sources trigger.
     """
@@ -24,8 +20,7 @@ class CompositeSource(CancelationSource):
         sources: list[CancelationSource],
         name: str | None = None,
     ):
-        """
-        Initialize composite source.
+        """Initialize composite source.
 
         Args:
             sources: List of cancelation sources to combine
@@ -41,8 +36,7 @@ class CompositeSource(CancelationSource):
         self.triggered_source: CancelationSource | None = None
 
     async def start_monitoring(self, scope: anyio.CancelScope) -> None:
-        """
-        Start monitoring all component sources.
+        """Start monitoring all component sources.
 
         Args:
             scope: Cancel scope to trigger when any source triggers
@@ -101,8 +95,7 @@ class CompositeSource(CancelationSource):
         )
 
     async def _monitor_source(self, source: CancelationSource) -> None:
-        """
-        Monitor a single source and propagate its cancelation.
+        """Monitor a single source and propagate its cancelation.
 
         Args:
             source: Source to monitor
@@ -139,8 +132,7 @@ class AnyOfSource(CompositeSource):
 
 
 class AllOfSource(CancelationSource):
-    """
-    Cancelation source that requires ALL component sources to trigger.
+    """Cancelation source that requires ALL component sources to trigger.
 
     Only cancels when all component sources have triggered.
     """
@@ -150,8 +142,7 @@ class AllOfSource(CancelationSource):
         sources: list[CancelationSource],
         name: str | None = None,
     ):
-        """
-        Initialize all-of source.
+        """Initialize all-of source.
 
         Args:
             sources: List of cancelation sources that must all trigger

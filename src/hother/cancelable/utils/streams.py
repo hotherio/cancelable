@@ -1,6 +1,4 @@
-"""
-Stream utilities for async cancelation.
-"""
+"""Stream utilities for async cancelation."""
 
 from collections.abc import AsyncIterator, Callable
 from datetime import timedelta
@@ -12,11 +10,14 @@ from hother.cancelable.core.cancelable import Cancelable
 from hother.cancelable.utils.logging import get_logger
 
 if TYPE_CHECKING:
-    from ..core.token import CancelationToken
+    from hother.cancelable.core.token import CancelationToken
 
 logger = get_logger(__name__)
 
 T = TypeVar("T")
+
+# Maximum items to keep in buffer to prevent unbounded memory growth
+_MAX_BUFFER_SIZE = 1000
 
 
 async def cancelable_stream(
@@ -29,8 +30,7 @@ async def cancelable_stream(
     operation_id: str | None = None,
     name: str | None = None,
 ) -> AsyncIterator[T]:
-    """
-    Make any async iterator cancelable with various options.
+    """Make any async iterator cancelable with various options.
 
     Args:
         stream: Async iterator to wrap
@@ -99,8 +99,7 @@ async def cancelable_stream(
 
 
 class CancelableAsyncIterator(AsyncIterator[T]):
-    """
-    Wrapper class that makes any async iterator cancelable.
+    """Wrapper class that makes any async iterator cancelable.
 
     This provides a class-based alternative to the cancelable_stream function.
     """
@@ -112,8 +111,7 @@ class CancelableAsyncIterator(AsyncIterator[T]):
         report_interval: int | None = None,
         buffer_partial: bool = False,
     ):
-        """
-        Initialize cancelable iterator.
+        """Initialize cancelable iterator.
 
         Args:
             iterator: Async iterator to wrap
@@ -147,8 +145,8 @@ class CancelableAsyncIterator(AsyncIterator[T]):
             self._count += 1
             if self._buffer is not None:
                 self._buffer.append(item)
-                if len(self._buffer) > 1000:
-                    self._buffer = self._buffer[-1000:]
+                if len(self._buffer) > _MAX_BUFFER_SIZE:
+                    self._buffer = self._buffer[-_MAX_BUFFER_SIZE:]
 
             # Report progress if needed
             if self._report_interval and self._count % self._report_interval == 0:
@@ -200,8 +198,7 @@ async def chunked_cancelable_stream(
     chunk_size: int,
     cancelable: Cancelable,
 ) -> AsyncIterator[list[T]]:
-    """
-    Process stream in chunks with cancelation support.
+    """Process stream in chunks with cancelation support.
 
     Args:
         stream: Source async iterator

@@ -2,22 +2,32 @@
 Integration tests for FastAPI integration.
 """
 
-from typing import Any
 from unittest.mock import AsyncMock, MagicMock, Mock
 
 import anyio
 import pytest
-from fastapi import HTTPException, Request
+
+# Check for optional fastapi dependency
+try:
+    from fastapi import HTTPException, Request
+
+    from hother.cancelable.integrations.fastapi import (
+        CancelableWebSocket,
+        RequestCancelationMiddleware,
+        cancelable_dependency,
+        cancelable_streaming_response,
+        get_request_token,
+        with_cancelation,
+    )
+
+    _has_fastapi = True
+except ImportError:
+    _has_fastapi = False
 
 from hother.cancelable import Cancelable, CancelationReason
-from hother.cancelable.integrations.fastapi import (
-    CancelableWebSocket,
-    RequestCancelationMiddleware,
-    cancelable_dependency,
-    cancelable_streaming_response,
-    get_request_token,
-    with_cancelation,
-)
+
+# Skip all tests in this module if fastapi is not available
+pytestmark = pytest.mark.skipif(not _has_fastapi, reason="fastapi not installed")
 
 
 class TestRequestCancelationMiddleware:
@@ -77,7 +87,7 @@ class TestRequestCancelationMiddleware:
     @pytest.mark.anyio
     async def test_middleware_client_disconnect(self):
         """Test middleware handles client disconnect."""
-        app = AsyncMock()
+        AsyncMock()
 
         # Make app wait so disconnect can be detected
         async def slow_app(scope, receive, send):
@@ -179,6 +189,7 @@ class TestWithCancelation:
     @pytest.mark.anyio
     async def test_decorator_success(self):
         """Test decorator with successful execution."""
+
         @with_cancelation(timeout=1.0)
         async def test_endpoint(request: Request):
             return {"status": "ok"}
@@ -197,6 +208,7 @@ class TestWithCancelation:
     @pytest.mark.anyio
     async def test_decorator_timeout(self):
         """Test decorator with timeout cancelation."""
+
         @with_cancelation(timeout=0.05, raise_on_cancel=True)
         async def test_endpoint(request: Request):
             await anyio.sleep(1.0)  # Will timeout
@@ -279,6 +291,7 @@ class TestWithCancelation:
     @pytest.mark.anyio
     async def test_decorator_no_raise(self):
         """Test decorator with raise_on_cancel=False."""
+
         @with_cancelation(timeout=0.05, raise_on_cancel=False)
         async def test_endpoint(request: Request):
             await anyio.sleep(1.0)
@@ -302,6 +315,7 @@ class TestCancelableStreamingResponse:
     @pytest.mark.anyio
     async def test_streaming_response_success(self):
         """Test successful streaming response."""
+
         async def generate():
             for i in range(3):
                 await anyio.sleep(0.01)
@@ -309,9 +323,7 @@ class TestCancelableStreamingResponse:
 
         cancelable = Cancelable(name="test_stream")
 
-        response = await cancelable_streaming_response(
-            generate(), cancelable, media_type="text/plain"
-        )
+        response = await cancelable_streaming_response(generate(), cancelable, media_type="text/plain")
 
         # Collect streamed data
         chunks = []
@@ -325,6 +337,7 @@ class TestCancelableStreamingResponse:
     @pytest.mark.anyio
     async def test_streaming_response_cancelled(self):
         """Test streaming response with cancelation."""
+
         async def generate():
             for i in range(100):
                 await anyio.sleep(0.01)
@@ -332,9 +345,7 @@ class TestCancelableStreamingResponse:
 
         cancelable = Cancelable.with_timeout(0.05, name="test_stream")
 
-        response = await cancelable_streaming_response(
-            generate(), cancelable, media_type="text/plain"
-        )
+        response = await cancelable_streaming_response(generate(), cancelable, media_type="text/plain")
 
         chunks = []
         try:
@@ -350,6 +361,7 @@ class TestCancelableStreamingResponse:
     @pytest.mark.anyio
     async def test_streaming_response_sse_cancelled(self):
         """Test SSE streaming with cancelation message."""
+
         async def generate():
             for i in range(100):
                 await anyio.sleep(0.01)
@@ -357,9 +369,7 @@ class TestCancelableStreamingResponse:
 
         cancelable = Cancelable.with_timeout(0.05, name="test_sse")
 
-        response = await cancelable_streaming_response(
-            generate(), cancelable, media_type="text/event-stream"
-        )
+        response = await cancelable_streaming_response(generate(), cancelable, media_type="text/event-stream")
 
         chunks = []
         try:
@@ -371,7 +381,7 @@ class TestCancelableStreamingResponse:
 
         # Last chunk should be cancelation message for SSE
         if chunks:
-            last_chunk = chunks[-1].decode() if isinstance(chunks[-1], bytes) else chunks[-1]
+            chunks[-1].decode() if isinstance(chunks[-1], bytes) else chunks[-1]
             # May or may not have cancelation message depending on timing
             assert len(chunks) > 0
 

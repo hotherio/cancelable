@@ -1,6 +1,4 @@
-"""
-Timeout-based cancelation source implementation.
-"""
+"""Timeout-based cancelation source implementation."""
 
 from datetime import timedelta
 
@@ -14,13 +12,10 @@ logger = get_logger(__name__)
 
 
 class TimeoutSource(CancelationSource):
-    """
-    Cancelation source that triggers after a specified timeout.
-    """
+    """Cancelation source that triggers after a specified timeout."""
 
     def __init__(self, timeout: float | timedelta, name: str | None = None):
-        """
-        Initialize timeout source.
+        """Initialize timeout source.
 
         Args:
             timeout: Timeout duration in seconds or as timedelta
@@ -39,8 +34,7 @@ class TimeoutSource(CancelationSource):
         self._deadline_time: float | None = None
 
     async def start_monitoring(self, scope: anyio.CancelScope) -> None:
-        """
-        Set scope deadline for timeout.
+        """Set scope deadline for timeout.
 
         Args:
             scope: Cancel scope to configure

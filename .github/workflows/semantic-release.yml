@@ -1,0 +1,106 @@
+name: Semantic Release
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+permissions:
+  id-token: write      # PyPI Trusted Publishing
+  contents: write      # Create tags and releases
+  issues: write        # Comment on issues
+  pull-requests: write # Comment on PRs
+
+jobs:
+  release:
+    name: Semantic Release
+    runs-on: ubuntu-latest
+    outputs:
+      released: ${{ steps.release.outputs.released }}
+      version: ${{ steps.release.outputs.version }}
+      tag: ${{ steps.release.outputs.tag }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Import GPG key
+        id: import-gpg
+        uses: crazy-max/ghaction-import-gpg@e89d40939c28e39f97cf32126055eeae86ba74ec # v6
+        with:
+          gpg_private_key: ${{ secrets.HOTHER_BOT_GPG_KEY }}
+          passphrase: ${{ secrets.HOTHER_BOT_GPG_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+          git_tag_gpgsign: true
+
+      - name: Configure Git
+        env:
+          GIT_EMAIL: ${{ steps.import-gpg.outputs.email }}
+          GIT_NAME: ${{ steps.import-gpg.outputs.name }}
+        run: |
+          git config user.email "$GIT_EMAIL"
+          git config user.name "$GIT_NAME"
+          git config core.autocrlf false
+          git config commit.gpgsign true
+          git config tag.gpgsign true
+
+      - name: Setup Python and uv
+        uses: ./.github/actions/setup-python-uv
+
+      - name: Python Semantic Release
+        id: release
+        uses: python-semantic-release/python-semantic-release@v9.15.3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          git_committer_name: ${{ steps.import-gpg.outputs.name }}
+          git_committer_email: ${{ steps.import-gpg.outputs.email }}
+
+      - name: Publish to PyPI
+        if: steps.release.outputs.released == 'true'
+        uses: pypa/gh-action-pypi-publish@release/v1
+
+      - name: Publish GitHub Release
+        if: steps.release.outputs.released == 'true'
+        uses: python-semantic-release/publish-action@v9.15.3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ steps.release.outputs.tag }}
+
+  dispatch:
+    name: Dispatch to Package Registry
+    runs-on: ubuntu-latest
+    needs: release
+    if: needs.release.outputs.released == 'true'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5
+        with:
+          ref: ${{ needs.release.outputs.tag }}
+
+      - name: Get package description
+        id: description
+        run: |
+          python -c "import tomllib; print(tomllib.load(open('pyproject.toml', 'rb'))['project']['description'])" > desc.txt
+          echo "value=$(cat desc.txt)" >> $GITHUB_OUTPUT
+
+      - name: Dispatch to package registry
+        env:
+          GH_TOKEN: ${{ secrets.GH_TOKEN }}
+          PKG_NAME: ${{ vars.PKG_NAME }}
+          PKG_REGISTRY: ${{ vars.PKG_REGISTRY }}
+          VERSION_TAG: ${{ needs.release.outputs.tag }}
+          REPO_OWNER: ${{ github.repository_owner }}
+          REPO_FULL: ${{ github.repository }}
+          DESCRIPTION: ${{ steps.description.outputs.value }}
+        run: |
+          curl -H "Accept: application/vnd.github.everest-preview+json" \
+          -H "Authorization: token $GH_TOKEN" \
+          --request POST \
+          --data "{\"event_type\": \"new_release\", \"client_payload\": { \"package_name\": \"$PKG_NAME\", \"version\": \"$VERSION_TAG\", \"author\": \"$REPO_OWNER\", \"short_desc\": \"$DESCRIPTION\", \"long_desc\": \"$DESCRIPTION\", \"homepage\": \"https://github.com/$REPO_FULL/\", \"link\": \"https://github.com/$REPO_FULL/releases/tag/$VERSION_TAG\" }}" \
+          "https://api.github.com/repos/$PKG_REGISTRY/dispatches"

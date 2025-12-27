@@ -94,11 +94,9 @@ docs-publish:  # Publishes the documentation
 licenses:
 	uvx --from pip-licenses==5.0.0 pip-licenses --from=mixed --order count -f $(FORMAT) --output-file licenses.$(FORMAT)
 
-changelog: ### Generate full changelog
-	git-cliff -o CHANGELOG.md
+version-check: ### Show current and next version
+	@echo "Current: $(shell grep 'version = ' pyproject.toml | cut -d'"' -f2)"
+	@echo "Next: $(shell uv run semantic-release --noop version --print 2>/dev/null || echo 'No release needed (must be on main branch)')"
 
-changelog-unreleased: ### Preview unreleased changes
-	@git-cliff --unreleased
-
-changelog-tag: ### Get changelog for latest tag (for releases)
-	@git-cliff --latest --strip header
+changelog-preview: ### Preview changelog for unreleased commits
+	@uv run semantic-release changelog

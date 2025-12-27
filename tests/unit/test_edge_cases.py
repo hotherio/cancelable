@@ -7,9 +7,8 @@ These tests verify that the bugs demonstrated in edge_case.py are properly fixed
 import asyncio
 import gc
 import threading
-import pytest
 
-import anyio
+import pytest
 
 from hother.cancelable import Cancelable
 from hother.cancelable.core.cancelable import _current_operation
@@ -42,9 +41,7 @@ class TestContextVariableThreadSafety:
             assert main_context.context.name == "context_test"
 
             # Run multiple thread checks
-            thread_results = await asyncio.gather(*[
-                cancel.run_in_thread(check_context_in_thread, i) for i in range(5)
-            ])
+            thread_results = await asyncio.gather(*[cancel.run_in_thread(check_context_in_thread, i) for i in range(5)])
 
             # All thread operations should succeed
             assert all(thread_results)
@@ -108,7 +105,7 @@ class TestCircularReferences:
         del current
 
         # Force garbage collection
-        collected = gc.collect()
+        gc.collect()
 
         # Check if objects were properly collected
         final_objects = len(gc.get_objects())
@@ -136,7 +133,7 @@ class TestCircularReferences:
         del child
 
         # Force garbage collection
-        collected = gc.collect()
+        gc.collect()
 
         # Check for significant object retention
         final_objects = len(gc.get_objects())
@@ -193,7 +190,7 @@ class TestMemoryLeakPrevention:
 
         # Create and use multiple operations
         for i in range(10):
-            async with Cancelable(name=f"operation_{i}") as cancel:
+            async with Cancelable(name=f"operation_{i}"):
                 # Do some work
                 await asyncio.sleep(0.001)
 
@@ -235,9 +232,7 @@ class TestMemoryLeakPrevention:
 
         # Create operations that use threads
         async with Cancelable(name="thread_test") as cancel:
-            results = await asyncio.gather(*[
-                cancel.run_in_thread(dummy_thread_work) for _ in range(10)
-            ])
+            results = await asyncio.gather(*[cancel.run_in_thread(dummy_thread_work) for _ in range(10)])
 
             assert len(results) == 10
             assert all(r == "completed" for r in results)

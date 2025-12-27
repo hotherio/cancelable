@@ -112,9 +112,7 @@ async def stream_with_cancelation(prompt: str, token: CancelationToken, conversa
         print("STREAMING OUTPUT:")
         print(f"{'='*70}\n")
 
-        async for chunk in await client.aio.models.generate_content_stream(
-            model="gemini-2.0-flash-exp", contents=contents
-        ):
+        async for chunk in await client.aio.models.generate_content_stream(model="gemini-2.0-flash-exp", contents=contents):
             # Get chunk text
             if not chunk.text:
                 continue

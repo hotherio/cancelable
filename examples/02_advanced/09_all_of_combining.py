@@ -78,9 +78,7 @@ async def batch_processor_with_requirements():
         elapsed = time.time() - start_time
         print("\n✅ Batch processing completed!")
         print(f"Final: {items_processed} items processed in {elapsed:.1f}s")
-        print(
-            f"Requirements met: Time={elapsed >= 60}, Items={items_processed >= 100}"
-        )
+        print(f"Requirements met: Time={elapsed >= 60}, Items={items_processed >= 100}")
 
 
 async def demonstration_fast_items_slow_time():
@@ -100,9 +98,7 @@ async def demonstration_fast_items_slow_time():
     print("Should continue for full 30 seconds\n")
 
     min_time = TimeoutSource(timeout=30.0)
-    min_items = ConditionSource(
-        condition=lambda: items_processed >= 100, check_interval=0.5
-    )
+    min_items = ConditionSource(condition=lambda: items_processed >= 100, check_interval=0.5)
 
     all_of = AllOfSource([min_time, min_items])
     cancelable = Cancelable(name="fast_items")
@@ -124,10 +120,7 @@ async def demonstration_fast_items_slow_time():
 
     except anyio.get_cancelled_exc_class():
         elapsed = time.time() - start_time
-        print(
-            f"\n✅ Completed: {items_processed} items in {elapsed:.1f}s "
-            f"(waited for time requirement)"
-        )
+        print(f"\n✅ Completed: {items_processed} items in {elapsed:.1f}s " f"(waited for time requirement)")
 
 
 async def demonstration_slow_items_fast_time():
@@ -147,9 +140,7 @@ async def demonstration_slow_items_fast_time():
     print("Should continue until 50 items processed\n")
 
     min_time = TimeoutSource(timeout=10.0)
-    min_items = ConditionSource(
-        condition=lambda: items_processed >= 50, check_interval=0.5
-    )
+    min_items = ConditionSource(condition=lambda: items_processed >= 50, check_interval=0.5)
 
     all_of = AllOfSource([min_time, min_items])
     cancelable = Cancelable(name="slow_items")
@@ -171,10 +162,7 @@ async def demonstration_slow_items_fast_time():
 
     except anyio.get_cancelled_exc_class():
         elapsed = time.time() - start_time
-        print(
-            f"\n✅ Completed: {items_processed} items in {elapsed:.1f}s "
-            f"(waited for item requirement)"
-        )
+        print(f"\n✅ Completed: {items_processed} items in {elapsed:.1f}s " f"(waited for item requirement)")
 
 
 async def main():

@@ -114,9 +114,7 @@ class TestConditionSource:
         from hother.cancelable import Cancelable
 
         cancelable = Cancelable.with_condition(
-            condition_with_unexpected_error,
-            check_interval=0.05,
-            condition_name="test_unexpected"
+            condition_with_unexpected_error, check_interval=0.05, condition_name="test_unexpected"
         )
 
         # The monitoring task should handle the exception gracefully
@@ -179,23 +177,23 @@ class TestResourceConditionSourceWithPsutil:
                 self.percent = percent
 
         mock_values = {
-            'memory_percent': 50.0,
-            'cpu_percent': 50.0,
-            'disk_percent': 50.0,
+            "memory_percent": 50.0,
+            "cpu_percent": 50.0,
+            "disk_percent": 50.0,
         }
 
         def mock_virtual_memory():
-            return MockMemory(mock_values['memory_percent'])
+            return MockMemory(mock_values["memory_percent"])
 
         def mock_cpu_percent(interval=None):
-            return mock_values['cpu_percent']
+            return mock_values["cpu_percent"]
 
         def mock_disk_usage(path):
-            return MockDiskUsage(mock_values['disk_percent'])
+            return MockDiskUsage(mock_values["disk_percent"])
 
-        monkeypatch.setattr(psutil, 'virtual_memory', mock_virtual_memory)
-        monkeypatch.setattr(psutil, 'cpu_percent', mock_cpu_percent)
-        monkeypatch.setattr(psutil, 'disk_usage', mock_disk_usage)
+        monkeypatch.setattr(psutil, "virtual_memory", mock_virtual_memory)
+        monkeypatch.setattr(psutil, "cpu_percent", mock_cpu_percent)
+        monkeypatch.setattr(psutil, "disk_usage", mock_disk_usage)
 
         return mock_values
 
@@ -205,17 +203,13 @@ class TestResourceConditionSourceWithPsutil:
         from hother.cancelable import Cancelable
 
         # Set memory above threshold
-        mock_psutil['memory_percent'] = 85.0
+        mock_psutil["memory_percent"] = 85.0
 
         # Create source that monitors memory at 80% threshold
         source = ResourceConditionSource(memory_threshold=80.0, check_interval=0.1)
 
         # Create cancelable with the source
-        cancelable = Cancelable.with_condition(
-            source._check_resources,
-            check_interval=0.1,
-            condition_name="memory_check"
-        )
+        cancelable = Cancelable.with_condition(source._check_resources, check_interval=0.1, condition_name="memory_check")
 
         # Should cancel due to high memory
         with pytest.raises(anyio.get_cancelled_exc_class()):
@@ -230,16 +224,12 @@ class TestResourceConditionSourceWithPsutil:
         from hother.cancelable import Cancelable
 
         # Set CPU above threshold
-        mock_psutil['cpu_percent'] = 95.0
+        mock_psutil["cpu_percent"] = 95.0
 
         # Create source that monitors CPU at 90% threshold
         source = ResourceConditionSource(cpu_threshold=90.0, check_interval=0.1)
 
-        cancelable = Cancelable.with_condition(
-            source._check_resources,
-            check_interval=0.1,
-            condition_name="cpu_check"
-        )
+        cancelable = Cancelable.with_condition(source._check_resources, check_interval=0.1, condition_name="cpu_check")
 
         # Should cancel due to high CPU
         with pytest.raises(anyio.get_cancelled_exc_class()):
@@ -254,16 +244,12 @@ class TestResourceConditionSourceWithPsutil:
         from hother.cancelable import Cancelable
 
         # Set disk usage above threshold
-        mock_psutil['disk_percent'] = 97.0
+        mock_psutil["disk_percent"] = 97.0
 
         # Create source that monitors disk at 95% threshold
         source = ResourceConditionSource(disk_threshold=95.0, check_interval=0.1)
 
-        cancelable = Cancelable.with_condition(
-            source._check_resources,
-            check_interval=0.1,
-            condition_name="disk_check"
-        )
+        cancelable = Cancelable.with_condition(source._check_resources, check_interval=0.1, condition_name="disk_check")
 
         # Should cancel due to high disk usage
         with pytest.raises(anyio.get_cancelled_exc_class()):
@@ -278,23 +264,14 @@ class TestResourceConditionSourceWithPsutil:
         from hother.cancelable import Cancelable
 
         # Start with one resource above threshold
-        mock_psutil['memory_percent'] = 85.0  # Above 80% threshold
-        mock_psutil['cpu_percent'] = 75.0     # Below 85% threshold
-        mock_psutil['disk_percent'] = 80.0    # Below 90% threshold
+        mock_psutil["memory_percent"] = 85.0  # Above 80% threshold
+        mock_psutil["cpu_percent"] = 75.0  # Below 85% threshold
+        mock_psutil["disk_percent"] = 80.0  # Below 90% threshold
 
         # Create source monitoring all three resources
-        source = ResourceConditionSource(
-            memory_threshold=80.0,
-            cpu_threshold=85.0,
-            disk_threshold=90.0,
-            check_interval=0.05
-        )
+        source = ResourceConditionSource(memory_threshold=80.0, cpu_threshold=85.0, disk_threshold=90.0, check_interval=0.05)
 
-        cancelable = Cancelable.with_condition(
-            source._check_resources,
-            check_interval=0.05,
-            condition_name="combined_check"
-        )
+        cancelable = Cancelable.with_condition(source._check_resources, check_interval=0.05, condition_name="combined_check")
 
         # Should cancel due to high memory (already above threshold)
         with pytest.raises(anyio.get_cancelled_exc_class()):
@@ -309,23 +286,14 @@ class TestResourceConditionSourceWithPsutil:
         from hother.cancelable import Cancelable
 
         # All resources well below thresholds
-        mock_psutil['memory_percent'] = 50.0
-        mock_psutil['cpu_percent'] = 40.0
-        mock_psutil['disk_percent'] = 60.0
+        mock_psutil["memory_percent"] = 50.0
+        mock_psutil["cpu_percent"] = 40.0
+        mock_psutil["disk_percent"] = 60.0
 
         # Create source with high thresholds
-        source = ResourceConditionSource(
-            memory_threshold=80.0,
-            cpu_threshold=85.0,
-            disk_threshold=90.0,
-            check_interval=0.05
-        )
+        source = ResourceConditionSource(memory_threshold=80.0, cpu_threshold=85.0, disk_threshold=90.0, check_interval=0.05)
 
-        cancelable = Cancelable.with_condition(
-            source._check_resources,
-            check_interval=0.05,
-            condition_name="normal_operation"
-        )
+        cancelable = Cancelable.with_condition(source._check_resources, check_interval=0.05, condition_name="normal_operation")
 
         # Should complete without cancelation
         completed = False
@@ -342,19 +310,13 @@ class TestResourceConditionSourceWithPsutil:
         from hother.cancelable import Cancelable
 
         # Start with memory already above threshold
-        mock_psutil['memory_percent'] = 80.0  # Above 75% threshold
-        mock_psutil['cpu_percent'] = 50.0
+        mock_psutil["memory_percent"] = 80.0  # Above 75% threshold
+        mock_psutil["cpu_percent"] = 50.0
 
-        source = ResourceConditionSource(
-            memory_threshold=75.0,
-            cpu_threshold=85.0,
-            check_interval=0.05
-        )
+        source = ResourceConditionSource(memory_threshold=75.0, cpu_threshold=85.0, check_interval=0.05)
 
         cancelable = Cancelable.with_condition(
-            source._check_resources,
-            check_interval=0.05,
-            condition_name="work_with_monitoring"
+            source._check_resources, check_interval=0.05, condition_name="work_with_monitoring"
         )
 
         # Should cancel due to high memory before completing work
@@ -369,15 +331,11 @@ class TestResourceConditionSourceWithPsutil:
     @pytest.mark.anyio
     async def test_resource_check_returns_false_initially(self, mock_psutil):
         """Test that _check_resources returns False when thresholds not exceeded."""
-        mock_psutil['memory_percent'] = 50.0
-        mock_psutil['cpu_percent'] = 40.0
-        mock_psutil['disk_percent'] = 60.0
+        mock_psutil["memory_percent"] = 50.0
+        mock_psutil["cpu_percent"] = 40.0
+        mock_psutil["disk_percent"] = 60.0
 
-        source = ResourceConditionSource(
-            memory_threshold=80.0,
-            cpu_threshold=85.0,
-            disk_threshold=90.0
-        )
+        source = ResourceConditionSource(memory_threshold=80.0, cpu_threshold=85.0, disk_threshold=90.0)
 
         result = await source._check_resources()
         assert result is False
@@ -385,15 +343,11 @@ class TestResourceConditionSourceWithPsutil:
     @pytest.mark.anyio
     async def test_resource_check_returns_true_on_threshold(self, mock_psutil):
         """Test that _check_resources returns True when any threshold exceeded."""
-        mock_psutil['memory_percent'] = 85.0  # Above 80% threshold
-        mock_psutil['cpu_percent'] = 40.0
-        mock_psutil['disk_percent'] = 60.0
+        mock_psutil["memory_percent"] = 85.0  # Above 80% threshold
+        mock_psutil["cpu_percent"] = 40.0
+        mock_psutil["disk_percent"] = 60.0
 
-        source = ResourceConditionSource(
-            memory_threshold=80.0,
-            cpu_threshold=90.0,
-            disk_threshold=95.0
-        )
+        source = ResourceConditionSource(memory_threshold=80.0, cpu_threshold=90.0, disk_threshold=95.0)
 
         result = await source._check_resources()
         assert result is True
@@ -401,9 +355,9 @@ class TestResourceConditionSourceWithPsutil:
     @pytest.mark.anyio
     async def test_resource_disk_threshold_only(self, mock_psutil):
         """Test disk threshold check when disk is exceeded."""
-        mock_psutil['memory_percent'] = 50.0
-        mock_psutil['cpu_percent'] = 40.0
-        mock_psutil['disk_percent'] = 96.0  # Above 95% threshold
+        mock_psutil["memory_percent"] = 50.0
+        mock_psutil["cpu_percent"] = 40.0
+        mock_psutil["disk_percent"] = 96.0  # Above 95% threshold
 
         source = ResourceConditionSource(
             disk_threshold=95.0  # Only disk threshold set
@@ -415,9 +369,9 @@ class TestResourceConditionSourceWithPsutil:
     @pytest.mark.anyio
     async def test_resource_disk_threshold_not_exceeded(self, mock_psutil):
         """Test disk threshold check when disk is NOT exceeded."""
-        mock_psutil['memory_percent'] = 50.0
-        mock_psutil['cpu_percent'] = 40.0
-        mock_psutil['disk_percent'] = 80.0  # Below 95% threshold
+        mock_psutil["memory_percent"] = 50.0
+        mock_psutil["cpu_percent"] = 40.0
+        mock_psutil["disk_percent"] = 80.0  # Below 95% threshold
 
         source = ResourceConditionSource(
             disk_threshold=95.0  # Only disk threshold set
@@ -433,16 +387,16 @@ class TestResourceConditionSourceWithPsutil:
         Targets branch 248->260: disk_threshold is None, skip disk check, return False.
         """
         # Set mock values for other resources
-        mock_psutil['memory_percent'] = 50.0
-        mock_psutil['cpu_percent'] = 40.0
-        mock_psutil['disk_percent'] = 90.0  # High, but won't be checked
+        mock_psutil["memory_percent"] = 50.0
+        mock_psutil["cpu_percent"] = 40.0
+        mock_psutil["disk_percent"] = 90.0  # High, but won't be checked
 
         # Create source WITHOUT disk_threshold (None)
         source = ResourceConditionSource(
             memory_threshold=80.0,  # Set memory threshold
-            cpu_threshold=85.0,     # Set CPU threshold
+            cpu_threshold=85.0,  # Set CPU threshold
             # disk_threshold NOT SET (None) - this is the key!
-            check_interval=0.1
+            check_interval=0.1,
         )
 
         # Should return False - memory and CPU OK, disk check skipped
@@ -456,6 +410,7 @@ class TestConditionSourceEdgeCases:
     @pytest.mark.anyio
     async def test_stop_monitoring_without_task_group(self):
         """Test stop_monitoring when _task_group is None."""
+
         def simple_condition():
             return False
 
@@ -469,7 +424,6 @@ class TestConditionSourceEdgeCases:
     @pytest.mark.anyio
     async def test_stop_monitoring_with_task_group_error(self):
         """Test stop_monitoring handles task group exit errors."""
-        from unittest.mock import AsyncMock, MagicMock
 
         def simple_condition():
             return False
@@ -480,7 +434,6 @@ class TestConditionSourceEdgeCases:
         await source.start_monitoring(scope)
 
         # Mock the task group to raise an error on exit
-        original_exit = source._task_group.__aexit__
 
         async def failing_exit(*args):
             raise RuntimeError("Task group exit failed")
@@ -525,6 +478,7 @@ class TestConditionSourceEdgeCases:
 
         Targets lines 151-154: except CancelledError with debug log and re-raise.
         """
+
         def never_true_condition():
             return False
 
@@ -549,7 +503,6 @@ class TestConditionSourceEdgeCases:
         # The monitoring task should have been stopped
         assert source._task_group is None
 
-
     @pytest.mark.anyio
     async def test_monitor_infrastructure_error(self):
         """Test that outer exception handler catches monitoring infrastructure errors.
@@ -557,7 +510,6 @@ class TestConditionSourceEdgeCases:
         This test targets lines 162-163 in condition.py by triggering an exception
         in the monitoring loop infrastructure (outside condition checking).
         """
-        from unittest.mock import AsyncMock
 
         condition_called = False
 
@@ -607,7 +559,7 @@ class TestResourceConditionSourceDiskThreshold:
         def mock_disk_usage(path):
             return MockDiskUsage(80.0)  # Below 95% threshold
 
-        monkeypatch.setattr(psutil, 'disk_usage', mock_disk_usage)
+        monkeypatch.setattr(psutil, "disk_usage", mock_disk_usage)
         return psutil
 
     @pytest.mark.anyio
@@ -616,12 +568,11 @@ class TestResourceConditionSourceDiskThreshold:
 
         Targets branch 248->260: disk check performed, threshold not exceeded, returns False.
         """
-        from hother.cancelable import Cancelable
 
         # Create source that ONLY monitors disk (no memory or CPU thresholds)
         source = ResourceConditionSource(
             disk_threshold=95.0,  # Set high threshold
-            check_interval=0.1
+            check_interval=0.1,
         )
 
         # Test the internal _check_resources method directly

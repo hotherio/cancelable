@@ -3,6 +3,7 @@ Unit tests for anyio_bridge.py utilities.
 """
 
 import asyncio
+import contextlib
 import threading
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -67,9 +68,10 @@ class TestAnyioBridge:
         bridge.call_soon_threadsafe(lambda: called.append("pending2"))
 
         # Mock the streams and worker to avoid infinite loop
-        with patch('anyio.create_memory_object_stream') as mock_stream, \
-             patch.object(bridge, '_worker', new_callable=AsyncMock) as mock_worker:
-
+        with (
+            patch("anyio.create_memory_object_stream") as mock_stream,
+            patch.object(bridge, "_worker", new_callable=AsyncMock),
+        ):
             mock_send, mock_receive = MagicMock(), MagicMock()
             mock_stream.return_value = (mock_send, mock_receive)
 
@@ -89,10 +91,8 @@ class TestAnyioBridge:
 
             # Cancel the start task to avoid hanging
             start_task.cancel()
-            try:
+            with contextlib.suppress(asyncio.CancelledError):
                 await start_task
-            except asyncio.CancelledError:
-                pass
 
     @pytest.mark.anyio
     async def test_call_soon_threadsafe_after_start(self):
@@ -100,9 +100,7 @@ class TestAnyioBridge:
         bridge = AnyioBridge()
 
         # Mock the streams
-        with patch('anyio.create_memory_object_stream') as mock_stream, \
-             patch.object(bridge, '_worker', new_callable=AsyncMock):
-
+        with patch("anyio.create_memory_object_stream") as mock_stream, patch.object(bridge, "_worker", new_callable=AsyncMock):
             mock_send, mock_receive = MagicMock(), MagicMock()
             mock_stream.return_value = (mock_send, mock_receive)
 
@@ -120,19 +118,15 @@ class TestAnyioBridge:
             mock_send.send_nowait.assert_called_with(callback)
 
             start_task.cancel()
-            try:
+            with contextlib.suppress(asyncio.CancelledError):
                 await start_task
-            except asyncio.CancelledError:
-                pass
 
     @pytest.mark.anyio
     async def test_bridge_queue_full_handling(self):
         """Test behavior when bridge queue is full."""
         bridge = AnyioBridge()
 
-        with patch('anyio.create_memory_object_stream') as mock_stream, \
-             patch.object(bridge, '_worker', new_callable=AsyncMock):
-
+        with patch("anyio.create_memory_object_stream") as mock_stream, patch.object(bridge, "_worker", new_callable=AsyncMock):
             mock_send, mock_receive = MagicMock(), MagicMock()
             mock_send.send_nowait.side_effect = anyio.WouldBlock()
             mock_stream.return_value = (mock_send, mock_receive)
@@ -149,10 +143,8 @@ class TestAnyioBridge:
             bridge.call_soon_threadsafe(callback)
 
             start_task.cancel()
-            try:
+            with contextlib.suppress(asyncio.CancelledError):
                 await start_task
-            except asyncio.CancelledError:
-                pass
 
     @pytest.mark.anyio
     async def test_convenience_function(self):
@@ -161,7 +153,7 @@ class TestAnyioBridge:
         AnyioBridge._instance = None
 
         # Mock the instance
-        with patch.object(AnyioBridge, 'get_instance') as mock_get_instance:
+        with patch.object(AnyioBridge, "get_instance") as mock_get_instance:
             mock_bridge = MagicMock()
             mock_get_instance.return_value = mock_bridge
 
@@ -192,9 +184,7 @@ class TestAnyioBridge:
         """Test warning when calling start() on already started bridge."""
         bridge = AnyioBridge()
 
-        with patch('anyio.create_memory_object_stream') as mock_stream, \
-             patch.object(bridge, '_worker', new_callable=AsyncMock):
-
+        with patch("anyio.create_memory_object_stream") as mock_stream, patch.object(bridge, "_worker", new_callable=AsyncMock):
             mock_send, mock_receive = MagicMock(), MagicMock()
             mock_stream.return_value = (mock_send, mock_receive)
 
@@ -214,14 +204,10 @@ class TestAnyioBridge:
             # Cleanup
             start_task1.cancel()
             start_task2.cancel()
-            try:
+            with contextlib.suppress(asyncio.CancelledError):
                 await start_task1
-            except asyncio.CancelledError:
-                pass
-            try:
+            with contextlib.suppress(asyncio.CancelledError):
                 await start_task2
-            except asyncio.CancelledError:
-                pass
 
     @pytest.mark.anyio
     async def test_bridge_pending_callback_queue_full_on_startup(self):
@@ -229,15 +215,19 @@ class TestAnyioBridge:
         bridge = AnyioBridge(buffer_size=1)
 
         # Queue multiple callbacks before starting
-        for i in range(5):
+        for _i in range(5):
             bridge.call_soon_threadsafe(lambda: None)
 
-        with patch('anyio.create_memory_object_stream') as mock_stream, \
-             patch.object(bridge, '_worker', new_callable=AsyncMock):
-
+        with patch("anyio.create_memory_object_stream") as mock_stream, patch.object(bridge, "_worker", new_callable=AsyncMock):
             mock_send, mock_receive = MagicMock(), MagicMock()
             # Make send_nowait raise WouldBlock after first callback
-            mock_send.send_nowait.side_effect = [None, anyio.WouldBlock(), anyio.WouldBlock(), anyio.WouldBlock(), anyio.WouldBlock()]
+            mock_send.send_nowait.side_effect = [
+                None,
+                anyio.WouldBlock(),
+                anyio.WouldBlock(),
+                anyio.WouldBlock(),
+                anyio.WouldBlock(),
+            ]
             mock_stream.return_value = (mock_send, mock_receive)
 
             # Start bridge - should handle WouldBlock gracefully
@@ -249,19 +239,15 @@ class TestAnyioBridge:
             assert mock_send.send_nowait.call_count >= 2
 
             start_task.cancel()
-            try:
+            with contextlib.suppress(asyncio.CancelledError):
                 await start_task
-            except asyncio.CancelledError:
-                pass
 
     @pytest.mark.anyio
     async def test_call_soon_threadsafe_send_exception(self):
         """Test exception handling in call_soon_threadsafe."""
         bridge = AnyioBridge()
 
-        with patch('anyio.create_memory_object_stream') as mock_stream, \
-             patch.object(bridge, '_worker', new_callable=AsyncMock):
-
+        with patch("anyio.create_memory_object_stream") as mock_stream, patch.object(bridge, "_worker", new_callable=AsyncMock):
             mock_send, mock_receive = MagicMock(), MagicMock()
             # Make send_nowait raise a different exception (not WouldBlock)
             mock_send.send_nowait.side_effect = RuntimeError("Simulated send error")
@@ -279,10 +265,8 @@ class TestAnyioBridge:
             bridge.call_soon_threadsafe(callback)
 
             start_task.cancel()
-            try:
+            with contextlib.suppress(asyncio.CancelledError):
                 await start_task
-            except asyncio.CancelledError:
-                pass
 
     @pytest.mark.anyio
     async def test_worker_end_of_stream_handling(self):
@@ -356,7 +340,7 @@ class TestAnyioBridge:
 
         def thread1_func():
             """First thread - creates the instance with delay."""
-            with patch.object(AnyioBridge, '__init__', slow_init):
+            with patch.object(AnyioBridge, "__init__", slow_init):
                 instance = AnyioBridge.get_instance()
                 instances.append(instance)
 
@@ -394,9 +378,7 @@ class TestAnyioBridge:
         bridge = AnyioBridge()
 
         # Create and start bridge
-        with patch('anyio.create_memory_object_stream') as mock_stream, \
-             patch.object(bridge, '_worker', new_callable=AsyncMock):
-
+        with patch("anyio.create_memory_object_stream") as mock_stream, patch.object(bridge, "_worker", new_callable=AsyncMock):
             mock_send, mock_receive = AsyncMock(), AsyncMock()
             mock_stream.return_value = (mock_send, mock_receive)
 
@@ -421,19 +403,15 @@ class TestAnyioBridge:
             assert bridge._receive_stream is None
 
             start_task.cancel()
-            try:
+            with contextlib.suppress(asyncio.CancelledError):
                 await start_task
-            except asyncio.CancelledError:
-                pass
 
     @pytest.mark.anyio
     async def test_stop_method_handles_stream_close_errors(self):
         """Test that stop() handles exceptions during stream closing."""
         bridge = AnyioBridge()
 
-        with patch('anyio.create_memory_object_stream') as mock_stream, \
-             patch.object(bridge, '_worker', new_callable=AsyncMock):
-
+        with patch("anyio.create_memory_object_stream") as mock_stream, patch.object(bridge, "_worker", new_callable=AsyncMock):
             mock_send, mock_receive = AsyncMock(), AsyncMock()
             # Make streams raise exceptions on aclose
             mock_send.aclose.side_effect = RuntimeError("Send stream close error")
@@ -453,10 +431,8 @@ class TestAnyioBridge:
             assert bridge._receive_stream is None
 
             start_task.cancel()
-            try:
+            with contextlib.suppress(asyncio.CancelledError):
                 await start_task
-            except asyncio.CancelledError:
-                pass
 
     @pytest.mark.anyio
     async def test_stop_method_when_streams_dont_exist(self):

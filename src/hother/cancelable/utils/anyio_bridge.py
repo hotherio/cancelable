@@ -1,5 +1,4 @@
-"""
-Global bridge for thread-safe anyio operations.
+"""Global bridge for thread-safe anyio operations.
 
 Allows regular Python threads to schedule callbacks in anyio context,
 providing an equivalent to asyncio's loop.call_soon_threadsafe().
@@ -21,8 +20,7 @@ logger = get_logger(__name__)
 
 
 class AnyioBridge:
-    """
-    Singleton bridge for thread-to-anyio communication.
+    """Singleton bridge for thread-to-anyio communication.
 
     Provides call_soon_threadsafe equivalent for anyio by using
     memory object streams and a background worker task.
@@ -52,8 +50,7 @@ class AnyioBridge:
     _lock = threading.Lock()
 
     def __init__(self, buffer_size: int = 1000) -> None:
-        """
-        Initialize the AnyioBridge.
+        """Initialize the AnyioBridge.
 
         Args:
             buffer_size: Maximum number of queued callbacks before blocking (default: 1000)
@@ -69,8 +66,7 @@ class AnyioBridge:
 
     @classmethod
     def get_instance(cls) -> Self:
-        """
-        Get singleton instance of the bridge.
+        """Get singleton instance of the bridge.
 
         Thread-safe lazy initialization.
 
@@ -84,8 +80,7 @@ class AnyioBridge:
         return cls._instance  # type: ignore[return-value]
 
     async def start(self) -> None:
-        """
-        Start the bridge worker task.
+        """Start the bridge worker task.
 
         Should be called once at application startup from async context.
         Must be run in a task group as it blocks forever.
@@ -126,8 +121,7 @@ class AnyioBridge:
         await self._worker()
 
     async def _worker(self) -> None:
-        """
-        Worker task that processes callbacks from threads.
+        """Worker task that processes callbacks from threads.
 
         Runs forever until the receive stream is closed.
         """
@@ -166,8 +160,7 @@ class AnyioBridge:
         logger.warning("Bridge worker loop ended")
 
     def call_soon_threadsafe(self, callback: Callable[[], Any]) -> None:
-        """
-        Schedule callback to run in anyio context from any thread.
+        """Schedule callback to run in anyio context from any thread.
 
         This is the anyio equivalent of asyncio's loop.call_soon_threadsafe().
         The callback will be executed in the anyio event loop context.
@@ -183,7 +176,7 @@ class AnyioBridge:
             # Queue for later processing
             with self._pending_lock:
                 self._pending_callbacks.append(callback)
-                logger.debug(f"Bridge not started, queuing callback " f"(queue size: {len(self._pending_callbacks)})")
+                logger.debug(f"Bridge not started, queuing callback (queue size: {len(self._pending_callbacks)})")
             return
 
         logger.debug(f"Queueing callback to bridge: {callback}")
@@ -192,15 +185,13 @@ class AnyioBridge:
             logger.debug("Callback successfully queued to bridge stream")
         except anyio.WouldBlock:
             logger.warning(
-                f"Bridge queue full ({self._buffer_size} callbacks), "
-                "callback dropped - consider increasing buffer size"
+                f"Bridge queue full ({self._buffer_size} callbacks), " "callback dropped - consider increasing buffer size"
             )
         except Exception as e:
             logger.error(f"Failed to schedule callback: {e}", exc_info=True)
 
     async def stop(self) -> None:
-        """
-        Stop the bridge and clean up resources.
+        """Stop the bridge and clean up resources.
 
         Properly closes the send and receive streams to avoid
         resource leak warnings during garbage collection.
@@ -246,8 +237,7 @@ class AnyioBridge:
 
 # Global convenience function
 def call_soon_threadsafe(callback: Callable[[], Any]) -> None:
-    """
-    Convenience function for thread-safe anyio scheduling.
+    """Convenience function for thread-safe anyio scheduling.
 
     Equivalent to bridge.get_instance().call_soon_threadsafe(callback).
 

@@ -221,7 +221,7 @@ class TestCancelationToken:
 
         assert token1 != "not a token"
         assert token1 != 123
-        assert token1 != None
+        assert token1 is not None
 
     def test_token_hashable(self):
         """Test that tokens are hashable and can be used in sets/dicts."""

@@ -1,5 +1,4 @@
-"""
-Integration modules for popular async libraries and frameworks.
+"""Integration modules for popular async libraries and frameworks.
 
 This module provides seamless integration with popular Python async frameworks:
 

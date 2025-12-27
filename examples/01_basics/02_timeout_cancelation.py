@@ -29,11 +29,11 @@ async def main() -> None:
 
     except anyio.get_cancelled_exc_class():
         if cancel:
-            print(f"  Operation timed out after {(cancel.context.duration.total_seconds() if cancel.context.duration else 0.0):.2f}s")
-            print(f"  Final status: {cancel.context.status.value}")
             print(
-                f"  Cancel reason: {cancel.context.cancel_reason.value if cancel.context.cancel_reason else 'unknown'}"
+                f"  Operation timed out after {(cancel.context.duration.total_seconds() if cancel.context.duration else 0.0):.2f}s"
             )
+            print(f"  Final status: {cancel.context.status.value}")
+            print(f"  Cancel reason: {cancel.context.cancel_reason.value if cancel.context.cancel_reason else 'unknown'}")
     # --8<-- [end:example]
 
 

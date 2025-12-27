@@ -172,9 +172,7 @@ async def example_stream_transformation():
             yield enriched
 
     # Process with pipeline
-    cancelable = Cancelable.with_timeout(5.0, name="transform_pipeline").on_progress(
-        lambda op_id, msg, meta: print(f"  {msg}")
-    )
+    cancelable = Cancelable.with_timeout(5.0, name="transform_pipeline").on_progress(lambda op_id, msg, meta: print(f"  {msg}"))
 
     async with cancelable:
         comfort_stats = {"optimal": 0, "good": 0, "poor": 0}

@@ -2,9 +2,10 @@
 Unit tests for stream utilities.
 """
 
+from typing import Any
+
 import anyio
 import pytest
-from typing import Any
 
 from hother.cancelable import Cancelable, CancelationToken
 from hother.cancelable.utils.streams import (
@@ -74,9 +75,7 @@ class TestCancelableStream:
             progress_calls.append((count, item))
 
         items = []
-        async for item in cancelable_stream(
-            async_range(10), report_interval=3, on_progress=on_progress
-        ):
+        async for item in cancelable_stream(async_range(10), report_interval=3, on_progress=on_progress):
             items.append(item)
 
         assert len(items) == 10
@@ -93,9 +92,7 @@ class TestCancelableStream:
             progress_calls.append((count, item))
 
         items = []
-        async for item in cancelable_stream(
-            async_range(10), report_interval=3, on_progress=on_progress
-        ):
+        async for item in cancelable_stream(async_range(10), report_interval=3, on_progress=on_progress):
             items.append(item)
 
         assert len(items) == 10
@@ -109,7 +106,6 @@ class TestCancelableStream:
 
         def on_progress(count, item):
             callback_calls.append((count, item))
-            return None
 
         cancel = Cancelable(name="test_progress")
 
@@ -164,9 +160,7 @@ class TestCancelableAsyncIterator:
         """Test iterator with buffer_partial enabled."""
         cancelable = Cancelable()
         async with cancelable:
-            iterator = CancelableAsyncIterator(
-                async_range(5), cancelable, buffer_partial=True
-            )
+            iterator = CancelableAsyncIterator(async_range(5), cancelable, buffer_partial=True)
 
             items = []
             async for item in iterator:
@@ -189,9 +183,7 @@ class TestCancelableAsyncIterator:
         cancelable.on_progress(on_progress)
 
         async with cancelable:
-            iterator = CancelableAsyncIterator(
-                async_range(10), cancelable, report_interval=3
-            )
+            iterator = CancelableAsyncIterator(async_range(10), cancelable, report_interval=3)
 
             items = []
             async for item in iterator:
@@ -206,9 +198,7 @@ class TestCancelableAsyncIterator:
         """Test iterator normal completion saves partial results."""
         cancelable = Cancelable()
         async with cancelable:
-            iterator = CancelableAsyncIterator(
-                async_range(5), cancelable, buffer_partial=True
-            )
+            iterator = CancelableAsyncIterator(async_range(5), cancelable, buffer_partial=True)
 
             items = []
             async for item in iterator:
@@ -222,6 +212,7 @@ class TestCancelableAsyncIterator:
     @pytest.mark.anyio
     async def test_iterator_cancelation_saves_partial(self):
         """Test iterator saves partial results on cancelation."""
+
         async def cancelling_iterator():
             """Iterator that raises CancelledError after a few items."""
             for i in range(100):
@@ -234,9 +225,7 @@ class TestCancelableAsyncIterator:
 
         try:
             async with cancelable:
-                iterator = CancelableAsyncIterator(
-                    cancelling_iterator(), cancelable, buffer_partial=True
-                )
+                iterator = CancelableAsyncIterator(cancelling_iterator(), cancelable, buffer_partial=True)
 
                 items = []
                 async for item in iterator:
@@ -252,6 +241,7 @@ class TestCancelableAsyncIterator:
     @pytest.mark.anyio
     async def test_iterator_exception_saves_partial(self):
         """Test iterator saves partial results on exception."""
+
         async def failing_iterator():
             for i in range(10):
                 yield i
@@ -261,9 +251,7 @@ class TestCancelableAsyncIterator:
         cancelable = Cancelable()
 
         async with cancelable:
-            iterator = CancelableAsyncIterator(
-                failing_iterator(), cancelable, buffer_partial=True
-            )
+            iterator = CancelableAsyncIterator(failing_iterator(), cancelable, buffer_partial=True)
 
             items = []
             try:
@@ -280,6 +268,7 @@ class TestCancelableAsyncIterator:
     @pytest.mark.anyio
     async def test_iterator_aclose(self):
         """Test iterator aclose method."""
+
         class CloseableIterator:
             def __init__(self):
                 self.closed = False
@@ -310,9 +299,7 @@ class TestCancelableAsyncIterator:
         """Test that buffer is limited to 1000 items."""
         cancelable = Cancelable()
         async with cancelable:
-            iterator = CancelableAsyncIterator(
-                async_range(2000), cancelable, buffer_partial=True
-            )
+            iterator = CancelableAsyncIterator(async_range(2000), cancelable, buffer_partial=True)
 
             items = []
             async for item in iterator:
@@ -333,9 +320,7 @@ class TestChunkedCancelableStream:
 
         async with cancelable:
             chunks = []
-            async for chunk in chunked_cancelable_stream(
-                async_range(10), chunk_size=3, cancelable=cancelable
-            ):
+            async for chunk in chunked_cancelable_stream(async_range(10), chunk_size=3, cancelable=cancelable):
                 chunks.append(chunk)
 
             # Should have 4 chunks: [0,1,2], [3,4,5], [6,7,8], [9]
@@ -352,9 +337,7 @@ class TestChunkedCancelableStream:
 
         async with cancelable:
             chunks = []
-            async for chunk in chunked_cancelable_stream(
-                async_range(7), chunk_size=3, cancelable=cancelable
-            ):
+            async for chunk in chunked_cancelable_stream(async_range(7), chunk_size=3, cancelable=cancelable):
                 chunks.append(chunk)
 
             # Should have 3 chunks: [0,1,2], [3,4,5], [6]
@@ -372,9 +355,7 @@ class TestChunkedCancelableStream:
 
         async with cancelable:
             chunks = []
-            async for chunk in chunked_cancelable_stream(
-                empty_iterator(), chunk_size=3, cancelable=cancelable
-            ):
+            async for chunk in chunked_cancelable_stream(empty_iterator(), chunk_size=3, cancelable=cancelable):
                 chunks.append(chunk)
 
             assert len(chunks) == 0
@@ -397,11 +378,7 @@ class TestStreamEdgeCases:
 
         # Using cancelable_stream normally should always have proper meta
         collected = []
-        async for item in cancelable_stream(
-            async_range(5),
-            on_progress=on_progress,
-            report_interval=2
-        ):
+        async for item in cancelable_stream(async_range(5), on_progress=on_progress, report_interval=2):
             collected.append(item)
 
         # Stream should work normally
@@ -412,6 +389,7 @@ class TestStreamEdgeCases:
     @pytest.mark.anyio
     async def test_iterator_exception_without_buffer(self):
         """Test iterator exception when buffer_partial is False."""
+
         async def failing_iterator():
             for i in range(10):
                 yield i
@@ -422,9 +400,7 @@ class TestStreamEdgeCases:
 
         async with cancelable:
             # buffer_partial=False means _buffer stays None
-            iterator = CancelableAsyncIterator(
-                failing_iterator(), cancelable, buffer_partial=False
-            )
+            iterator = CancelableAsyncIterator(failing_iterator(), cancelable, buffer_partial=False)
 
             items = []
             try:
@@ -440,6 +416,7 @@ class TestStreamEdgeCases:
     @pytest.mark.anyio
     async def test_iterator_aclose_without_method(self):
         """Test aclose when iterator doesn't have aclose method."""
+
         class SimpleIterator:
             def __init__(self):
                 self.index = 0
@@ -452,6 +429,7 @@ class TestStreamEdgeCases:
                     raise StopAsyncIteration
                 self.index += 1
                 return self.index
+
             # Note: No aclose method
 
         simple = SimpleIterator()
@@ -475,6 +453,7 @@ class TestStreamEdgeCases:
     @pytest.mark.anyio
     async def test_iterator_cancelation_without_buffer(self):
         """Test iterator cancelation when buffer_partial is False."""
+
         async def cancelling_iterator():
             """Iterator that raises CancelledError."""
             for i in range(100):
@@ -487,9 +466,7 @@ class TestStreamEdgeCases:
         try:
             async with cancelable:
                 # buffer_partial=False means _buffer stays None
-                iterator = CancelableAsyncIterator(
-                    cancelling_iterator(), cancelable, buffer_partial=False
-                )
+                iterator = CancelableAsyncIterator(cancelling_iterator(), cancelable, buffer_partial=False)
 
                 items = []
                 async for item in iterator:
@@ -507,8 +484,8 @@ class TestStreamEdgeCases:
         This covers the defensive branch 82->exit where the condition
         (meta and "count" in meta and "latest_item" in meta) fails.
         """
+
         from hother.cancelable.utils.streams import cancelable_stream
-        from unittest.mock import AsyncMock
 
         callback_calls = []
 
@@ -540,7 +517,7 @@ class TestStreamEdgeCases:
         async for item in cancelable_stream(
             async_range(5),
             on_progress=on_progress,
-            report_interval=1  # Report every item
+            report_interval=1,  # Report every item
         ):
             items.append(item)
 

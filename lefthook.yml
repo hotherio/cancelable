@@ -111,11 +111,12 @@ commit-msg:
     # Validate commit message format
     check-commit-msg:
       run: |
-        commit_regex='^(feat|fix|docs|style|refactor|test|chore|build|ci|perf|revert)(\(.+\))?: .+'
+        commit_regex='^(feat|fix|docs|style|refactor|test|chore|build|ci|perf|revert)(\(.+\))?!?: .+'
         if ! grep -qE "$commit_regex" {1}; then
           echo "❌ Commit message must follow conventional commits format!"
           echo ""
           echo "Format: <type>: <subject>  OR  <type>(<scope>): <subject>"
+          echo "        <type>!: <subject> for breaking changes"
           echo ""
           echo "Types:"
           echo "  feat:     New feature"
@@ -133,5 +134,6 @@ commit-msg:
           echo "Examples:"
           echo "  feat: add user authentication"
           echo "  fix(auth): resolve login timeout issue"
+          echo "  feat!: breaking API change"
           exit 1
         fi

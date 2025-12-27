@@ -2,7 +2,6 @@
 Tests for cancelation sources.
 """
 
-import signal
 from datetime import timedelta
 
 import anyio
@@ -13,7 +12,6 @@ from hother.cancelable.core.models import CancelationReason
 from hother.cancelable.sources.base import CancelationSource
 from hother.cancelable.sources.composite import AllOfSource, AnyOfSource, CompositeSource
 from hother.cancelable.sources.condition import ConditionSource
-from hother.cancelable.sources.signal import SignalSource
 from hother.cancelable.sources.timeout import TimeoutSource
 
 
@@ -29,7 +27,6 @@ class TestTimeoutSource:
         assert not source.triggered
 
         # Test with actual cancelable
-        from hother.cancelable import Cancelable
 
         start = anyio.current_time()
         with pytest.raises(anyio.get_cancelled_exc_class()):
@@ -60,7 +57,6 @@ class TestTimeoutSource:
         source = TimeoutSource(0.1)
 
         # Create a cancelable that uses this source
-        from hother.cancelable import Cancelable
 
         cancelable = Cancelable()
         cancelable._sources.append(source)
@@ -86,7 +82,6 @@ class TestConditionSource:
             return check_count >= 3
 
         # Test with actual cancelable
-        from hother.cancelable import Cancelable
 
         start = anyio.current_time()
         with pytest.raises(anyio.get_cancelled_exc_class()):
@@ -109,7 +104,6 @@ class TestConditionSource:
             return check_count >= 2
 
         # Test with actual cancelable
-        from hother.cancelable import Cancelable
 
         with pytest.raises(anyio.get_cancelled_exc_class()):
             async with Cancelable.with_condition(async_condition, check_interval=0.1):
@@ -130,7 +124,6 @@ class TestConditionSource:
             return call_count >= 4
 
         # Test with actual cancelable
-        from hother.cancelable import Cancelable
 
         with pytest.raises(anyio.get_cancelled_exc_class()):
             async with Cancelable.with_condition(faulty_condition, check_interval=0.05):
@@ -170,7 +163,6 @@ class TestCompositeSource:
     @pytest.mark.anyio
     async def test_composite_any_of(self):
         """Test composite source with ANY logic."""
-        from hother.cancelable import Cancelable
 
         # Create two cancelables with different timeouts
         cancel1 = Cancelable.with_timeout(0.2)
@@ -202,7 +194,6 @@ class TestCompositeSource:
     @pytest.mark.anyio
     async def test_composite_multiple_types(self):
         """Test combining different source types."""
-        from hother.cancelable import Cancelable
 
         check_count = 0
 
@@ -267,6 +258,7 @@ class TestCompositeSource:
         """Test that composite propagates reason from triggered source."""
         # Create sources with different reasons
         check_count = 0
+
         def condition():
             nonlocal check_count
             check_count += 1
@@ -298,6 +290,7 @@ class TestCompositeSource:
     @pytest.mark.anyio
     async def test_composite_stop_monitoring_with_errors(self):
         """Test composite handles errors when stopping sources."""
+
         # Create a mock source that raises error on stop
         class FailingSource(CancelationSource):
             def __init__(self):
@@ -323,6 +316,7 @@ class TestCompositeSource:
     @pytest.mark.anyio
     async def test_composite_monitor_source_exception(self):
         """Test composite handles exception in source monitoring."""
+
         # Create a source that raises during start_monitoring
         class ExceptionSource(CancelationSource):
             def __init__(self):
@@ -388,6 +382,7 @@ class TestCompositeSource:
             def condition():
                 counts[idx] += 1
                 return counts[idx] >= threshold
+
             return condition
 
         source1 = ConditionSource(make_condition(0, 2), check_interval=0.05)
@@ -519,6 +514,7 @@ class TestAllOfSource:
             def condition():
                 counts[idx] += 1
                 return counts[idx] >= threshold
+
             return condition
 
         # Different thresholds mean they trigger at different times
@@ -569,6 +565,7 @@ class TestAllOfSource:
     @pytest.mark.anyio
     async def test_all_of_monitor_source_exception(self):
         """Test AllOfSource handles exception in source monitoring."""
+
         # Create a source that raises during start_monitoring
         class ExceptionSource(CancelationSource):
             def __init__(self):
@@ -593,7 +590,3 @@ class TestAllOfSource:
         await anyio.sleep(0.1)
 
         await all_of.stop_monitoring()
-
-
-
-

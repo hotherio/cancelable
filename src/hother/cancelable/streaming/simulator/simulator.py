@@ -18,9 +18,8 @@ logger = logging.getLogger(__name__)
 
 async def simulate_stream(
     text: str, config: StreamConfig | None = None, cancelable: Cancelable | None = None
-) -> AsyncGenerator[dict[str, Any], None]:
-    """
-    Simulate a realistic network stream with variable timing and cancellation support.
+) -> AsyncGenerator[dict[str, Any]]:
+    """Simulate a realistic network stream with variable timing and cancellation support.
 
     This function simulates network streaming behavior including bursts, stalls,
     jitter, and variable chunk sizes. It's useful for testing cancellable stream

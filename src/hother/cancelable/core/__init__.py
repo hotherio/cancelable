@@ -1,5 +1,4 @@
-"""
-Core components of the async cancellation system.
+"""Core components of the async cancellation system.
 
 This module provides the fundamental building blocks for cancellable async operations:
 

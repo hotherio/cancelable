@@ -64,11 +64,10 @@ class TestShielding:
     @pytest.mark.anyio
     async def test_shield_status(self):
         """Test shield status tracking."""
-        async with Cancelable() as parent:
-            async with parent.shield() as shielded:
-                assert shielded.context.status == OperationStatus.SHIELDED
-                assert shielded.context.metadata.get("shielded") is True
-                assert shielded.context.parent_id == parent.context.id
+        async with Cancelable() as parent, parent.shield() as shielded:
+            assert shielded.context.status == OperationStatus.SHIELDED
+            assert shielded.context.metadata.get("shielded") is True
+            assert shielded.context.parent_id == parent.context.id
 
     @pytest.mark.anyio
     async def test_shield_with_manual_cancelation(self):

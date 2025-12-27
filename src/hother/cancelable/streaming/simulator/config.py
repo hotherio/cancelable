@@ -1,6 +1,5 @@
 """Configuration models for stream simulation."""
 
-
 from pydantic import BaseModel, Field, model_validator
 
 

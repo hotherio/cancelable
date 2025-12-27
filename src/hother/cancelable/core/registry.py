@@ -1,6 +1,4 @@
-"""
-Global operation registry for tracking and managing operations.
-"""
+"""Global operation registry for tracking and managing operations."""
 
 import threading
 from datetime import UTC, datetime, timedelta
@@ -18,8 +16,7 @@ logger = get_logger(__name__)
 
 
 class OperationRegistry:
-    """
-    Singleton registry for tracking all cancelable operations.
+    """Singleton registry for tracking all cancelable operations.
 
     Provides centralized management and monitoring of operations across
     the application.
@@ -50,8 +47,7 @@ class OperationRegistry:
 
     @classmethod
     def get_instance(cls) -> "OperationRegistry":
-        """
-        Get singleton instance of the registry.
+        """Get singleton instance of the registry.
 
         Returns:
             The global OperationRegistry instance
@@ -61,8 +57,7 @@ class OperationRegistry:
         return cls._instance
 
     async def register(self, operation: "Cancelable") -> None:
-        """
-        Register an operation with the registry.
+        """Register an operation with the registry.
 
         Args:
             operation: Cancelable operation to register
@@ -82,8 +77,7 @@ class OperationRegistry:
             )
 
     async def unregister(self, operation_id: str) -> None:
-        """
-        Unregister an operation and add to history.
+        """Unregister an operation and add to history.
 
         Args:
             operation_id: ID of operation to unregister
@@ -110,8 +104,7 @@ class OperationRegistry:
                 )
 
     async def get_operation(self, operation_id: str) -> Optional["Cancelable"]:
-        """
-        Get operation by ID.
+        """Get operation by ID.
 
         Args:
             operation_id: Operation ID to look up
@@ -129,8 +122,7 @@ class OperationRegistry:
         parent_id: str | None = None,
         name_pattern: str | None = None,
     ) -> list[OperationContext]:
-        """
-        List operations with optional filtering.
+        """List operations with optional filtering.
 
         Args:
             status: Filter by operation status
@@ -162,8 +154,7 @@ class OperationRegistry:
         reason: CancelationReason = CancelationReason.MANUAL,
         message: str | None = None,
     ) -> bool:
-        """
-        Cancel a specific operation.
+        """Cancel a specific operation.
 
         Args:
             operation_id: ID of operation to cancel
@@ -189,8 +180,7 @@ class OperationRegistry:
         reason: CancelationReason = CancelationReason.MANUAL,
         message: str | None = None,
     ) -> int:
-        """
-        Cancel all operations with optional status filter.
+        """Cancel all operations with optional status filter.
 
         Args:
             status: Only cancel operations with this status
@@ -239,8 +229,7 @@ class OperationRegistry:
         status: OperationStatus | None = None,
         since: datetime | None = None,
     ) -> list[OperationContext]:
-        """
-        Get operation history.
+        """Get operation history.
 
         Args:
             limit: Maximum number of operations to return
@@ -272,8 +261,7 @@ class OperationRegistry:
         older_than: timedelta | None = None,
         keep_failed: bool = True,
     ) -> int:
-        """
-        Clean up completed operations from active tracking.
+        """Clean up completed operations from active tracking.
 
         Args:
             older_than: Only cleanup operations older than this
@@ -326,8 +314,7 @@ class OperationRegistry:
         return len(to_remove)
 
     async def get_statistics(self) -> dict[str, Any]:
-        """
-        Get registry statistics.
+        """Get registry statistics.
 
         Returns:
             Dictionary with operation statistics
@@ -373,8 +360,7 @@ class OperationRegistry:
     # Thread-safe synchronous methods
 
     def get_operation_sync(self, operation_id: str) -> Optional["Cancelable"]:
-        """
-        Get operation by ID (thread-safe, synchronous).
+        """Get operation by ID (thread-safe, synchronous).
 
         This method can be called from any thread.
 
@@ -393,8 +379,7 @@ class OperationRegistry:
         parent_id: str | None = None,
         name_pattern: str | None = None,
     ) -> list[OperationContext]:
-        """
-        List operations with optional filtering (thread-safe, synchronous).
+        """List operations with optional filtering (thread-safe, synchronous).
 
         This method can be called from any thread.
 
@@ -423,8 +408,7 @@ class OperationRegistry:
         return operations
 
     def get_statistics_sync(self) -> dict[str, Any]:
-        """
-        Get registry statistics (thread-safe, synchronous).
+        """Get registry statistics (thread-safe, synchronous).
 
         This method can be called from any thread.
 
@@ -466,8 +450,7 @@ class OperationRegistry:
         status: OperationStatus | None = None,
         since: datetime | None = None,
     ) -> list[OperationContext]:
-        """
-        Get operation history (thread-safe, synchronous).
+        """Get operation history (thread-safe, synchronous).
 
         This method can be called from any thread.
 
@@ -501,8 +484,7 @@ class OperationRegistry:
         reason: CancelationReason = CancelationReason.MANUAL,
         message: str | None = None,
     ) -> None:
-        """
-        Cancel a specific operation (thread-safe, asynchronous execution).
+        """Cancel a specific operation (thread-safe, asynchronous execution).
 
         This method can be called from any thread. It schedules the cancelation
         to be executed asynchronously and returns immediately.
@@ -529,8 +511,7 @@ class OperationRegistry:
         reason: CancelationReason = CancelationReason.MANUAL,
         message: str | None = None,
     ) -> None:
-        """
-        Cancel all operations (thread-safe, asynchronous execution).
+        """Cancel all operations (thread-safe, asynchronous execution).
 
         This method can be called from any thread. It schedules the cancelation
         to be executed asynchronously and returns immediately.

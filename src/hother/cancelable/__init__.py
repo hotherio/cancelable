@@ -1,9 +1,10 @@
-"""
-Cancelable - Async Cancelation System for Python Streams
+"""Cancelable - Async Cancelation System for Python Streams
 
 A comprehensive, production-ready cancelation system for async operations
 with support for timeouts, signals, conditions, and manual cancelation.
 """
+
+import importlib.metadata
 
 from .core.cancelable import Cancelable, current_operation
 from .core.exceptions import (
@@ -17,6 +18,7 @@ from .core.exceptions import (
 from .core.models import CancelationReason, OperationContext, OperationStatus
 from .core.registry import OperationRegistry
 from .core.token import CancelationToken
+from .sources.composite import AllOfSource, AnyOfSource, CompositeSource
 from .types import (
     ErrorCallback,
     ErrorCallbackType,
@@ -27,9 +29,6 @@ from .types import (
     ensure_cancelable,
 )
 from .utils.anyio_bridge import AnyioBridge, call_soon_threadsafe
-from .utils.threading_bridge import ThreadSafeRegistry
-import importlib.metadata
-
 from .utils.decorators import (
     cancelable,
     cancelable_combine,
@@ -40,7 +39,7 @@ from .utils.decorators import (
     with_timeout,
 )
 from .utils.streams import cancelable_stream
-from .sources.composite import AllOfSource, AnyOfSource, CompositeSource
+from .utils.threading_bridge import ThreadSafeRegistry
 
 try:
     __version__ = importlib.metadata.version("hother-cancelable")

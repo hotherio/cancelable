@@ -300,7 +300,9 @@ class TestCancelablePerformance:
         with_callback_times = []
         for _ in range(iterations):
             start = time.perf_counter()
-            async with Cancelable().on_progress(progress_callback).on_start(async_callback).on_complete(async_callback) as cancel:
+            async with (
+                Cancelable().on_progress(progress_callback).on_start(async_callback).on_complete(async_callback) as cancel
+            ):
                 await cancel.report_progress("test")
             with_callback_times.append(time.perf_counter() - start)
 
@@ -365,7 +367,7 @@ class TestScalability:
             async def process_until_count():
                 nonlocal processed
                 async with Cancelable() as cancel:
-                    async for item in cancel.stream(large_stream()):
+                    async for _item in cancel.stream(large_stream()):
                         processed += 1
                         if processed >= cancel_at:
                             await cancel.cancel()

@@ -395,14 +395,6 @@ Git hooks for:
 - **Plugins**: mkdocstrings, social cards, glightbox
 - **Watch paths**: src/, examples/, docs/, docs/.hooks/
 
-### `Makefile`
-Convenience commands:
-- `make install`: Setup dependencies
-- `make test`: Run tests
-- `make lint`: Run linting
-- `make docs`: Serve documentation
-
-
 ## CI/CD
 
 The project uses GitHub Actions for CI/CD:
@@ -416,12 +408,57 @@ The project uses GitHub Actions for CI/CD:
 
 ## Release Process
 
-1. **Update version** in `pyproject.toml`
-2. **Update CHANGELOG.md** with release notes
-3. **Run full test suite**: `uv run pytest --cov`
-4. **Build package**: `uv build`
-5. **Test package locally**: `uv pip install dist/hother_cancelable-*.whl`
-6. **Publish to PyPI**: `uv publish`
-7. **Tag release**: `git tag v0.1.0 && git push --tags`
-8. **Deploy docs**: `uv run mike deploy --update-aliases v0.1 latest`
-9. **Create GitHub release** with changelog
+This project uses **python-semantic-release** for fully automated versioning and releases.
+
+### How It Works
+
+Releases happen automatically when commits are pushed to `main`:
+1. Commits are analyzed using conventional commit format
+2. Version is automatically bumped based on commit types
+3. CHANGELOG.md is updated
+4. Git tag is created and pushed (GPG signed)
+5. Package is built and published to PyPI (via Trusted Publishing)
+6. GitHub Release is created
+7. Documentation is deployed
+
+### Version Bumping Rules
+
+| Commit Type | Bump | Example |
+|-------------|------|---------|
+| `feat:` | Minor | 0.5.0 → 0.6.0 |
+| `fix:`, `perf:`, `refactor:` | Patch | 0.5.0 → 0.5.1 |
+| `feat!:`, `BREAKING CHANGE:` | Major | 0.5.0 → 1.0.0 |
+| `docs:`, `chore:`, `ci:`, `style:`, `test:` | None | No release |
+
+### Local Version Preview
+
+```bash
+# Check current version
+grep 'version = ' pyproject.toml | cut -d'"' -f2
+
+# Preview next version (on main branch)
+uv run semantic-release --noop version --print
+```
+
+### Manual Release Trigger
+
+```bash
+# Via GitHub UI: Actions → Semantic Release → Run workflow
+# or via gh CLI:
+gh workflow run semantic-release.yml
+```
+
+### Documentation Deployment
+
+Docs are automatically deployed on releases. Manual deployment:
+
+```bash
+# Deploy specific version
+uv run mike deploy --push --update-aliases v0.5 latest
+
+# Set default
+uv run mike set-default latest
+
+# Serve locally
+uv run mkdocs serve
+```

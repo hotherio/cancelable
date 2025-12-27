@@ -1,6 +1,4 @@
-"""
-Main Cancelable class implementation.
-"""
+"""Main Cancelable class implementation."""
 
 from __future__ import annotations
 
@@ -30,9 +28,10 @@ T = TypeVar("T")
 R = TypeVar("R")
 
 # Context variable for current operation
-_current_operation: contextvars.ContextVar[Cancelable | None] = contextvars.ContextVar(
-    "current_operation", default=None
-)
+_current_operation: contextvars.ContextVar[Cancelable | None] = contextvars.ContextVar("current_operation", default=None)
+
+# Maximum items to keep in buffer to prevent unbounded memory growth
+_MAX_BUFFER_SIZE = 1000
 
 
 class LinkState(StrEnum):
@@ -45,8 +44,7 @@ class LinkState(StrEnum):
 
 
 class Cancelable:
-    """
-    Main cancelation helper with composable cancelation sources.
+    """Main cancelation helper with composable cancelation sources.
 
     Provides a unified interface for handling cancelation from multiple sources
     including timeouts, tokens, signals, and conditions.
@@ -60,8 +58,7 @@ class Cancelable:
         metadata: dict[str, Any] | None = None,
         register_globally: bool = False,
     ):
-        """
-        Initialize a new cancelable operation.
+        """Initialize a new cancelable operation.
 
         Args:
             operation_id: Unique operation identifier (auto-generated if not provided)
@@ -123,8 +120,7 @@ class Cancelable:
 
     @property
     def token(self) -> LinkedCancelationToken:
-        """
-        Get the cancellation token for this operation.
+        """Get the cancellation token for this operation.
 
         Returns:
             The LinkedCancelationToken managing this operation's cancellation state.
@@ -132,8 +128,7 @@ class Cancelable:
         return self._token
 
     def add_source(self, source: CancelationSource) -> Cancelable:
-        """
-        Add a cancelation source to this operation.
+        """Add a cancelation source to this operation.
 
         This allows adding custom or composite sources (like AllOfSource) to an existing
         Cancelable instance.
@@ -161,8 +156,7 @@ class Cancelable:
     def with_timeout(
         cls, timeout: float | timedelta, operation_id: str | None = None, name: str | None = None, **kwargs: Any
     ) -> Cancelable:
-        """
-        Create cancelable with timeout.
+        """Create cancelable with timeout.
 
         Args:
             timeout: Timeout duration in seconds or timedelta
@@ -173,7 +167,7 @@ class Cancelable:
         Returns:
             Configured Cancelable instance
         """
-        from ..sources.timeout import TimeoutSource
+        from hother.cancelable.sources.timeout import TimeoutSource
 
         if isinstance(timeout, timedelta):
             timeout = timeout.total_seconds()
@@ -186,8 +180,7 @@ class Cancelable:
     def with_token(
         cls, token: CancelationToken, operation_id: str | None = None, name: str | None = None, **kwargs: Any
     ) -> Cancelable:
-        """
-        Create a Cancelable operation using an existing cancellation token.
+        """Create a Cancelable operation using an existing cancellation token.
 
         This factory method allows you to create a cancellable operation that shares
         a cancellation token with other operations, enabling coordinated cancellation.
@@ -224,11 +217,8 @@ class Cancelable:
         return instance
 
     @classmethod
-    def with_signal(
-        cls, *signals: int, operation_id: str | None = None, name: str | None = None, **kwargs: Any
-    ) -> Cancelable:
-        """
-        Create cancelable with signal handling.
+    def with_signal(cls, *signals: int, operation_id: str | None = None, name: str | None = None, **kwargs: Any) -> Cancelable:
+        """Create cancelable with signal handling.
 
         Args:
             *signals: Signal numbers to handle
@@ -239,7 +229,7 @@ class Cancelable:
         Returns:
             Configured Cancelable instance
         """
-        from ..sources.signal import SignalSource
+        from hother.cancelable.sources.signal import SignalSource
 
         instance = cls(operation_id=operation_id, name=name or "signal_based", **kwargs)
         instance._sources.append(SignalSource(*signals))
@@ -255,8 +245,7 @@ class Cancelable:
         name: str | None = None,
         **kwargs: Any,
     ) -> Cancelable:
-        """
-        Create cancelable with condition checking.
+        """Create cancelable with condition checking.
 
         Args:
             condition: Callable that returns True when cancelation should occur
@@ -269,7 +258,7 @@ class Cancelable:
         Returns:
             Configured Cancelable instance
         """
-        from ..sources.condition import ConditionSource
+        from hother.cancelable.sources.condition import ConditionSource
 
         instance = cls(operation_id=operation_id, name=name or "condition_based", **kwargs)
         instance._sources.append(ConditionSource(condition, check_interval, condition_name))
@@ -277,8 +266,7 @@ class Cancelable:
 
     # Composition
     def combine(self, *others: Cancelable) -> Cancelable:
-        """
-        Combine multiple Cancelable operations into a single coordinated operation.
+        """Combine multiple Cancelable operations into a single coordinated operation.
 
         Creates a new Cancelable that will be cancelled if ANY of the combined
         operations is cancelled. All cancellation sources from the combined
@@ -348,8 +336,7 @@ class Cancelable:
         self,
         callback: ProgressCallbackType,
     ) -> Cancelable:
-        """
-        Register a callback to be invoked when progress is reported.
+        """Register a callback to be invoked when progress is reported.
 
         The callback will be called whenever `report_progress()` is invoked
         on this operation. Both sync and async callbacks are supported.
@@ -377,8 +364,7 @@ class Cancelable:
         return self
 
     def on_start(self, callback: StatusCallbackType) -> Cancelable:
-        """
-        Register a callback to be invoked when the operation starts.
+        """Register a callback to be invoked when the operation starts.
 
         The callback is triggered when entering the async context (on `__aenter__`).
 
@@ -392,8 +378,7 @@ class Cancelable:
         return self
 
     def on_complete(self, callback: StatusCallbackType) -> Cancelable:
-        """
-        Register a callback to be invoked when the operation completes successfully.
+        """Register a callback to be invoked when the operation completes successfully.
 
         The callback is triggered when exiting the context without cancellation or error.
 
@@ -407,8 +392,7 @@ class Cancelable:
         return self
 
     def on_cancel(self, callback: StatusCallbackType) -> Cancelable:
-        """
-        Register a callback to be invoked when the operation is cancelled.
+        """Register a callback to be invoked when the operation is cancelled.
 
         The callback is triggered when the operation is cancelled by any source
         (timeout, signal, token, condition, or parent cancellation).
@@ -426,8 +410,7 @@ class Cancelable:
         self,
         callback: ErrorCallbackType,
     ) -> Cancelable:
-        """
-        Register a callback to be invoked when the operation encounters an error.
+        """Register a callback to be invoked when the operation encounters an error.
 
         The callback is triggered when an exception (other than CancelledError)
         is raised within the operation context.
@@ -444,8 +427,7 @@ class Cancelable:
 
     # Progress reporting
     async def report_progress(self, message: Any, metadata: dict[str, Any] | None = None) -> None:
-        """
-        Report progress to all registered callbacks.
+        """Report progress to all registered callbacks.
 
         Args:
             message: Progress message
@@ -465,8 +447,7 @@ class Cancelable:
                 )
 
     async def check_cancelation(self) -> None:
-        """
-        Check if operation is cancelled and raise if so.
+        """Check if operation is cancelled and raise if so.
 
         This is a public API for checking cancellation state.
         Use this instead of accessing `_token` directly.
@@ -474,7 +455,7 @@ class Cancelable:
         Raises:
             anyio.CancelledError: If operation is cancelled
         """
-        await self._token.check_async()
+        await self._token.check_async()  # pragma: no cover
 
     # Context manager
     async def __aenter__(self) -> Cancelable:
@@ -503,16 +484,13 @@ class Cancelable:
         # Set up simple token monitoring via callback
         async def on_token_cancel(token: CancelationToken) -> None:
             """Callback when token is cancelled."""
-            logger.error(
-                f"🚨 TOKEN CALLBACK TRIGGERED! Token {token.id} cancelled, cancelling scope for {self.context.id}"
-            )
+            logger.error(f"🚨 TOKEN CALLBACK TRIGGERED! Token {token.id} cancelled, cancelling scope for {self.context.id}")
             if self._scope and not self._scope.cancel_called:
                 logger.error(f"🚨 CANCELLING SCOPE for {self.context.id}")
                 self._scope.cancel()
             else:
-                logger.error(
-                    f"🚨 SCOPE ALREADY CANCELLED OR NONE for {self.context.id} (scope={self._scope}, cancel_called={self._scope.cancel_called if self._scope else 'N/A'})"
-                )
+                scope_info = f"scope={self._scope}, cancel_called={self._scope.cancel_called if self._scope else 'N/A'}"
+                logger.error(f"🚨 SCOPE ALREADY CANCELLED OR NONE for {self.context.id} ({scope_info})")
 
         logger.debug(f"Registering token callback for token {self._token.id}")
         await self._token.register_callback(on_token_cancel)
@@ -536,8 +514,7 @@ class Cancelable:
         return self._parent_ref() if self._parent_ref else None
 
     async def run_in_thread(self, func: Callable[..., T], *args: Any, **kwargs: Any) -> T:
-        """
-        Run function in thread with proper context propagation.
+        """Run function in thread with proper context propagation.
 
         This method solves the context variable thread safety issue by ensuring
         that context variables (including _current_operation) are properly
@@ -583,6 +560,123 @@ class Cancelable:
         self._parent_ref = None
         self._children.clear()
 
+    def _handle_scope_exit(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+        exc_tb: Any | None,
+    ) -> bool:
+        """Handle anyio scope exit.
+
+        Returns:
+            True if scope handled the exception, False otherwise.
+        """
+        _scope_handled = False
+        if self._scope:
+            try:
+                # scope.__exit__ returns True if it handled the exception
+                _scope_handled = self._scope.__exit__(exc_type, exc_val, exc_tb)
+            except Exception as e:
+                logger.debug(f"Scope exit raised: {e}")
+                # Re-raise the exception from scope exit
+                raise
+        return _scope_handled
+
+    async def _determine_final_status(
+        self,
+        exc_type: type[BaseException] | None,
+        exc_val: BaseException | None,
+    ) -> None:
+        """Determine final operation status based on exception."""
+        # Determine final status based on the exception
+        # We need to update status even if scope handled it, because the exception might still propagate
+        if exc_type is not None:
+            logger.debug(f"Exception type: {exc_type}")
+            if issubclass(exc_type, anyio.get_cancelled_exc_class()):
+                logger.debug("Handling CancelledError")
+                # Handle cancelation
+                # First check if we already have a cancel reason set by a source
+                if self.context.cancel_reason:
+                    # A source already set the reason (like condition, timeout, etc.)
+                    logger.debug(f"Cancel reason already set: {self.context.cancel_reason}")
+                elif self._token.is_cancelled:
+                    # Token was cancelled
+                    self.context.cancel_reason = self._token.reason
+                    self.context.cancel_message = self._token.message
+                    logger.debug(f"Cancel reason from token: {self._token.reason}")
+                elif self._scope and self._scope.cancel_called:
+                    # Scope was cancelled - check why
+                    # Check if deadline was exceeded (timeout)
+                    # Note: anyio CancelScope always has deadline attribute (defaults to inf)
+                    if anyio.current_time() >= self._scope.deadline:
+                        self.context.cancel_reason = CancelationReason.TIMEOUT
+                        self.context.cancel_message = "Operation timed out"
+                        logger.debug("Detected timeout from deadline")
+                    else:
+                        # Check sources
+                        for source in self._sources:
+                            if hasattr(source, "triggered") and source.triggered:
+                                self.context.cancel_reason = source.reason
+                                break
+
+                    if not self.context.cancel_reason:
+                        self.context.cancel_reason = CancelationReason.MANUAL
+                else:
+                    self.context.cancel_reason = CancelationReason.MANUAL
+
+                # Always update status to CANCELLED for any CancelledError
+                logger.debug(f"Updating status to CANCELLED (was {self.context.status})")
+                self.context.update_status(OperationStatus.CANCELLED)
+                logger.debug(f"Status after update: {self.context.status}")
+                await self._trigger_callbacks("cancel")
+
+            elif issubclass(exc_type, CancelationError) and isinstance(exc_val, CancelationError):
+                # Our custom cancelation errors
+                self.context.cancel_reason = exc_val.reason
+                self.context.cancel_message = exc_val.message
+                self.context.update_status(OperationStatus.CANCELLED)
+                await self._trigger_callbacks("cancel")
+            else:
+                # Other errors
+                self.context.error = str(exc_val)
+                self.context.update_status(OperationStatus.FAILED)
+
+                # Only trigger error callbacks for Exception instances, not BaseException
+                # (e.g., skip KeyboardInterrupt, SystemExit, GeneratorExit)
+                if isinstance(exc_val, Exception):
+                    await self._trigger_error_callbacks(exc_val)
+        else:
+            # Successful completion
+            self.context.update_status(OperationStatus.COMPLETED)
+            await self._trigger_callbacks("complete")
+
+    async def _cleanup_context(self) -> None:
+        """Cleanup monitoring, shields, registry, and context vars."""
+        logger.debug(f"=== __aexit__ finally block for {self.context.id} ===")
+
+        # Stop monitoring
+        await self._stop_monitoring()
+
+        # Cleanup shields
+        for shield in self._shields:
+            shield.cancel()
+
+        # Unregister from global registry
+        if self._register_globally:
+            from .registry import OperationRegistry
+
+            registry = OperationRegistry.get_instance()
+            await registry.unregister(self.context.id)
+
+        # Reset context variable
+        if hasattr(self, "_context_token"):
+            _current_operation.reset(self._context_token)
+
+        logger.debug(
+            f"Exited cancelation context - final status: {self.context.status}",
+            extra=self.context.log_context(),
+        )
+
     async def __aexit__(
         self,
         exc_type: type[BaseException] | None,
@@ -596,107 +690,15 @@ class Cancelable:
         logger.debug(f"Current cancel_reason: {self.context.cancel_reason}")
 
         try:
-            # Exit the scope first - sync operation
-            _scope_handled = False
-            if self._scope:
-                try:
-                    # scope.__exit__ returns True if it handled the exception
-                    _scope_handled = self._scope.__exit__(exc_type, exc_val, exc_tb)
-                except Exception as e:
-                    logger.debug(f"Scope exit raised: {e}")
-                    # Re-raise the exception from scope exit
-                    raise
-
-            # Determine final status based on the exception
-            # We need to update status even if scope handled it, because the exception might still propagate
-            if exc_type is not None:
-                logger.debug(f"Exception type: {exc_type}")
-                if issubclass(exc_type, anyio.get_cancelled_exc_class()):
-                    logger.debug("Handling CancelledError")
-                    # Handle cancelation
-                    # First check if we already have a cancel reason set by a source
-                    if self.context.cancel_reason:
-                        # A source already set the reason (like condition, timeout, etc.)
-                        logger.debug(f"Cancel reason already set: {self.context.cancel_reason}")
-                    elif self._token.is_cancelled:
-                        # Token was cancelled
-                        self.context.cancel_reason = self._token.reason
-                        self.context.cancel_message = self._token.message
-                        logger.debug(f"Cancel reason from token: {self._token.reason}")
-                    elif self._scope and self._scope.cancel_called:
-                        # Scope was cancelled - check why
-                        # Check if deadline was exceeded (timeout)
-                        # Note: anyio CancelScope always has deadline attribute (defaults to inf)
-                        if anyio.current_time() >= self._scope.deadline:
-                            self.context.cancel_reason = CancelationReason.TIMEOUT
-                            self.context.cancel_message = "Operation timed out"
-                            logger.debug("Detected timeout from deadline")
-                        else:
-                            # Check sources
-                            for source in self._sources:
-                                if hasattr(source, "triggered") and source.triggered:
-                                    self.context.cancel_reason = source.reason
-                                    break
-
-                        if not self.context.cancel_reason:
-                            self.context.cancel_reason = CancelationReason.MANUAL
-                    else:
-                        self.context.cancel_reason = CancelationReason.MANUAL
-
-                    # Always update status to CANCELLED for any CancelledError
-                    logger.debug(f"Updating status to CANCELLED (was {self.context.status})")
-                    self.context.update_status(OperationStatus.CANCELLED)
-                    logger.debug(f"Status after update: {self.context.status}")
-                    await self._trigger_callbacks("cancel")
-
-                elif issubclass(exc_type, CancelationError) and isinstance(exc_val, CancelationError):
-                    # Our custom cancelation errors
-                    self.context.cancel_reason = exc_val.reason
-                    self.context.cancel_message = exc_val.message
-                    self.context.update_status(OperationStatus.CANCELLED)
-                    await self._trigger_callbacks("cancel")
-                else:
-                    # Other errors
-                    self.context.error = str(exc_val)
-                    self.context.update_status(OperationStatus.FAILED)
-
-                    # Only trigger error callbacks for Exception instances, not BaseException
-                    # (e.g., skip KeyboardInterrupt, SystemExit, GeneratorExit)
-                    if isinstance(exc_val, Exception):
-                        await self._trigger_error_callbacks(exc_val)
-            else:
-                # Successful completion
-                self.context.update_status(OperationStatus.COMPLETED)
-                await self._trigger_callbacks("complete")
-
+            # Handle scope exit
+            _scope_handled = self._handle_scope_exit(exc_type, exc_val, exc_tb)
+            # Determine final status based on exception
+            await self._determine_final_status(exc_type, exc_val)
         except Exception as e:
             logger.error(f"Error in __aexit__ status handling: {e}", exc_info=True)
-
         finally:
-            logger.debug(f"=== __aexit__ finally block for {self.context.id} ===")
-
-            # Stop monitoring
-            await self._stop_monitoring()
-
-            # Cleanup shields
-            for shield in self._shields:
-                shield.cancel()
-
-            # Unregister from global registry
-            if self._register_globally:
-                from .registry import OperationRegistry
-
-                registry = OperationRegistry.get_instance()
-                await registry.unregister(self.context.id)
-
-            # Reset context variable
-            if hasattr(self, "_context_token"):
-                _current_operation.reset(self._context_token)
-
-            logger.debug(
-                f"Exited cancelation context - final status: {self.context.status}",
-                extra=self.context.log_context(),
-            )
+            # Cleanup context resources
+            await self._cleanup_context()
 
         # Always propagate exceptions - cancelation context should not suppress them
         # The anyio.CancelScope handles cancelation propagation appropriately
@@ -801,8 +803,7 @@ class Cancelable:
         report_interval: int | None = None,
         buffer_partial: bool = True,
     ) -> AsyncIterator[T]:
-        """
-        Wrap async iterator with cancelation support.
+        """Wrap async iterator with cancelation support.
 
         Args:
             async_iter: Async iterator to wrap
@@ -826,8 +827,8 @@ class Cancelable:
                 if buffer_partial:
                     buffer.append(item)
                     # Limit buffer size
-                    if len(buffer) > 1000:
-                        buffer = buffer[-1000:]
+                    if len(buffer) > _MAX_BUFFER_SIZE:
+                        buffer = buffer[-_MAX_BUFFER_SIZE:]
 
                 if report_interval and count % report_interval == 0:
                     await self.report_progress(f"Processed {count} items", {"count": count, "latest_item": item})
@@ -864,8 +865,7 @@ class Cancelable:
 
     # Function wrapper
     def wrap(self, operation: Callable[..., Awaitable[R]]) -> Callable[..., Awaitable[R]]:
-        """
-        Wrap an async operation to automatically check for cancelation before execution.
+        """Wrap an async operation to automatically check for cancelation before execution.
 
         This is useful for retry loops and other patterns where you want automatic
         cancelation checking without manually accessing the token.
@@ -904,8 +904,7 @@ class Cancelable:
 
     @asynccontextmanager
     async def wrapping(self) -> AsyncIterator[Callable[..., Awaitable[R]]]:
-        """
-        Async context manager that yields a wrap function for scoped operation wrapping.
+        """Async context manager that yields a wrap function for scoped operation wrapping.
 
         The yielded wrap function checks cancelation before executing any operation.
         This is useful for retry loops where you want all operations in a scope to
@@ -935,8 +934,7 @@ class Cancelable:
     # Shielding
     @asynccontextmanager
     async def shield(self) -> AsyncIterator[Cancelable]:
-        """
-        Shield a section from cancelation.
+        """Shield a section from cancelation.
 
         Creates a child operation that is protected from cancelation but still
         participates in the operation hierarchy for monitoring and tracking.
@@ -979,8 +977,7 @@ class Cancelable:
         message: str | None = None,
         propagate_to_children: bool = True,
     ) -> None:
-        """
-        Cancel the operation.
+        """Cancel the operation.
 
         Args:
             reason: Reason for cancelation

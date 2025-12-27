@@ -20,7 +20,7 @@ class TestGetLogger:
     def test_get_logger_without_name(self):
         """Test getting logger without name (uses caller module)."""
         # Mock inspect to control the frame
-        with patch('inspect.currentframe') as mock_frame:
+        with patch("inspect.currentframe") as mock_frame:
             mock_frame.return_value = None
             logger = get_logger()
             assert isinstance(logger, logging.Logger)
@@ -29,13 +29,9 @@ class TestGetLogger:
     def test_get_logger_with_frame(self):
         """Test getting logger with frame inspection."""
         # Mock inspect to return a frame with __name__
-        mock_frame = type('Frame', (), {
-            'f_back': type('Frame', (), {
-                'f_globals': {'__name__': 'test_module'}
-            })()
-        })()
+        mock_frame = type("Frame", (), {"f_back": type("Frame", (), {"f_globals": {"__name__": "test_module"}})()})()
 
-        with patch('inspect.currentframe', return_value=mock_frame):
+        with patch("inspect.currentframe", return_value=mock_frame):
             logger = get_logger()
             assert logger.name == "test_module"
 
@@ -50,7 +46,7 @@ class TestGetLogger:
         parent_logger = get_logger("hother.cancelable")
         child_logger = get_logger("hother.cancelable.core")
 
-        assert child_logger.parent == parent_logger or child_logger.parent == parent_logger.parent
+        assert child_logger.parent in (parent_logger, parent_logger.parent)
 
     def test_null_handler_present(self):
         """Test that NullHandler is added to prevent 'No handler found' warnings."""

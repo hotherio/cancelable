@@ -1,6 +1,4 @@
-"""
-Testing utilities for async cancelation.
-"""
+"""Testing utilities for async cancelation."""
 
 from collections.abc import AsyncIterator, Callable
 from contextlib import asynccontextmanager
@@ -21,8 +19,7 @@ T = TypeVar("T")
 
 
 class MockCancelationToken(CancelationToken):
-    """
-    Mock cancelation token for testing.
+    """Mock cancelation token for testing.
 
     Provides additional testing capabilities like scheduled cancelation.
     """
@@ -52,8 +49,7 @@ class MockCancelationToken(CancelationToken):
         reason: CancelationReason = CancelationReason.MANUAL,
         message: str | None = None,
     ) -> None:
-        """
-        Schedule cancelation after a delay.
+        """Schedule cancelation after a delay.
 
         Args:
             delay: Delay in seconds before cancelation
@@ -75,9 +71,7 @@ class MockCancelationToken(CancelationToken):
 
 
 class OperationRecorder:
-    """
-    Records operation events for testing assertions.
-    """
+    """Records operation events for testing assertions."""
 
     def __init__(self):
         self.events: list[dict[str, Any]] = []
@@ -102,8 +96,7 @@ class OperationRecorder:
             )
 
     def attach_to_cancellable(self, cancelable: Cancelable) -> Cancelable:
-        """
-        Attach recorder to a cancelable to track its events.
+        """Attach recorder to a cancelable to track its events.
 
         Args:
             cancelable: Cancelable to track
@@ -146,8 +139,7 @@ class OperationRecorder:
         event_type: str,
         timeout: float = 1.0,
     ) -> dict[str, Any]:
-        """
-        Assert that an event occurred (synchronous check).
+        """Assert that an event occurred (synchronous check).
 
         Args:
             operation_id: Operation ID to check
@@ -172,8 +164,7 @@ class OperationRecorder:
         operation_id: str,
         expected_status: OperationStatus,
     ) -> None:
-        """
-        Assert the final status of an operation.
+        """Assert the final status of an operation.
 
         Args:
             operation_id: Operation ID to check
@@ -195,8 +186,7 @@ async def create_slow_stream(
     delay: float = 0.1,
     cancelable: Cancelable | None = None,
 ) -> AsyncIterator[T]:
-    """
-    Create a slow async stream for testing cancelation.
+    """Create a slow async stream for testing cancelation.
 
     Args:
         items: Items to yield
@@ -221,8 +211,7 @@ async def run_with_timeout_test(
     expected_timeout: float,
     tolerance: float = 0.1,
 ) -> None:
-    """
-    Test that a coroutine times out within expected duration.
+    """Test that a coroutine times out within expected duration.
 
     Args:
         coro: Coroutine to run
@@ -242,9 +231,7 @@ async def run_with_timeout_test(
         duration = anyio.current_time() - start_time
 
         if abs(duration - expected_timeout) > tolerance:
-            raise AssertionError(
-                f"Timeout occurred after {duration:.2f}s, expected {expected_timeout:.2f}s ± {tolerance:.2f}s"
-            )
+            raise AssertionError(f"Timeout occurred after {duration:.2f}s, expected {expected_timeout:.2f}s ± {tolerance:.2f}s")
 
 
 @asynccontextmanager
@@ -252,8 +239,7 @@ async def assert_cancelation_within(
     min_time: float,
     max_time: float,
 ) -> AsyncIterator[MockCancelationToken]:
-    """
-    Context manager that asserts cancelation occurs within a time range.
+    """Context manager that asserts cancelation occurs within a time range.
 
     Args:
         min_time: Minimum time before cancelation
@@ -282,9 +268,7 @@ async def assert_cancelation_within(
 
 
 class CancelationScenario:
-    """
-    Test scenario builder for cancelation testing.
-    """
+    """Test scenario builder for cancelation testing."""
 
     def __init__(self, name: str):
         self.name = name
@@ -345,8 +329,7 @@ class CancelationScenario:
         *args: Any,
         **kwargs: Any,
     ) -> OperationRecorder:
-        """
-        Run the scenario.
+        """Run the scenario.
 
         Args:
             operation: Async callable to test

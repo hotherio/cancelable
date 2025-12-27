@@ -1,5 +1,4 @@
-"""
-Logging utilities for the cancelable library.
+"""Logging utilities for the cancelable library.
 
 Following Python library best practices, this module provides logger access
 but does not configure logging. Applications using cancelable should configure
@@ -7,16 +6,13 @@ their own logging as needed.
 """
 
 import logging
-from typing import Optional
-
 
 # Add a NullHandler to prevent "No handler found" warnings
 logging.getLogger("hother.cancelable").addHandler(logging.NullHandler())
 
 
-def get_logger(name: Optional[str] = None) -> logging.Logger:
-    """
-    Get a standard library logger instance.
+def get_logger(name: str | None = None) -> logging.Logger:
+    """Get a standard library logger instance.
 
     Args:
         name: Logger name. If None, uses the calling module's name
@@ -47,9 +43,6 @@ def get_logger(name: Optional[str] = None) -> logging.Logger:
         import inspect
 
         frame = inspect.currentframe()
-        if frame and frame.f_back:
-            name = frame.f_back.f_globals.get("__name__", "cancelable")
-        else:
-            name = "cancelable"
+        name = frame.f_back.f_globals.get("__name__", "cancelable") if frame and frame.f_back else "cancelable"
 
     return logging.getLogger(name)

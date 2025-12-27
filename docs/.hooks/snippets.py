@@ -54,10 +54,10 @@ class SectionExtractor:
     """
 
     # Pattern for section start: ### [section_name]
-    START_PATTERN = re.compile(r'^\s*###\s*\[(\w+)\]\s*$')
+    START_PATTERN = re.compile(r"^\s*###\s*\[(\w+)\]\s*$")
 
     # Pattern for section end: ### [/section_name]
-    END_PATTERN = re.compile(r'^\s*###\s*\[/(\w+)\]\s*$')
+    END_PATTERN = re.compile(r"^\s*###\s*\[/(\w+)\]\s*$")
 
     def __init__(self, file_path: Path):
         """Initialize extractor for a specific file.
@@ -290,7 +290,7 @@ def inject_snippets(markdown: str) -> str:
         # Parse sections list if provided
         sections_list = None
         if sections_str:
-            sections_list = [s.strip() for s in sections_str.split(',')]
+            sections_list = [s.strip() for s in sections_str.split(",")]
 
         return process_snippet_directive(file_path, section, sections_list)
 

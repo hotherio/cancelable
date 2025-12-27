@@ -1,6 +1,4 @@
-"""
-Thread-safe cancelation token implementation.
-"""
+"""Thread-safe cancelation token implementation."""
 
 from __future__ import annotations
 
@@ -22,8 +20,7 @@ logger = get_logger(__name__)
 
 
 class CancelationToken(BaseModel):
-    """
-    Thread-safe cancelation token that can be shared across tasks.
+    """Thread-safe cancelation token that can be shared across tasks.
 
     Attributes:
         id: Unique token identifier
@@ -71,8 +68,7 @@ class CancelationToken(BaseModel):
         reason: CancelationReason = CancelationReason.MANUAL,
         message: str | None = None,
     ) -> bool:
-        """
-        Cancel the token.
+        """Cancel the token.
 
         Args:
             reason: Reason for cancelation
@@ -134,8 +130,7 @@ class CancelationToken(BaseModel):
         reason: CancelationReason = CancelationReason.MANUAL,
         message: str | None = None,
     ) -> bool:
-        """
-        Thread-safe synchronous cancelation from any thread.
+        """Thread-safe synchronous cancelation from any thread.
 
         This method can be called from regular Python threads (pynput, signal handlers, etc.)
         and will safely cancel the token and notify async waiters via the anyio bridge.
@@ -192,8 +187,7 @@ class CancelationToken(BaseModel):
         return True
 
     def _notify_async_waiters(self) -> None:
-        """
-        Set the anyio event from a thread.
+        """Set the anyio event from a thread.
 
         Uses the anyio bridge to safely set the event in the anyio context.
         """
@@ -204,8 +198,7 @@ class CancelationToken(BaseModel):
         call_soon_threadsafe(set_event)
 
     def _schedule_callbacks(self) -> None:
-        """
-        Schedule callbacks to run in the anyio context.
+        """Schedule callbacks to run in the anyio context.
 
         Uses the anyio bridge to safely execute callbacks from a thread.
         """
@@ -243,8 +236,7 @@ class CancelationToken(BaseModel):
         await self._event.wait()
 
     def check(self) -> None:
-        """
-        Check if cancelled and raise exception if so.
+        """Check if cancelled and raise exception if so.
 
         Raises:
             ManualCancelation: If token is cancelled
@@ -256,8 +248,7 @@ class CancelationToken(BaseModel):
             )
 
     async def check_async(self) -> None:
-        """
-        Async version of check that allows for proper async cancelation.
+        """Async version of check that allows for proper async cancelation.
 
         Raises:
             anyio.CancelledError: If token is cancelled
@@ -267,8 +258,7 @@ class CancelationToken(BaseModel):
             raise anyio.get_cancelled_exc_class()(self.message or "Operation cancelled via token")
 
     def is_cancelation_requested(self) -> bool:
-        """
-        Non-throwing check for cancelation.
+        """Non-throwing check for cancelation.
 
         Returns:
             True if cancelation has been requested
@@ -276,8 +266,7 @@ class CancelationToken(BaseModel):
         return self.is_cancelled
 
     async def register_callback(self, callback: Callable[[CancelationToken], Awaitable[None]]) -> None:
-        """
-        Register a callback to be called on cancelation.
+        """Register a callback to be called on cancelation.
 
         The callback should accept the token as its only argument.
 
@@ -312,12 +301,14 @@ class CancelationToken(BaseModel):
 
     def __repr__(self) -> str:
         """Detailed representation of token."""
-        return f"CancelationToken(id='{self.id}', is_cancelled={self.is_cancelled}, reason={self.reason}, message='{self.message}')"
+        return (
+            f"CancelationToken(id='{self.id}', is_cancelled={self.is_cancelled}, "
+            f"reason={self.reason}, message='{self.message}')"
+        )
 
 
 class LinkedCancelationToken(CancelationToken):
-    """
-    Cancelation token that can be linked to other tokens.
+    """Cancelation token that can be linked to other tokens.
 
     When any linked token is cancelled, this token is also cancelled.
     """
@@ -327,8 +318,7 @@ class LinkedCancelationToken(CancelationToken):
         self._linked_tokens: list[CancelationToken] = []  # Use regular list instead of WeakSet for now
 
     async def link(self, token: CancelationToken, preserve_reason: bool = False) -> None:
-        """
-        Link this token to another token.
+        """Link this token to another token.
 
         When the linked token is cancelled, this token will also be cancelled.
 

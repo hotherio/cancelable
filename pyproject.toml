@@ -1,6 +1,6 @@
 [project]
 name = "hother-cancelable"
-dynamic = ["version"]
+version = "0.5.1"
 description = "A comprehensive async cancellation system for Python streams"
 readme = "README.md"
 authors = [{ name = "Alexandre Quemy", email="alexandre@hother.io" }]
@@ -62,7 +62,6 @@ include = [
     "CHANGELOG.md",
     "LICENSE",
     "README.md",
-    "cliff.toml",
     "lefthook.yml",
     "pyproject.toml",
 ]
@@ -79,12 +78,13 @@ dev = [
     "coverage[toml]>=7.10.7",
     "pretty_errors>=1.2.25",
     "ruff>=0.8.6",
-    "basedpyright>=1.23.0",
+    "basedpyright>=1.36.0",
     "twine>=6.0.0",
     "lefthook>=1.13.0",
     "pyyaml>=6.0.2",
     "git-cliff>=2.7.0",
     "detect-secrets>=1.5.0",
+    "python-semantic-release>=9.15.3",
 ]
 doc = [
     "mkdocs==1.6.1",
@@ -140,6 +140,7 @@ ignore = [
     "D104",     # Missing docstring in public package
     "D105",     # Missing docstring in magic method
     "D107",     # Missing docstring in __init__
+    "ISC001",   # Conflicts with formatter
 ]
 
 mccabe = { max-complexity = 15 }
@@ -153,8 +154,18 @@ combine-as-imports = true
 convention = "google"
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**/*.py" = ["D", "PLR2004"]  # Ignore docstrings and magic values in tests
-"examples/**/*.py" = ["D101", "D103"]
+"tests/**/*.py" = ["D", "PLR2004", "S101", "S110", "E722", "F401", "F811", "B023", "SIM117", "PLR0124"]  # Comprehensive test ignores
+"examples/**/*.py" = ["ALL"]  # Examples are demonstration code, ignore all linting rules
+"docs/.hooks/**/*.py" = ["ALL"]  # Ignore all rules in docs hooks
+"src/**/*.py" = ["D200", "D212", "D415", "D301"]  # Ignore minor docstring formatting in src
+"src/hother/cancelable/sources/condition.py" = ["S101"]  # Allow assert for defensive programming
+"src/hother/cancelable/streaming/**/*.py" = ["S311"]  # Allow random in streaming simulators
+"src/hother/cancelable/utils/decorators.py" = ["S101"]  # Allow assert False for unreachable code markers
+"src/hother/cancelable/core/exceptions.py" = ["N818"]  # Exception naming convention (Cancelation vs CancelationError) is intentional
+"src/hother/cancelable/core/cancelable.py" = ["PLR0912"]  # Allow _determine_final_status to have multiple branches for exception handling
+"src/hother/cancelable/integrations/fastapi.py" = ["B904"]  # HTTPException raising patterns are intentional
+"src/hother/cancelable/utils/testing.py" = ["B904"]  # AssertionError raising in test utilities is intentional
+"tools/**/*.py" = ["S602", "S110", "D"]  # Allow subprocess shell=True, try-except-pass, and skip docstrings in internal tools
 
 # Format settings
 [tool.ruff.format]
@@ -175,6 +186,7 @@ include = [
 exclude = [
     "tests",
     "examples",
+    "src/hother/cancelable/integrations/fastapi.py",  # Optional dependency
 ]
 venvPath = "."
 venv = ".venv"
@@ -197,7 +209,12 @@ filterwarnings = [
 
 [tool.coverage.run]
 source = ["src/hother/cancelable"]
-omit = ["*/tests/*", "*/__init__.py", "*/_version.py"]
+omit = [
+    "*/tests/*",
+    "*/__init__.py",
+    "*/_version.py",
+    "*/integrations/fastapi.py",  # Optional dependency
+]
 branch = true
 concurrency = ["multiprocessing", "thread"]
 # Use subdirectory for coverage data to keep root clean
@@ -244,7 +261,29 @@ exclude_lines = [
 [tool.hatch.envs.default]
 installer = "uv"
 
-[tool.hatch.envs.default.scripts]
-release = "python tools/release.py {args}"
+[tool.semantic_release]
+version_toml = ["pyproject.toml:project.version"]
+branch = "main"
+upload_to_vcs_release = true
+upload_to_pypi = true
+build_command = "uv build"
+tag_format = "v{version}"
+major_on_zero = false
+allow_zero_version = true
+changelog_file = "CHANGELOG.md"
+
+[tool.semantic_release.commit_parser_options]
+allowed_tags = [
+    "build", "chore", "ci", "docs", "feat", "fix",
+    "perf", "refactor", "style", "test", "revert"
+]
+minor_tags = ["feat"]
+patch_tags = ["fix", "perf", "refactor"]
+
+[tool.semantic_release.changelog]
+exclude_commit_patterns = [
+    "^chore\\(release\\):",
+    "^Merge pull request",
+]
 
 

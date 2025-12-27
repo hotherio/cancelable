@@ -46,6 +46,7 @@ jobs:
           git config user.email "$GIT_EMAIL"
           git config user.name "$GIT_NAME"
           git config core.autocrlf false
+          git config commit.gpgsign false
           git config tag.gpgsign true
 
       - name: Setup Python and uv

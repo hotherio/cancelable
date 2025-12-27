@@ -49,24 +49,13 @@ jobs:
           git config commit.gpgsign true
           git config tag.gpgsign true
 
-      - name: Setup Python and uv
-        uses: ./.github/actions/setup-python-uv
-
-      - name: Install python-semantic-release
-        run: uv pip install python-semantic-release
-
-      - name: Run semantic-release
+      - name: Python Semantic Release
         id: release
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          # Run version and publish in same step to maintain atomicity
-          uv run semantic-release version --skip-build
-
-          # Capture outputs for later steps
-          echo "released=$(git describe --exact-match --tags HEAD &>/dev/null && echo 'true' || echo 'false')" >> $GITHUB_OUTPUT
-          echo "version=$(git describe --tags --abbrev=0 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
-          echo "tag=$(git describe --tags --abbrev=0 2>/dev/null || echo '')" >> $GITHUB_OUTPUT
+        uses: python-semantic-release/python-semantic-release@v10.5.3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          git_committer_name: ${{ steps.import-gpg.outputs.name }}
+          git_committer_email: ${{ steps.import-gpg.outputs.email }}
 
       - name: Publish to PyPI
         if: steps.release.outputs.released == 'true'

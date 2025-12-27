@@ -84,7 +84,6 @@ dev = [
     "pyyaml>=6.0.2",
     "git-cliff>=2.7.0",
     "detect-secrets>=1.5.0",
-    "python-semantic-release>=9.15.3,<11.0.0",
 ]
 doc = [
     "mkdocs==1.6.1",

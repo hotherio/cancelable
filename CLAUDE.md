@@ -462,7 +462,3 @@ uv run mike set-default latest
 # Serve locally
 uv run mkdocs serve
 ```
-
-### Migration Note
-
-Previously used `tools/release.py` and `git-cliff`. Now fully automated with python-semantic-release. See commit history for migration details.

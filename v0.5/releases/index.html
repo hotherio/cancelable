@@ -1494,15 +1494,6 @@
 </li>
         
           <li class="md-nav__item">
-  <a href="#tags-not-pushed" class="md-nav__link">
-    <span class="md-ellipsis">
-      Tags Not Pushed
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
   <a href="#documentation-not-deployed" class="md-nav__link">
     <span class="md-ellipsis">
       Documentation Not Deployed
@@ -1987,36 +1978,21 @@
    - Default: <code>semantic-release.yml</code></p>
 </li>
 </ol>
-<h3 id="tags-not-pushed">Tags Not Pushed</h3>
-<p><strong>Problem:</strong> Release created but tag not visible on GitHub.</p>
-<p><strong>Cause:</strong> GPG signing configuration issue.</p>
-<p><strong>Solution:</strong>
-</p><div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="c1"># Check workflow logs for GPG errors</span>
-<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>gh<span class="w"> </span>run<span class="w"> </span>list<span class="w"> </span>--workflow<span class="o">=</span>semantic-release.yml<span class="w"> </span>--limit<span class="w"> </span><span class="m">1</span>
-<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>gh<span class="w"> </span>run<span class="w"> </span>view<span class="w"> </span>&lt;run-id&gt;<span class="w"> </span>--log
-<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a>
-<a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a><span class="c1"># Verify secrets are set</span>
-<a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a>gh<span class="w"> </span>secret<span class="w"> </span>list
-<a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a>
-<a id="__codelineno-22-8" name="__codelineno-22-8" href="#__codelineno-22-8"></a><span class="c1"># Required secrets:</span>
-<a id="__codelineno-22-9" name="__codelineno-22-9" href="#__codelineno-22-9"></a><span class="c1"># - HOTHER_BOT_GPG_KEY</span>
-<a id="__codelineno-22-10" name="__codelineno-22-10" href="#__codelineno-22-10"></a><span class="c1"># - HOTHER_BOT_GPG_PASSPHRASE</span>
-</code></pre></div><p></p>
 <h3 id="documentation-not-deployed">Documentation Not Deployed</h3>
 <p><strong>Problem:</strong> Release succeeded but docs not updated.</p>
 <p><strong>Cause:</strong> Docs workflow depends on <code>release.published</code> event.</p>
 <p><strong>Check:</strong>
-</p><div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a><span class="c1"># Verify docs.yaml uses correct event</span>
-<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>grep<span class="w"> </span>-A<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="s2">"release:"</span><span class="w"> </span>.github/workflows/docs.yaml
-<a id="__codelineno-23-3" name="__codelineno-23-3" href="#__codelineno-23-3"></a>
-<a id="__codelineno-23-4" name="__codelineno-23-4" href="#__codelineno-23-4"></a><span class="c1"># Should show:</span>
-<a id="__codelineno-23-5" name="__codelineno-23-5" href="#__codelineno-23-5"></a><span class="c1">#   release:</span>
-<a id="__codelineno-23-6" name="__codelineno-23-6" href="#__codelineno-23-6"></a><span class="c1">#     types:</span>
-<a id="__codelineno-23-7" name="__codelineno-23-7" href="#__codelineno-23-7"></a><span class="c1">#     - published</span>
+</p><div class="highlight"><pre><span></span><code><a id="__codelineno-22-1" name="__codelineno-22-1" href="#__codelineno-22-1"></a><span class="c1"># Verify docs.yaml uses correct event</span>
+<a id="__codelineno-22-2" name="__codelineno-22-2" href="#__codelineno-22-2"></a>grep<span class="w"> </span>-A<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="s2">"release:"</span><span class="w"> </span>.github/workflows/docs.yaml
+<a id="__codelineno-22-3" name="__codelineno-22-3" href="#__codelineno-22-3"></a>
+<a id="__codelineno-22-4" name="__codelineno-22-4" href="#__codelineno-22-4"></a><span class="c1"># Should show:</span>
+<a id="__codelineno-22-5" name="__codelineno-22-5" href="#__codelineno-22-5"></a><span class="c1">#   release:</span>
+<a id="__codelineno-22-6" name="__codelineno-22-6" href="#__codelineno-22-6"></a><span class="c1">#     types:</span>
+<a id="__codelineno-22-7" name="__codelineno-22-7" href="#__codelineno-22-7"></a><span class="c1">#     - published</span>
 </code></pre></div><p></p>
 <p><strong>Manual deploy:</strong>
-</p><div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a>uv<span class="w"> </span>sync<span class="w"> </span>--group<span class="w"> </span>doc
-<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>uv<span class="w"> </span>run<span class="w"> </span>mike<span class="w"> </span>deploy<span class="w"> </span>--push<span class="w"> </span>--update-aliases<span class="w"> </span>v0.5<span class="w"> </span>latest
+</p><div class="highlight"><pre><span></span><code><a id="__codelineno-23-1" name="__codelineno-23-1" href="#__codelineno-23-1"></a>uv<span class="w"> </span>sync<span class="w"> </span>--group<span class="w"> </span>doc
+<a id="__codelineno-23-2" name="__codelineno-23-2" href="#__codelineno-23-2"></a>uv<span class="w"> </span>run<span class="w"> </span>mike<span class="w"> </span>deploy<span class="w"> </span>--push<span class="w"> </span>--update-aliases<span class="w"> </span>v0.5<span class="w"> </span>latest
 </code></pre></div><p></p>
 <h2 id="migration-from-git-cliff">Migration from git-cliff</h2>
 <h3 id="what-changed">What Changed</h3>
@@ -2074,34 +2050,34 @@
 <ol>
 <li>
 <p><strong>Write clear, descriptive messages:</strong>
-   </p><div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a><span class="c1"># Good</span>
-<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>feat:<span class="w"> </span>add<span class="w"> </span>timeout<span class="w"> </span>parameter<span class="w"> </span>to<span class="w"> </span>Cancelable<span class="w"> </span>context
-<a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a>
-<a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a><span class="c1"># Bad</span>
-<a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a>feat:<span class="w"> </span>add<span class="w"> </span>timeout
+   </p><div class="highlight"><pre><span></span><code><a id="__codelineno-24-1" name="__codelineno-24-1" href="#__codelineno-24-1"></a><span class="c1"># Good</span>
+<a id="__codelineno-24-2" name="__codelineno-24-2" href="#__codelineno-24-2"></a>feat:<span class="w"> </span>add<span class="w"> </span>timeout<span class="w"> </span>parameter<span class="w"> </span>to<span class="w"> </span>Cancelable<span class="w"> </span>context
+<a id="__codelineno-24-3" name="__codelineno-24-3" href="#__codelineno-24-3"></a>
+<a id="__codelineno-24-4" name="__codelineno-24-4" href="#__codelineno-24-4"></a><span class="c1"># Bad</span>
+<a id="__codelineno-24-5" name="__codelineno-24-5" href="#__codelineno-24-5"></a>feat:<span class="w"> </span>add<span class="w"> </span>timeout
 </code></pre></div><p></p>
 </li>
 <li>
 <p><strong>Include context in body:</strong>
-   </p><div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>feat:<span class="w"> </span>add<span class="w"> </span>condition-based<span class="w"> </span>cancellation
-<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>
-<a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>Allows<span class="w"> </span>cancellation<span class="w"> </span>based<span class="w"> </span>on<span class="w"> </span>custom<span class="w"> </span>predicates<span class="w"> </span>that<span class="w"> </span>are
-<a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a>polled<span class="w"> </span>periodically.<span class="w"> </span>Useful<span class="w"> </span><span class="k">for</span><span class="w"> </span>resource<span class="w"> </span>monitoring<span class="w"> </span>and
-<a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a>external<span class="w"> </span>stop<span class="w"> </span>signals.
+   </p><div class="highlight"><pre><span></span><code><a id="__codelineno-25-1" name="__codelineno-25-1" href="#__codelineno-25-1"></a>feat:<span class="w"> </span>add<span class="w"> </span>condition-based<span class="w"> </span>cancellation
+<a id="__codelineno-25-2" name="__codelineno-25-2" href="#__codelineno-25-2"></a>
+<a id="__codelineno-25-3" name="__codelineno-25-3" href="#__codelineno-25-3"></a>Allows<span class="w"> </span>cancellation<span class="w"> </span>based<span class="w"> </span>on<span class="w"> </span>custom<span class="w"> </span>predicates<span class="w"> </span>that<span class="w"> </span>are
+<a id="__codelineno-25-4" name="__codelineno-25-4" href="#__codelineno-25-4"></a>polled<span class="w"> </span>periodically.<span class="w"> </span>Useful<span class="w"> </span><span class="k">for</span><span class="w"> </span>resource<span class="w"> </span>monitoring<span class="w"> </span>and
+<a id="__codelineno-25-5" name="__codelineno-25-5" href="#__codelineno-25-5"></a>external<span class="w"> </span>stop<span class="w"> </span>signals.
 </code></pre></div><p></p>
 </li>
 <li>
 <p><strong>Document breaking changes:</strong>
-   </p><div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>feat!:<span class="w"> </span>make<span class="w"> </span>CancellationToken.cancel<span class="o">()</span><span class="w"> </span>async
-<a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>
-<a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a>BREAKING<span class="w"> </span>CHANGE:<span class="w"> </span>The<span class="w"> </span>cancel<span class="o">()</span><span class="w"> </span>method<span class="w"> </span>is<span class="w"> </span>now<span class="w"> </span>async<span class="w"> </span>and<span class="w"> </span>must
-<a id="__codelineno-27-4" name="__codelineno-27-4" href="#__codelineno-27-4"></a>be<span class="w"> </span>awaited.<span class="w"> </span>Synchronous<span class="w"> </span>callers<span class="w"> </span>should<span class="w"> </span>use<span class="w"> </span>cancel_sync<span class="o">()</span>
-<a id="__codelineno-27-5" name="__codelineno-27-5" href="#__codelineno-27-5"></a>instead.
-<a id="__codelineno-27-6" name="__codelineno-27-6" href="#__codelineno-27-6"></a>
-<a id="__codelineno-27-7" name="__codelineno-27-7" href="#__codelineno-27-7"></a>Migration<span class="w"> </span>guide:
-<a id="__codelineno-27-8" name="__codelineno-27-8" href="#__codelineno-27-8"></a>-<span class="w"> </span>Old:<span class="w"> </span>token.cancel<span class="o">()</span>
-<a id="__codelineno-27-9" name="__codelineno-27-9" href="#__codelineno-27-9"></a>-<span class="w"> </span>New:<span class="w"> </span>await<span class="w"> </span>token.cancel<span class="o">()</span><span class="w">  </span><span class="c1"># async context</span>
-<a id="__codelineno-27-10" name="__codelineno-27-10" href="#__codelineno-27-10"></a>-<span class="w"> </span>New:<span class="w"> </span>token.cancel_sync<span class="o">()</span><span class="w">   </span><span class="c1"># sync context</span>
+   </p><div class="highlight"><pre><span></span><code><a id="__codelineno-26-1" name="__codelineno-26-1" href="#__codelineno-26-1"></a>feat!:<span class="w"> </span>make<span class="w"> </span>CancellationToken.cancel<span class="o">()</span><span class="w"> </span>async
+<a id="__codelineno-26-2" name="__codelineno-26-2" href="#__codelineno-26-2"></a>
+<a id="__codelineno-26-3" name="__codelineno-26-3" href="#__codelineno-26-3"></a>BREAKING<span class="w"> </span>CHANGE:<span class="w"> </span>The<span class="w"> </span>cancel<span class="o">()</span><span class="w"> </span>method<span class="w"> </span>is<span class="w"> </span>now<span class="w"> </span>async<span class="w"> </span>and<span class="w"> </span>must
+<a id="__codelineno-26-4" name="__codelineno-26-4" href="#__codelineno-26-4"></a>be<span class="w"> </span>awaited.<span class="w"> </span>Synchronous<span class="w"> </span>callers<span class="w"> </span>should<span class="w"> </span>use<span class="w"> </span>cancel_sync<span class="o">()</span>
+<a id="__codelineno-26-5" name="__codelineno-26-5" href="#__codelineno-26-5"></a>instead.
+<a id="__codelineno-26-6" name="__codelineno-26-6" href="#__codelineno-26-6"></a>
+<a id="__codelineno-26-7" name="__codelineno-26-7" href="#__codelineno-26-7"></a>Migration<span class="w"> </span>guide:
+<a id="__codelineno-26-8" name="__codelineno-26-8" href="#__codelineno-26-8"></a>-<span class="w"> </span>Old:<span class="w"> </span>token.cancel<span class="o">()</span>
+<a id="__codelineno-26-9" name="__codelineno-26-9" href="#__codelineno-26-9"></a>-<span class="w"> </span>New:<span class="w"> </span>await<span class="w"> </span>token.cancel<span class="o">()</span><span class="w">  </span><span class="c1"># async context</span>
+<a id="__codelineno-26-10" name="__codelineno-26-10" href="#__codelineno-26-10"></a>-<span class="w"> </span>New:<span class="w"> </span>token.cancel_sync<span class="o">()</span><span class="w">   </span><span class="c1"># sync context</span>
 </code></pre></div><p></p>
 </li>
 </ol>
@@ -2109,9 +2085,9 @@
 <ol>
 <li>
 <p><strong>Use conventional format in PR title:</strong>
-   </p><div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a>feat: add feature X
-<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a>fix: resolve bug Y
-<a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a>docs: update guide Z
+   </p><div class="highlight"><pre><span></span><code><a id="__codelineno-27-1" name="__codelineno-27-1" href="#__codelineno-27-1"></a>feat: add feature X
+<a id="__codelineno-27-2" name="__codelineno-27-2" href="#__codelineno-27-2"></a>fix: resolve bug Y
+<a id="__codelineno-27-3" name="__codelineno-27-3" href="#__codelineno-27-3"></a>docs: update guide Z
 </code></pre></div><p></p>
 </li>
 <li>
@@ -2137,28 +2113,28 @@
 <h2 id="advanced-configuration">Advanced Configuration</h2>
 <h3 id="custom-commit-types">Custom Commit Types</h3>
 <p>To add custom commit types, edit <code>pyproject.toml</code>:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="k">[tool.semantic_release.commit_parser_options]</span>
-<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a><span class="n">allowed_tags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
-<a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a><span class="w">    </span><span class="s2">"build"</span><span class="p">,</span><span class="w"> </span><span class="s2">"chore"</span><span class="p">,</span><span class="w"> </span><span class="s2">"ci"</span><span class="p">,</span><span class="w"> </span><span class="s2">"docs"</span><span class="p">,</span><span class="w"> </span><span class="s2">"feat"</span><span class="p">,</span><span class="w"> </span><span class="s2">"fix"</span><span class="p">,</span>
-<a id="__codelineno-29-4" name="__codelineno-29-4" href="#__codelineno-29-4"></a><span class="w">    </span><span class="s2">"perf"</span><span class="p">,</span><span class="w"> </span><span class="s2">"refactor"</span><span class="p">,</span><span class="w"> </span><span class="s2">"style"</span><span class="p">,</span><span class="w"> </span><span class="s2">"test"</span><span class="p">,</span><span class="w"> </span><span class="s2">"revert"</span><span class="p">,</span>
-<a id="__codelineno-29-5" name="__codelineno-29-5" href="#__codelineno-29-5"></a><span class="w">    </span><span class="s2">"custom"</span><span class="p">,</span><span class="w">  </span><span class="c1"># Add custom type</span>
-<a id="__codelineno-29-6" name="__codelineno-29-6" href="#__codelineno-29-6"></a><span class="p">]</span>
-<a id="__codelineno-29-7" name="__codelineno-29-7" href="#__codelineno-29-7"></a><span class="n">minor_tags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"feat"</span><span class="p">,</span><span class="w"> </span><span class="s2">"custom"</span><span class="p">]</span><span class="w">  </span><span class="c1"># Types that trigger minor bump</span>
-<a id="__codelineno-29-8" name="__codelineno-29-8" href="#__codelineno-29-8"></a><span class="n">patch_tags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"fix"</span><span class="p">,</span><span class="w"> </span><span class="s2">"perf"</span><span class="p">,</span><span class="w"> </span><span class="s2">"refactor"</span><span class="p">]</span><span class="w">  </span><span class="c1"># Types that trigger patch bump</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-28-1" name="__codelineno-28-1" href="#__codelineno-28-1"></a><span class="k">[tool.semantic_release.commit_parser_options]</span>
+<a id="__codelineno-28-2" name="__codelineno-28-2" href="#__codelineno-28-2"></a><span class="n">allowed_tags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-28-3" name="__codelineno-28-3" href="#__codelineno-28-3"></a><span class="w">    </span><span class="s2">"build"</span><span class="p">,</span><span class="w"> </span><span class="s2">"chore"</span><span class="p">,</span><span class="w"> </span><span class="s2">"ci"</span><span class="p">,</span><span class="w"> </span><span class="s2">"docs"</span><span class="p">,</span><span class="w"> </span><span class="s2">"feat"</span><span class="p">,</span><span class="w"> </span><span class="s2">"fix"</span><span class="p">,</span>
+<a id="__codelineno-28-4" name="__codelineno-28-4" href="#__codelineno-28-4"></a><span class="w">    </span><span class="s2">"perf"</span><span class="p">,</span><span class="w"> </span><span class="s2">"refactor"</span><span class="p">,</span><span class="w"> </span><span class="s2">"style"</span><span class="p">,</span><span class="w"> </span><span class="s2">"test"</span><span class="p">,</span><span class="w"> </span><span class="s2">"revert"</span><span class="p">,</span>
+<a id="__codelineno-28-5" name="__codelineno-28-5" href="#__codelineno-28-5"></a><span class="w">    </span><span class="s2">"custom"</span><span class="p">,</span><span class="w">  </span><span class="c1"># Add custom type</span>
+<a id="__codelineno-28-6" name="__codelineno-28-6" href="#__codelineno-28-6"></a><span class="p">]</span>
+<a id="__codelineno-28-7" name="__codelineno-28-7" href="#__codelineno-28-7"></a><span class="n">minor_tags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"feat"</span><span class="p">,</span><span class="w"> </span><span class="s2">"custom"</span><span class="p">]</span><span class="w">  </span><span class="c1"># Types that trigger minor bump</span>
+<a id="__codelineno-28-8" name="__codelineno-28-8" href="#__codelineno-28-8"></a><span class="n">patch_tags</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span><span class="s2">"fix"</span><span class="p">,</span><span class="w"> </span><span class="s2">"perf"</span><span class="p">,</span><span class="w"> </span><span class="s2">"refactor"</span><span class="p">]</span><span class="w">  </span><span class="c1"># Types that trigger patch bump</span>
 </code></pre></div>
 <h3 id="changelog-template">Changelog Template</h3>
 <p>Custom changelog templates can be added in <code>templates/</code> directory:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="c1"># Project structure</span>
-<a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a>templates/
-<a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a><span class="w">  </span>└──<span class="w"> </span>CHANGELOG.md.j2
+<div class="highlight"><pre><span></span><code><a id="__codelineno-29-1" name="__codelineno-29-1" href="#__codelineno-29-1"></a><span class="c1"># Project structure</span>
+<a id="__codelineno-29-2" name="__codelineno-29-2" href="#__codelineno-29-2"></a>templates/
+<a id="__codelineno-29-3" name="__codelineno-29-3" href="#__codelineno-29-3"></a><span class="w">  </span>└──<span class="w"> </span>CHANGELOG.md.j2
 </code></pre></div>
 <h3 id="version-variables">Version Variables</h3>
 <p>Access version in other files using template variables:</p>
-<div class="highlight"><pre><span></span><code><a id="__codelineno-31-1" name="__codelineno-31-1" href="#__codelineno-31-1"></a><span class="k">[tool.semantic_release]</span>
-<a id="__codelineno-31-2" name="__codelineno-31-2" href="#__codelineno-31-2"></a><span class="n">version_toml</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
-<a id="__codelineno-31-3" name="__codelineno-31-3" href="#__codelineno-31-3"></a><span class="w">    </span><span class="s2">"pyproject.toml:project.version"</span><span class="p">,</span>
-<a id="__codelineno-31-4" name="__codelineno-31-4" href="#__codelineno-31-4"></a><span class="w">    </span><span class="s2">"src/hother/cancelable/__init__.py:__version__"</span><span class="p">,</span>
-<a id="__codelineno-31-5" name="__codelineno-31-5" href="#__codelineno-31-5"></a><span class="p">]</span>
+<div class="highlight"><pre><span></span><code><a id="__codelineno-30-1" name="__codelineno-30-1" href="#__codelineno-30-1"></a><span class="k">[tool.semantic_release]</span>
+<a id="__codelineno-30-2" name="__codelineno-30-2" href="#__codelineno-30-2"></a><span class="n">version_toml</span><span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="p">[</span>
+<a id="__codelineno-30-3" name="__codelineno-30-3" href="#__codelineno-30-3"></a><span class="w">    </span><span class="s2">"pyproject.toml:project.version"</span><span class="p">,</span>
+<a id="__codelineno-30-4" name="__codelineno-30-4" href="#__codelineno-30-4"></a><span class="w">    </span><span class="s2">"src/hother/cancelable/__init__.py:__version__"</span><span class="p">,</span>
+<a id="__codelineno-30-5" name="__codelineno-30-5" href="#__codelineno-30-5"></a><span class="p">]</span>
 </code></pre></div>
 <h2 id="reference">Reference</h2>
 <ul>

@@ -28,34 +28,21 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Import GPG key
-        id: import-gpg
-        uses: crazy-max/ghaction-import-gpg@e89d40939c28e39f97cf32126055eeae86ba74ec # v6
-        with:
-          gpg_private_key: ${{ secrets.HOTHER_BOT_GPG_KEY }}
-          passphrase: ${{ secrets.HOTHER_BOT_GPG_PASSPHRASE }}
-          git_user_signingkey: true
-          git_commit_gpgsign: false
-          git_tag_gpgsign: false
-
       - name: Configure Git
-        env:
-          GIT_EMAIL: ${{ steps.import-gpg.outputs.email }}
-          GIT_NAME: ${{ steps.import-gpg.outputs.name }}
         run: |
-          git config user.email "$GIT_EMAIL"
-          git config user.name "$GIT_NAME"
+          git config user.email "github-bot@hother.io"
+          git config user.name "Hother Bot"
           git config core.autocrlf false
-          git config commit.gpgsign false
-          git config tag.gpgsign false
 
       - name: Python Semantic Release
         id: release
         uses: python-semantic-release/python-semantic-release@v10.5.3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          git_committer_name: ${{ steps.import-gpg.outputs.name }}
-          git_committer_email: ${{ steps.import-gpg.outputs.email }}
+          git_committer_name: "Hother Bot"
+          git_committer_email: "github-bot@hother.io"
+          ssh_public_signing_key: ${{ secrets.SSH_PUBLIC_SIGNING_KEY }}
+          ssh_private_signing_key: ${{ secrets.SSH_PRIVATE_SIGNING_KEY }}
 
       - name: Publish to PyPI
         if: steps.release.outputs.released == 'true'

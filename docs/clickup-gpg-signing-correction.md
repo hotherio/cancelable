@@ -1,78 +1,100 @@
-# GPG Signing with python-semantic-release
+# Commit and Tag Signing with python-semantic-release
+
+## Critical Finding: GPG + Docker PSR = Not Possible
+
+**Important:** GPG signing does **NOT** work with the python-semantic-release Docker action because:
+1. The Docker container does not have GPG installed (only git and openssh-client)
+2. The PSR action only supports SSH signing parameters, not GPG
+3. Docker container isolation prevents access to host GPG agent
+
+**Solution:** Use SSH signing with Docker-based PSR (recommended) or run PSR directly on the host for GPG signing.
+
+---
 
 ## Overview
 
-Python-semantic-release supports GPG signing through **both** Docker action and pip installation approaches. The common misconception that "Docker can't access GPG" is incorrect.
+Python-semantic-release supports signing through:
+- **SSH signing** - Works with Docker action (recommended)
+- **GPG signing** - Only works when running PSR directly on the host (not in Docker)
 
-## How Docker-Based GPG Signing Works
+---
 
-The `crazy-max/ghaction-import-gpg` action configures GPG on the GitHub Actions runner (host). The PSR Docker action inherits this configuration automatically through GitHub Actions' standard mounts.
+## SSH Signing with Docker Action (RECOMMENDED)
 
-**No special Docker configuration needed!**
+This is the correct approach for signed commits/tags with Docker-based PSR.
 
-### Workflow Configuration (Docker Action)
+### Setup Steps
+
+1. **Generate SSH signing key pair:**
+   ```bash
+   ssh-keygen -t ed25519 -f hother_signing_key -N "" -C "github-bot@hother.io"
+   ```
+
+2. **Add SSH public key to GitHub:**
+   - Go to: Settings → SSH and GPG keys → New SSH key
+   - Select "Signing Key" as key type
+   - Paste public key content
+   - Title: "HOTHER_BOT Signing Key"
+
+3. **Add secrets to GitHub repository:**
+   - `SSH_PRIVATE_SIGNING_KEY`: Content of private key file
+   - `SSH_PUBLIC_SIGNING_KEY`: Content of public key file (.pub)
+
+### Workflow Configuration
 
 ```yaml
-- name: Import GPG key
-  id: import-gpg
-  uses: crazy-max/ghaction-import-gpg@v6
+- name: Checkout code
+  uses: actions/checkout@v5
   with:
-    gpg_private_key: ${{ secrets.HOTHER_BOT_GPG_KEY }}
-    passphrase: ${{ secrets.HOTHER_BOT_GPG_PASSPHRASE }}
-    git_user_signingkey: true
-    git_commit_gpgsign: true
-    git_tag_gpgsign: true
+    fetch-depth: 0
+    token: ${{ secrets.GITHUB_TOKEN }}
 
 - name: Configure Git
-  env:
-    GIT_EMAIL: ${{ steps.import-gpg.outputs.email }}
-    GIT_NAME: ${{ steps.import-gpg.outputs.name }}
   run: |
-    git config user.email "$GIT_EMAIL"
-    git config user.name "$GIT_NAME"
-    git config commit.gpgsign true
-    git config tag.gpgsign true
+    git config user.email "github-bot@hother.io"
+    git config user.name "Hother Bot"
+    git config core.autocrlf false
 
 - name: Python Semantic Release
   id: release
   uses: python-semantic-release/python-semantic-release@v10.5.3
   with:
     github_token: ${{ secrets.GITHUB_TOKEN }}
-    git_committer_name: ${{ steps.import-gpg.outputs.name }}
-    git_committer_email: ${{ steps.import-gpg.outputs.email }}
+    git_committer_name: "Hother Bot"
+    git_committer_email: "github-bot@hother.io"
+    ssh_public_signing_key: ${{ secrets.SSH_PUBLIC_SIGNING_KEY }}
+    ssh_private_signing_key: ${{ secrets.SSH_PRIVATE_SIGNING_KEY }}
+
+- name: Publish to PyPI
+  if: steps.release.outputs.released == 'true'
+  uses: pypa/gh-action-pypi-publish@release/v1
 ```
 
 **How it works:**
-1. GPG key imported to runner's keyring by `crazy-max/ghaction-import-gpg`
-2. Git configured globally on runner
-3. PSR Docker action inherits Git config via GitHub Actions mounts
-4. Signing works automatically
+1. SSH keys added to GitHub as signing keys
+2. PSR Docker action receives SSH keys via secrets
+3. Container uses openssh-client (already installed) to sign commits/tags
+4. GitHub verifies signatures and shows "Verified" badge
 
-## Alternative: pip-installed PSR
+---
 
-Both approaches support GPG signing equally well.
+## GPG Signing (NOT with Docker)
 
-### When to use Docker action (Recommended)
-- ✅ Standard workflow
-- ✅ Simpler setup (one step)
-- ✅ Better caching
-- ✅ Consistent environment
+If you absolutely need GPG signing, you must run PSR directly on the GitHub runner (not in a Docker container).
 
-### When to use pip install
-- Need specific PSR version not available as Docker action
-- Want to run PSR locally in dev environment
-- Need to customize PSR execution extensively
+### When to use this approach:
+- GPG keys already established and required
+- Cannot migrate to SSH signing
+- Willing to give up Docker action benefits
 
-### pip Installation Example
+### Workflow Configuration
 
 ```yaml
-- name: Setup Python
-  uses: actions/setup-python@v4
+- name: Checkout code
+  uses: actions/checkout@v5
   with:
-    python-version: '3.11'
-
-- name: Install PSR
-  run: pip install python-semantic-release
+    fetch-depth: 0
+    token: ${{ secrets.GITHUB_TOKEN }}
 
 - name: Import GPG key
   uses: crazy-max/ghaction-import-gpg@v6
@@ -83,83 +105,144 @@ Both approaches support GPG signing equally well.
     git_commit_gpgsign: true
     git_tag_gpgsign: true
 
-- name: Run PSR
+- name: Set up Python
+  uses: actions/setup-python@v5
+  with:
+    python-version: '3.13'
+
+- name: Install python-semantic-release
+  run: pip install python-semantic-release
+
+- name: Configure Git
+  run: |
+    git config user.email "github-bot@hother.io"
+    git config user.name "Hother Bot"
+
+- name: Run Semantic Release
   run: semantic-release version
   env:
     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-Both produce identical results - GPG-signed commits and tags.
+**Why this works:**
+- Runs directly on GitHub runner (not in Docker)
+- GPG is pre-installed on GitHub runners
+- `crazy-max/ghaction-import-gpg` configures GPG
+- Full access to GPG agent on the host
 
-## Common Misconception: "Docker can't access GPG"
+---
 
-**False.** This misconception arises from:
-1. Default Docker isolation (true for standalone Docker)
-2. Missing configuration (forgetting to enable signing)
-3. Misunderstanding GitHub Actions' mount behavior
+## Comparison: SSH vs GPG vs Unsigned
 
-**Reality:** GitHub Actions automatically makes host Git configuration available to Docker actions, including GPG setup.
+| Feature | SSH (Docker) | GPG (Direct) | Unsigned |
+|---------|--------------|--------------|----------|
+| **Uses Docker action** | ✅ Yes | ❌ No | ✅ Yes |
+| **Setup complexity** | Low | Medium | Lowest |
+| **Key expiration** | ❌ No | ✅ Yes | N/A |
+| **Key revocation** | ❌ No | ✅ Yes | N/A |
+| **GitHub verified badge** | ✅ | ✅ | ❌ |
+| **Key management** | Simpler | More complex | None |
+| **Performance** | Slower (Docker) | Faster (Direct) | Slower (Docker) |
 
-## SSH Signing Alternative
+---
 
-PSR Docker action also supports SSH signing natively:
+## Why GPG Doesn't Work with Docker PSR
 
-```yaml
-- name: Python Semantic Release
-  uses: python-semantic-release/python-semantic-release@v10.5.3
-  with:
-    github_token: ${{ secrets.GITHUB_TOKEN }}
-    ssh_private_signing_key: ${{ secrets.SSH_PRIVATE_SIGNING_KEY }}
-    ssh_public_signing_key: ${{ secrets.SSH_PUBLIC_SIGNING_KEY }}
-```
+### Technical Explanation
 
-## Comparison: GPG vs SSH vs Unsigned
+1. **Missing GPG binary in container:**
+   - PSR Dockerfile installs: git, git-lfs, openssh-client, build tools
+   - Notably missing: gnupg, gnupg2
+   - Error: `error: cannot run gpg: No such file or directory`
 
-| Feature | GPG (Docker) | GPG (pip) | SSH (Docker native) | Unsigned |
-|---------|--------------|-----------|---------------------|----------|
-| Setup complexity | Low | Medium | Low | Lowest |
-| Expiration support | ✅ | ✅ | ❌ | N/A |
-| Revocation support | ✅ | ✅ | ❌ | N/A |
-| GitHub verified badge | ✅ | ✅ | ✅ | ❌ |
-| Docker action support | ✅ | N/A | ✅ Native | ✅ |
+2. **PSR action only supports SSH:**
+   - From [action.yml](https://github.com/python-semantic-release/python-semantic-release/blob/master/action.yml):
+     - `ssh_public_signing_key` ✅
+     - `ssh_private_signing_key` ✅
+     - No GPG parameters ❌
+
+3. **Container isolation:**
+   - Even if Git config is mounted, GPG binary isn't in container
+   - Would require: mounting ~/.gnupg, setting GNUPGHOME, handling UID/GID
+   - PSR Docker action doesn't expose these mount options
+
+### Common Misconception
+
+**Myth:** "GitHub Actions automatically mounts Git config to Docker containers, so GPG should work."
+
+**Reality:** While Git *config* may be mounted, the GPG *binary* and *agent* are not accessible inside the container. The PSR Docker image simply doesn't include GPG.
+
+---
 
 ## Troubleshooting
 
-### "Commits not signed" with Docker action
+### "error: cannot run gpg: No such file or directory"
+
+**Cause:** Trying to use GPG signing with Docker-based PSR
+
+**Solution:** Switch to SSH signing (see above) or run PSR directly on host
+
+### "Commits not signed" with SSH signing
 
 **Check:**
-1. `git_commit_gpgsign: true` in import-gpg action
-2. `git config commit.gpgsign true` in workflow
-3. Secrets configured: `HOTHER_BOT_GPG_KEY`, `HOTHER_BOT_GPG_PASSPHRASE`
+1. SSH public key added to GitHub as "Signing Key" (not just SSH key)
+2. Secrets configured: `SSH_PRIVATE_SIGNING_KEY`, `SSH_PUBLIC_SIGNING_KEY`
+3. Both secrets contain the full key content (including headers/footers)
 
 **Verify in workflow logs:**
 ```bash
-git config --global --get commit.gpgsign  # Should be: true
-git config --global --get user.signingkey # Should show key ID
+# Should see PSR using SSH signing
+python-semantic-release version
 ```
 
-### "gpg: cannot run gpg: No such file or directory"
+### SSH key not recognized
 
-**Cause:** Git config not properly set before PSR runs
+**Solution:**
+- Ensure public key is added to your GitHub account as a **Signing Key**
+- Go to: Settings → SSH and GPG keys
+- Key type must be "Signing Key" (not "Authentication Key")
 
-**Solution:** Ensure `Configure Git` step runs before PSR step and has:
-```yaml
-git config commit.gpgsign true
-git config tag.gpgsign true
-```
+---
 
-Also ensure `git_commit_gpgsign: true` in the import-gpg action.
+## Migration Guide: GPG to SSH
+
+If you're currently using GPG and want to migrate to SSH signing:
+
+1. **Generate SSH signing key** (see setup steps above)
+2. **Add to GitHub** as signing key
+3. **Update workflow:**
+   - Remove `crazy-max/ghaction-import-gpg` step
+   - Add SSH key parameters to PSR action
+4. **Update secrets:**
+   - Add `SSH_PUBLIC_SIGNING_KEY`
+   - Add `SSH_PRIVATE_SIGNING_KEY`
+   - Can remove `GPG_PRIVATE_KEY` and `GPG_PASSPHRASE` (optional)
+5. **Test:** Trigger a release and verify "Verified" badge appears
+
+---
 
 ## Key Takeaways
 
-1. **Docker DOES support GPG signing** with `crazy-max/ghaction-import-gpg`
-2. **Docker action is simpler** than pip installation for CI/CD
-3. **Both approaches work equally well** for GPG signing
-4. **GitHub Actions automatically mounts** Git config to Docker containers
-5. **No special Docker configuration needed** - standard PSR action works
+1. **GPG + Docker PSR = IMPOSSIBLE** (container lacks GPG binary)
+2. **SSH signing IS the solution** for Docker-based PSR
+3. **SSH advantages:**
+   - Works with Docker action out of the box
+   - Simpler key management (no expiration)
+   - Same "Verified" badge on GitHub
+   - Modern, well-supported approach
+4. **If GPG is required:**
+   - Must run PSR directly on runner (not Docker)
+   - Slower setup but GPG works perfectly
+5. **Docker action benefits preserved with SSH:**
+   - Consistent environment
+   - Official supported approach
+   - No custom Python/dependency setup
+
+---
 
 ## References
 
-- [crazy-max/ghaction-import-gpg](https://github.com/crazy-max/ghaction-import-gpg) - Handles GPG setup for GitHub Actions
-- [python-semantic-release Docker action](https://github.com/python-semantic-release/python-semantic-release)
-- [GitHub Actions Docker container mounts](https://docs.github.com/en/actions/using-jobs/running-jobs-in-a-container)
+- [PSR GitHub Actions Documentation](https://python-semantic-release.readthedocs.io/en/latest/configuration/automatic-releases/github-actions.html)
+- [PSR commit adding SSH signing](https://github.com/python-semantic-release/python-semantic-release/commit/31ad5eb5a25f0ea703afc295351104aefd66cac1)
+- [GitHub Docs: SSH Signing](https://docs.github.com/en/authentication/managing-commit-signature-verification/about-commit-signature-verification#ssh-commit-signature-verification)
+- [PSR action.yml](https://github.com/python-semantic-release/python-semantic-release/blob/master/action.yml)

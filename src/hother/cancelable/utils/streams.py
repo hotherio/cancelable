@@ -16,6 +16,9 @@ logger = get_logger(__name__)
 
 T = TypeVar("T")
 
+# Maximum items to keep in buffer to prevent unbounded memory growth
+_MAX_BUFFER_SIZE = 1000
+
 
 async def cancelable_stream(
     stream: AsyncIterator[T],
@@ -142,8 +145,8 @@ class CancelableAsyncIterator(AsyncIterator[T]):
             self._count += 1
             if self._buffer is not None:
                 self._buffer.append(item)
-                if len(self._buffer) > 1000:
-                    self._buffer = self._buffer[-1000:]
+                if len(self._buffer) > _MAX_BUFFER_SIZE:
+                    self._buffer = self._buffer[-_MAX_BUFFER_SIZE:]
 
             # Report progress if needed
             if self._report_interval and self._count % self._report_interval == 0:

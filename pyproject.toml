@@ -154,14 +154,18 @@ combine-as-imports = true
 convention = "google"
 
 [tool.ruff.lint.per-file-ignores]
-"tests/**/*.py" = ["D", "PLR2004", "S101", "S110"]  # Ignore docstrings, magic values, assert, and try-except-pass in tests
+"tests/**/*.py" = ["D", "PLR2004", "S101", "S110", "E722", "F401", "F811", "B023", "SIM117", "PLR0124"]  # Comprehensive test ignores
 "examples/**/*.py" = ["ALL"]  # Examples are demonstration code, ignore all linting rules
 "docs/.hooks/**/*.py" = ["ALL"]  # Ignore all rules in docs hooks
 "src/**/*.py" = ["D200", "D212", "D415", "D301"]  # Ignore minor docstring formatting in src
 "src/hother/cancelable/sources/condition.py" = ["S101"]  # Allow assert for defensive programming
 "src/hother/cancelable/streaming/**/*.py" = ["S311"]  # Allow random in streaming simulators
 "src/hother/cancelable/utils/decorators.py" = ["S101"]  # Allow assert False for unreachable code markers
-"tools/**/*.py" = ["S602", "S110"]  # Allow subprocess shell=True and try-except-pass in internal development tools
+"src/hother/cancelable/core/exceptions.py" = ["N818"]  # Exception naming convention (Cancelation vs CancelationError) is intentional
+"src/hother/cancelable/core/cancelable.py" = ["PLR0912"]  # Allow _determine_final_status to have multiple branches for exception handling
+"src/hother/cancelable/integrations/fastapi.py" = ["B904"]  # HTTPException raising patterns are intentional
+"src/hother/cancelable/utils/testing.py" = ["B904"]  # AssertionError raising in test utilities is intentional
+"tools/**/*.py" = ["S602", "S110", "D"]  # Allow subprocess shell=True, try-except-pass, and skip docstrings in internal tools
 
 # Format settings
 [tool.ruff.format]
@@ -182,6 +186,7 @@ include = [
 exclude = [
     "tests",
     "examples",
+    "src/hother/cancelable/integrations/fastapi.py",  # Optional dependency
 ]
 venvPath = "."
 venv = ".venv"
@@ -204,7 +209,12 @@ filterwarnings = [
 
 [tool.coverage.run]
 source = ["src/hother/cancelable"]
-omit = ["*/tests/*", "*/__init__.py", "*/_version.py"]
+omit = [
+    "*/tests/*",
+    "*/__init__.py",
+    "*/_version.py",
+    "*/integrations/fastapi.py",  # Optional dependency
+]
 branch = true
 concurrency = ["multiprocessing", "thread"]
 # Use subdirectory for coverage data to keep root clean

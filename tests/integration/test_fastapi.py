@@ -6,17 +6,28 @@ from unittest.mock import AsyncMock, MagicMock, Mock
 
 import anyio
 import pytest
-from fastapi import HTTPException, Request
+
+# Check for optional fastapi dependency
+try:
+    from fastapi import HTTPException, Request
+
+    from hother.cancelable.integrations.fastapi import (
+        CancelableWebSocket,
+        RequestCancelationMiddleware,
+        cancelable_dependency,
+        cancelable_streaming_response,
+        get_request_token,
+        with_cancelation,
+    )
+
+    _has_fastapi = True
+except ImportError:
+    _has_fastapi = False
 
 from hother.cancelable import Cancelable, CancelationReason
-from hother.cancelable.integrations.fastapi import (
-    CancelableWebSocket,
-    RequestCancelationMiddleware,
-    cancelable_dependency,
-    cancelable_streaming_response,
-    get_request_token,
-    with_cancelation,
-)
+
+# Skip all tests in this module if fastapi is not available
+pytestmark = pytest.mark.skipif(not _has_fastapi, reason="fastapi not installed")
 
 
 class TestRequestCancelationMiddleware:

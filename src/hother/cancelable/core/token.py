@@ -301,7 +301,10 @@ class CancelationToken(BaseModel):
 
     def __repr__(self) -> str:
         """Detailed representation of token."""
-        return f"CancelationToken(id='{self.id}', is_cancelled={self.is_cancelled}, reason={self.reason}, message='{self.message}')"
+        return (
+            f"CancelationToken(id='{self.id}', is_cancelled={self.is_cancelled}, "
+            f"reason={self.reason}, message='{self.message}')"
+        )
 
 
 class LinkedCancelationToken(CancelationToken):

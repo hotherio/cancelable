@@ -130,8 +130,8 @@ class TestIntegration:
         assert not db.in_transaction
 
     @pytest.mark.anyio
-    async def test_multi_stage_pipeline(self):
-        """Test multi-stage data processing pipeline."""
+    async def test_multi_stage_pipeline_success(self):
+        """Test multi-stage data processing pipeline without cancelation."""
 
         async def stage1_fetch(cancelable: Cancelable) -> list:
             """Fetch data from source."""
@@ -188,13 +188,58 @@ class TestIntegration:
             saved = await stage3_save(processed_data, cancel)
             assert saved == 10
 
+    @pytest.mark.anyio
+    async def test_multi_stage_pipeline_cancelation(self):
+        """Test pipeline cancelation at different stages."""
+
+        async def stage1_fetch(cancelable: Cancelable) -> list:
+            """Fetch data from source."""
+            await cancelable.report_progress("Fetching data")
+            data = []
+
+            for i in range(10):
+                await anyio.sleep(0.05)
+                data.append({"id": i, "value": i * 10})
+                await cancelable._token.check_async()
+
+            await cancelable.report_progress(f"Fetched {len(data)} items")
+            return data
+
+        async def stage2_process(data: list, cancelable: Cancelable) -> list:
+            """Process the data."""
+            await cancelable.report_progress("Processing data")
+            processed = []
+
+            for item in data:
+                await anyio.sleep(0.02)
+                processed.append({**item, "processed": True, "score": item["value"] * 2})
+                await cancelable._token.check_async()
+
+            await cancelable.report_progress(f"Processed {len(processed)} items")
+            return processed
+
+        async def stage3_save(data: list, cancelable: Cancelable) -> int:
+            """Save the processed data."""
+            await cancelable.report_progress("Saving data")
+            saved_count = 0
+
+            for _item in data:
+                await anyio.sleep(0.01)
+                # Simulate save
+                saved_count += 1
+                await cancelable._token.check_async()
+
+            await cancelable.report_progress(f"Saved {saved_count} items")
+            return saved_count
+
         # Test pipeline cancelation at different stages
         for cancel_after in [0.3, 0.8, 1.2]:
             token = CancelationToken()
 
-            async def cancel_pipeline():
-                await anyio.sleep(cancel_after)
-                await token.cancel()
+            # Bind loop variables to avoid B023 closure issue
+            async def cancel_pipeline(delay=cancel_after, tok=token):
+                await anyio.sleep(delay)
+                await tok.cancel()
 
             stage_reached = 0
 
@@ -209,7 +254,7 @@ class TestIntegration:
                         processed_data = await stage2_process(raw_data, cancel)
                         stage_reached = 2
 
-                        saved = await stage3_save(processed_data, cancel)
+                        await stage3_save(processed_data, cancel)
                         stage_reached = 3
 
                 except anyio.get_cancelled_exc_class():

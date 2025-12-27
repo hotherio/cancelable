@@ -335,26 +335,6 @@ uv publish
    - PyPI publisher must match exact workflow filename
    - Default: `semantic-release.yml`
 
-### Tags Not Pushed
-
-**Problem:** Release created but tag not visible on GitHub.
-
-**Cause:** GPG signing configuration issue.
-
-**Solution:**
-```bash
-# Check workflow logs for GPG errors
-gh run list --workflow=semantic-release.yml --limit 1
-gh run view <run-id> --log
-
-# Verify secrets are set
-gh secret list
-
-# Required secrets:
-# - HOTHER_BOT_GPG_KEY
-# - HOTHER_BOT_GPG_PASSPHRASE
-```
-
 ### Documentation Not Deployed
 
 **Problem:** Release succeeded but docs not updated.

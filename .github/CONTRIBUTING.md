@@ -32,34 +32,24 @@
 - **Merge PRs into `develop`.** Configure repository settings so that branches are deleted automatically after PRs are merged.
 - **Only merge to `main` if [fast-forwarding](https://www.git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging) from `develop`.**
 - **Enable [branch protection](https://docs.github.com/en/free-pro-team@latest/github/administering-a-repository/about-protected-branches) on `develop` and `main`.**
-- **Set up a release workflow.** Here's an example release workflow, controlled by Git tags:
-  - Bump the version number in `pyproject.toml` with `poetry version` and commit the changes to `develop`.
-  - Push to `develop` and verify all CI checks pass.
-  - Fast-forward merge to `main`, push, and verify all CI checks pass.
-  - Create an [annotated and signed Git tag](https://www.git-scm.com/book/en/v2/Git-Basics-Tagging)
-    - Follow [SemVer](https://semver.org/) guidelines when choosing a version number.
-    - List PRs and commits in the tag message:
-      ```sh
-      git log --pretty=format:"- %s (%h)" "$(git describe --abbrev=0 --tags)"..HEAD
-      ```
-    - Omit the leading `v` (use `1.0.0` instead of `v1.0.0`)
-    - Example: `git tag -a -s 1.0.0`
-  - Push the tag. GitHub Actions will build and push the Python package and Docker images.
-- **Create a changelog.** Here's an example changelog generation command, controlled by Git tags:
-
-  ```sh
-  printf '# Changelog\n\n' >CHANGELOG.md
-
-  GIT_LOG_FORMAT='## %(subject) - %(taggerdate:short)
-
-  %(contents:body)
-  Tagger: %(taggername) %(taggeremail)
-  Date: %(taggerdate:iso)
-
-  %(contents:signature)'
-
-  git tag -l --sort=-taggerdate:iso --format="$GIT_LOG_FORMAT" >>CHANGELOG.md
-  ```
+- **Release workflow is fully automated.** This project uses [python-semantic-release](https://python-semantic-release.readthedocs.io/) for automated versioning:
+  - Releases happen automatically when commits are pushed to `main`
+  - Version is determined by analyzing [conventional commits](https://www.conventionalcommits.org/)
+  - CHANGELOG.md is automatically updated
+  - Git tags are created and GPG signed
+  - Package is published to PyPI via Trusted Publishing
+  - GitHub Release is created with changelog
+  - Documentation is deployed automatically
+  - **No manual tagging or version bumping required!**
+  - For detailed information, see [Release Automation Guide](../docs/releases.md)
+- **Use conventional commits.** All commit messages must follow the [Conventional Commits](https://www.conventionalcommits.org/) specification:
+  - `feat:` for new features (minor version bump)
+  - `fix:` for bug fixes (patch version bump)
+  - `docs:`, `chore:`, `ci:`, etc. for non-releasing changes
+  - `feat!:` or `BREAKING CHANGE:` for breaking changes (major version bump)
+  - Commit messages are validated before commit via lefthook
+  - PR titles must also follow this format
+  - See [Release Automation Guide](../docs/releases.md) for examples and best practices
 
 ## Git
 
@@ -68,7 +58,7 @@
 - [Configure Git to connect to GitHub with SSH](https://docs.github.com/en/free-pro-team@latest/github/authenticating-to-github/connecting-to-github-with-ssh)
 - [Fork](https://docs.github.com/en/free-pro-team@latest/github/getting-started-with-github/fork-a-repo) this repo
 - Create a [branch](https://www.git-scm.com/book/en/v2/Git-Branching-Branches-in-a-Nutshell) in your fork.
-- Commit your changes with a [properly-formatted Git commit message](https://chris.beams.io/posts/git-commit/).
+- Commit your changes with a [conventional commit message](https://www.conventionalcommits.org/). See [Release Automation Guide](../docs/releases.md) for format and examples.
 - Create a [pull request (PR)](https://docs.github.com/en/free-pro-team@latest/github/collaborating-with-issues-and-pull-requests/about-pull-requests) to incorporate your changes into the upstream project you forked.
 
 ## Python

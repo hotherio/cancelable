@@ -1,6 +1,6 @@
 [project]
 name = "hother-cancelable"
-dynamic = ["version"]
+version = "0.5.1"
 description = "A comprehensive async cancellation system for Python streams"
 readme = "README.md"
 authors = [{ name = "Alexandre Quemy", email="alexandre@hother.io" }]
@@ -62,7 +62,6 @@ include = [
     "CHANGELOG.md",
     "LICENSE",
     "README.md",
-    "cliff.toml",
     "lefthook.yml",
     "pyproject.toml",
 ]
@@ -85,6 +84,7 @@ dev = [
     "pyyaml>=6.0.2",
     "git-cliff>=2.7.0",
     "detect-secrets>=1.5.0",
+    "python-semantic-release>=9.15.3",
 ]
 doc = [
     "mkdocs==1.6.1",
@@ -261,7 +261,29 @@ exclude_lines = [
 [tool.hatch.envs.default]
 installer = "uv"
 
-[tool.hatch.envs.default.scripts]
-release = "python tools/release.py {args}"
+[tool.semantic_release]
+version_toml = ["pyproject.toml:project.version"]
+branch = "main"
+upload_to_vcs_release = true
+upload_to_pypi = true
+build_command = "uv build"
+tag_format = "v{version}"
+major_on_zero = false
+allow_zero_version = true
+changelog_file = "CHANGELOG.md"
+
+[tool.semantic_release.commit_parser_options]
+allowed_tags = [
+    "build", "chore", "ci", "docs", "feat", "fix",
+    "perf", "refactor", "style", "test", "revert"
+]
+minor_tags = ["feat"]
+patch_tags = ["fix", "perf", "refactor"]
+
+[tool.semantic_release.changelog]
+exclude_commit_patterns = [
+    "^chore\\(release\\):",
+    "^Merge pull request",
+]
 
 

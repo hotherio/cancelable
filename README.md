@@ -237,75 +237,112 @@ uv build
 
 ### Release process
 
-This project uses Git tags for versioning with automatic semantic versioning based on conventional commits. Version numbers are automatically derived from Git tags using hatch-vcs.
+This project uses [python-semantic-release](https://python-semantic-release.readthedocs.io/) for fully automated versioning and releases. Every commit to the `main` branch is analyzed using conventional commits, and releases are created automatically when needed.
 
-#### Quick Release Commands
+#### How It Works
+
+1. **Commit with conventional format** to the `main` branch
+2. **GitHub Actions automatically** analyzes commits, determines version bump, creates tag, updates changelog, publishes to PyPI, and creates GitHub release
+3. **Documentation** is automatically deployed when a release is published
+
+No manual intervention required! 🎉
+
+#### Version Bumping Rules
+
+| Commit Type | Version Bump | Example |
+|-------------|--------------|---------|
+| `feat:` | Minor | 0.5.0 → 0.6.0 |
+| `fix:`, `perf:`, `refactor:` | Patch | 0.5.0 → 0.5.1 |
+| `feat!:`, `BREAKING CHANGE:` | Major | 0.5.0 → 1.0.0 |
+| `docs:`, `chore:`, `ci:`, `style:`, `test:` | No release | - |
+
+#### Conventional Commit Examples
+
+```bash
+# Minor version bump (new feature)
+git commit -m "feat: add streaming cancellation support"
+
+# Patch version bump (bug fix)
+git commit -m "fix: resolve race condition in token cancellation"
+
+# Major version bump (breaking change)
+git commit -m "feat!: redesign cancellation API
+
+BREAKING CHANGE: CancellationToken.cancel() is now async"
+```
+
+#### Manual Release Trigger
+
+If needed, you can manually trigger a release via GitHub Actions:
+
+```bash
+# Go to: Actions → Semantic Release → Run workflow → Run on main branch
+```
+
+Or use the `gh` CLI:
+```bash
+gh workflow run semantic-release.yml
+```
+
+#### Local Version Preview
+
+Check what the next version would be without making changes:
 
 ```bash
 # Check current version
-hatch version
+grep 'version = ' pyproject.toml | cut -d'"' -f2
 
-# Create development release (v1.0.0 → v1.0.1-dev1)
-hatch release dev
-
-# Create release candidate (v1.0.1-dev1 → v1.0.1rc1)
-hatch release rc
-
-# Create final release (v1.0.1rc1 → v1.0.1)
-hatch release final
+# Preview next version (requires being on main branch)
+uv run semantic-release --noop version --print
 ```
 
-#### Release from Specific Commit
+#### PyPI Trusted Publishing
 
-You can optionally specify a commit SHA to create a release from:
+This project uses PyPI's Trusted Publishing for secure, token-free releases. The GitHub Actions workflow is automatically authorized to publish to PyPI via OIDC.
+
+**No API tokens needed!** The workflow authenticates using:
+- Publisher: GitHub Actions
+- Repository: `hotherio/cancelable`
+- Workflow: `semantic-release.yml`
+
+#### Release Checklist for Maintainers
+
+When preparing for a release:
+
+- [ ] Ensure all PRs use conventional commit format in titles
+- [ ] Verify CI passes on main branch
+- [ ] Commit messages follow conventional commits specification
+- [ ] Breaking changes are documented in commit body with `BREAKING CHANGE:`
+- [ ] Push to main or merge PR - release happens automatically!
+
+#### Changelog
+
+The changelog is automatically generated from conventional commits and updated on every release. View it at [CHANGELOG.md](CHANGELOG.md).
+
+### Documentation Deployment
+
+Documentation is automatically built and deployed when:
+- A release is published (triggered by semantic-release)
+- Changes are pushed to `docs/`, `mkdocs.yml`, or the workflow file on `main`
+
+Manual deployment commands:
 ```bash
-# Release from a specific commit
-hatch release dev abc123
-hatch release rc def456
-hatch release final 789xyz
+# Deploy a specific version
+uv run mike deploy --push --update-aliases v0.5 latest
+
+# Set default version
+uv run mike set-default latest
+
+# List deployed versions
+uv run mike list
 ```
 
-The SHA must be:
-- Reachable from HEAD (on current branch history)
-- Not already included in a previous release
-
-#### How it Works
-
-- **Development releases** (`dev`): Increments patch version and adds `-dev` suffix
-- **Release candidates** (`rc`): Removes `-dev` and adds `rc` suffix
-- **Final releases** (`final`): Uses git-cliff to analyze commits and automatically bumps major/minor/patch based on conventional commits
-
-The release process:
-1. Analyzes commit history (for final releases)
-2. Calculates the next version number
-3. Creates and pushes the git tag
-4. GitHub Actions automatically builds and publishes the release
-
-#### Manual Tagging (Advanced)
-
-If needed, you can still create tags manually:
+Check documentation locally:
 ```bash
-# Manual tag creation
-git tag -a v1.2.3 -m "Release v1.2.3"
-git push origin v1.2.3
+uv run mkdocs serve
+# or with mike
+uv run mike serve
 ```
-
-### Changelog Management
-
-This project uses [git-cliff](https://git-cliff.org/) to automatically generate changelogs from conventional commits.
-
-```
-# Generate/update CHANGELOG.md
-make changelog
-
-# Preview unreleased changes
-make changelog-unreleased
-
-# Get changelog for latest tag (used in releases)
-make changelog-tag
-```
-
-The changelog is automatically updated and included in GitHub releases when you push a version tag.
 
 Generate the licenses:
 ```

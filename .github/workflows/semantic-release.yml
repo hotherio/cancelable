@@ -28,32 +28,49 @@ jobs:
           fetch-depth: 0
           token: ${{ secrets.GITHUB_TOKEN }}
 
+      - name: Set up Python
+        uses: actions/setup-python@0b93645e9fea7318ecaed2b359559ac225c90a2b # v5
+        with:
+          python-version: '3.13'
+
+      - name: Install python-semantic-release
+        run: pip install python-semantic-release
+
+      - name: Import GPG key
+        id: import-gpg
+        uses: crazy-max/ghaction-import-gpg@v6
+        with:
+          gpg_private_key: ${{ secrets.HOTHER_BOT_GPG_KEY }}
+          passphrase: ${{ secrets.HOTHER_BOT_GPG_PASSPHRASE }}
+          git_user_signingkey: true
+          git_commit_gpgsign: true
+          git_tag_gpgsign: true
+
       - name: Configure Git
         run: |
           git config user.email "github-bot@hother.io"
           git config user.name "Hother Bot"
           git config core.autocrlf false
 
-      - name: Python Semantic Release
+      - name: Run Semantic Release
         id: release
-        uses: python-semantic-release/python-semantic-release@v10.5.3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          git_committer_name: "Hother Bot"
-          git_committer_email: "github-bot@hother.io"
-          ssh_public_signing_key: ${{ secrets.SSH_PUBLIC_SIGNING_KEY }}
-          ssh_private_signing_key: ${{ secrets.SSH_PRIVATE_SIGNING_KEY }}
+        run: |
+          semantic-release version
+          if [ $? -eq 0 ]; then
+            echo "released=true" >> $GITHUB_OUTPUT
+            LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+            echo "tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+            VERSION=${LATEST_TAG#v}
+            echo "version=$VERSION" >> $GITHUB_OUTPUT
+          else
+            echo "released=false" >> $GITHUB_OUTPUT
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Publish to PyPI
         if: steps.release.outputs.released == 'true'
         uses: pypa/gh-action-pypi-publish@release/v1
-
-      - name: Publish GitHub Release
-        if: steps.release.outputs.released == 'true'
-        uses: python-semantic-release/publish-action@v10.5.3
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          tag: ${{ steps.release.outputs.tag }}
 
   dispatch:
     name: Dispatch to Package Registry

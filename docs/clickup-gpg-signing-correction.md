@@ -71,9 +71,10 @@ This is our current approach - running PSR directly on the GitHub runner with GP
   env:
     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-- name: Publish to GitHub Release
+- name: Upload release assets
   if: steps.release.outputs.released == 'true'
-  run: semantic-release publish
+  run: |
+    gh release upload ${{ steps.release.outputs.tag }} dist/*.whl dist/*.tar.gz --clobber
   env:
     GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -87,6 +88,7 @@ This is our current approach - running PSR directly on the GitHub runner with GP
 - GPG is pre-installed on GitHub runners
 - `crazy-max/ghaction-import-gpg` configures GPG
 - Full access to GPG agent on the host
+- Uses `gh release upload` instead of `semantic-release publish` to avoid GitHub immutable releases issues
 
 ---
 
@@ -102,6 +104,38 @@ This is our current approach - running PSR directly on the GitHub runner with GP
 | **Key management** | More complex | Simpler | None |
 | **Performance** | Faster (Direct) | Slower (Docker) | Slower (Docker) |
 | **Compatibility** | ✅ Works | ❌ libcrypto errors | ✅ Works |
+
+---
+
+## GitHub Immutable Releases & Asset Upload
+
+### The Issue
+
+As of October 2025, GitHub introduced [**Immutable Releases**](https://github.blog/changelog/2025-10-28-immutable-releases-are-now-generally-available/) as a supply chain security feature. Once a release is published as immutable, its assets cannot be added, modified, or deleted.
+
+This creates a problem for `semantic-release publish`:
+1. `semantic-release version` creates and **publishes** the release (making it immutable)
+2. `semantic-release publish` tries to upload assets to the now-immutable release
+3. GitHub API returns **422 Unprocessable Entity** error
+
+### The Solution: `gh release upload`
+
+We use `gh release upload` with the `--clobber` flag instead of `semantic-release publish`:
+
+```yaml
+- name: Upload release assets
+  if: steps.release.outputs.released == 'true'
+  run: |
+    gh release upload ${{ steps.release.outputs.tag }} dist/*.whl dist/*.tar.gz --clobber
+  env:
+    GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+**Why this works:**
+- `gh release upload` can handle both immutable and non-immutable releases
+- The `--clobber` flag allows overwriting existing assets if needed
+- More reliable than `semantic-release publish` for asset uploads
+- Works directly with GitHub's release API
 
 ---
 

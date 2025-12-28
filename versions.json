@@ -1,9 +1,15 @@
 [
   {
+    "version": "v0.8",
+    "title": "v0.8",
+    "aliases": [
+      "latest"
+    ]
+  },
+  {
     "version": "v0.6",
     "title": "v0.6",
     "aliases": [
-      "latest",
       "docs"
     ]
   },

@@ -52,10 +52,10 @@ jobs:
           git config user.name "Hother Bot"
           git config core.autocrlf false
 
-      - name: Run Semantic Release
+      - name: Run Semantic Release (no VCS release)
         id: release
         run: |
-          semantic-release version
+          semantic-release version --no-vcs-release
           if [ $? -eq 0 ]; then
             echo "released=true" >> $GITHUB_OUTPUT
             LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
@@ -68,10 +68,13 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Upload release assets
+      - name: Create immutable release with assets
         if: steps.release.outputs.released == 'true'
         run: |
-          gh release upload ${{ steps.release.outputs.tag }} dist/*.whl dist/*.tar.gz --clobber
+          gh release create ${{ steps.release.outputs.tag }} \
+            --title "${{ steps.release.outputs.tag }}" \
+            --notes-file CHANGELOG.md \
+            dist/*.whl dist/*.tar.gz
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 

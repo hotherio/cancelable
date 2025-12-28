@@ -1,6 +1,6 @@
 [project]
 name = "hother-cancelable"
-version = "0.8.1"
+version = "0.9.0"
 description = "A comprehensive async cancellation system for Python streams"
 readme = "README.md"
 authors = [{ name = "Alexandre Quemy", email="alexandre@hother.io" }]

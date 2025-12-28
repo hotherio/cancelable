@@ -17,6 +17,8 @@ jobs:
   release:
     name: Semantic Release
     runs-on: ubuntu-latest
+    # Skip workflow on release commits to prevent self-triggering loop
+    if: "!startsWith(github.event.head_commit.message, 'chore(release):')"
     outputs:
       released: ${{ steps.release.outputs.released }}
       version: ${{ steps.release.outputs.version }}
@@ -65,16 +67,32 @@ jobs:
         run: |
           semantic-release version --no-vcs-release
           if [ $? -eq 0 ]; then
-            echo "released=true" >> $GITHUB_OUTPUT
-            LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
-            echo "tag=$LATEST_TAG" >> $GITHUB_OUTPUT
-            VERSION=${LATEST_TAG#v}
-            echo "version=$VERSION" >> $GITHUB_OUTPUT
+            # Defensive check: Verify dist/ directory exists
+            if [ -d "dist" ] && [ "$(ls -A dist 2>/dev/null)" ]; then
+              echo "released=true" >> $GITHUB_OUTPUT
+              LATEST_TAG=$(git describe --tags --abbrev=0 2>/dev/null || echo "")
+              echo "tag=$LATEST_TAG" >> $GITHUB_OUTPUT
+              VERSION=${LATEST_TAG#v}
+              echo "version=$VERSION" >> $GITHUB_OUTPUT
+            else
+              echo "released=false" >> $GITHUB_OUTPUT
+              echo "Warning: semantic-release succeeded but no dist/ artifacts found"
+            fi
           else
             echo "released=false" >> $GITHUB_OUTPUT
           fi
         env:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
+
+      - name: Generate release notes for current version
+        id: release-notes
+        if: steps.release.outputs.released == 'true'
+        uses: orhun/git-cliff-action@v4
+        with:
+          config: cliff.toml
+          args: -vv --latest --strip header
+        env:
+          OUTPUT: RELEASE_NOTES.md
 
       - name: Publish to PyPI
         if: steps.release.outputs.released == 'true'
@@ -97,7 +115,7 @@ jobs:
         run: |
           gh release create ${{ steps.release.outputs.tag }} \
             --title "${{ steps.release.outputs.tag }}" \
-            --notes-file CHANGELOG.md \
+            --notes "${{ steps.release-notes.outputs.content }}" \
             --latest \
             dist/*.whl dist/*.tar.gz dist/SHA256SUMS dist/SHA256SUMS.asc
         env:

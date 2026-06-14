@@ -290,11 +290,6 @@ class Cancelable:
             The combined Cancelable preserves the cancellation reason from
             whichever source triggers first.
         """
-        logger.debug("=== COMBINE CALLED ===")
-        logger.debug(f"Self: {self.context.id} ({self.context.name}) with token {self._token.id}")
-        for i, other in enumerate(others):
-            logger.debug(f"Other {i}: {other.context.id} ({other.context.name}) with token {other._token.id}")
-
         combined = Cancelable(
             name=f"combined_{self.context.name}",
             metadata={
@@ -304,13 +299,8 @@ class Cancelable:
             },
         )
 
-        logger.debug(f"Created combined cancelable: {combined.context.id} with default token {combined._token.id}")
-
         # Store the actual cancelables to link their tokens later
         combined._cancellables_to_link = [self] + list(others)
-        logger.debug(f"Will link to {len(combined._cancellables_to_link)} cancelables:")
-        for i, c in enumerate(combined._cancellables_to_link):
-            logger.debug(f"  {i}: {c.context.id} with token {c._token.id}")
 
         # Combine all sources
         combined._sources.extend(self._sources)
@@ -456,8 +446,6 @@ class Cancelable:
     # Context manager
     async def __aenter__(self) -> Cancelable:
         """Enter cancelation context."""
-        logger.debug(f"=== ENTERING cancelation context for {self.context.id} ({self.context.name}) ===")
-
         # Set as current operation
         self._context_token = _current_operation.set(self)
 
@@ -480,13 +468,12 @@ class Cancelable:
         # Set up simple token monitoring via callback
         async def on_token_cancel(token: CancelationToken) -> None:
             """Callback when token is cancelled."""
-            logger.error(f"🚨 TOKEN CALLBACK TRIGGERED! Token {token.id} cancelled, cancelling scope for {self.context.id}")
+            logger.debug(f"Token {token.id} cancelled, cancelling scope for {self.context.id}")
             if self._scope and not self._scope.cancel_called:
-                logger.error(f"🚨 CANCELLING SCOPE for {self.context.id}")
                 self._scope.cancel()
             else:
                 scope_info = f"scope={self._scope}, cancel_called={self._scope.cancel_called if self._scope else 'N/A'}"
-                logger.error(f"🚨 SCOPE ALREADY CANCELLED OR NONE for {self.context.id} ({scope_info})")
+                logger.debug(f"Scope already cancelled or None for {self.context.id} ({scope_info})")
 
         logger.debug(f"Registering token callback for token {self._token.id}")
         await self._token.register_callback(on_token_cancel)
@@ -501,7 +488,6 @@ class Cancelable:
         # Enter scope - sync operation
         self._scope_exit = self._scope.__enter__()
 
-        logger.debug(f"=== COMPLETED ENTER for {self.context.id} ===")
         return self
 
     @property
@@ -648,8 +634,6 @@ class Cancelable:
 
     async def _cleanup_context(self) -> None:
         """Cleanup monitoring, shields, registry, and context vars."""
-        logger.debug(f"=== __aexit__ finally block for {self.context.id} ===")
-
         # Stop monitoring
         await self._stop_monitoring()
 
@@ -680,11 +664,6 @@ class Cancelable:
         exc_tb: Any | None,
     ) -> bool:
         """Exit cancelation context."""
-        logger.debug(f"=== ENTERING __aexit__ for {self.context.id} ===")
-        logger.debug(f"exc_type: {exc_type}, exc_val: {exc_val}")
-        logger.debug(f"Current status: {self.context.status}")
-        logger.debug(f"Current cancel_reason: {self.context.cancel_reason}")
-
         try:
             # Handle scope exit (return value intentionally unused; exceptions always propagate)
             self._handle_scope_exit(exc_type, exc_val, exc_tb)

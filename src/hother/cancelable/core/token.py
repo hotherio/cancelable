@@ -77,7 +77,6 @@ class CancelationToken(BaseModel):
         Returns:
             True if token was cancelled, False if already cancelled
         """
-        logger.info(f"=== CANCEL CALLED on token {self.id} ===")
         async with self._lock:
             if self.is_cancelled:
                 logger.debug(
@@ -95,7 +94,7 @@ class CancelationToken(BaseModel):
             self.cancelled_at = datetime.now(UTC)
             self._event.set()
 
-            logger.info(
+            logger.debug(
                 f"Token {self.id} cancelled - calling {len(self._callbacks)} callbacks",
                 extra={
                     "token_id": self.id,
@@ -122,7 +121,6 @@ class CancelationToken(BaseModel):
                         exc_info=True,
                     )
 
-            logger.info(f"=== CANCEL COMPLETED for token {self.id} ===")
             return True
 
     def cancel_sync(
@@ -149,8 +147,6 @@ class CancelationToken(BaseModel):
                 token.cancel_sync(CancelationReason.SIGNAL)
             ```
         """
-        logger.info(f"=== CANCEL_SYNC CALLED on token {self.id} from thread ===")
-
         # Update state with thread-safe lock
         with self._state_lock:
             if self.is_cancelled:
@@ -183,7 +179,6 @@ class CancelationToken(BaseModel):
         # Schedule callbacks (thread-safe)
         self._schedule_callbacks()
 
-        logger.debug(f"=== CANCEL_SYNC COMPLETED for token {self.id} ===")
         return True
 
     def _notify_async_waiters(self) -> None:
@@ -273,14 +268,13 @@ class CancelationToken(BaseModel):
         Args:
             callback: Async callable that accepts the token
         """
-        logger.info(f"Registering callback for token {self.id} (currently {len(self._callbacks)} callbacks)")
         async with self._lock:
             self._callbacks.append(callback)
-            logger.info(f"Callback registered. Now {len(self._callbacks)} callbacks for token {self.id}")
+            logger.debug(f"Callback registered ({len(self._callbacks)} total) for token {self.id}")
 
             # If already cancelled, call immediately
             if self.is_cancelled:
-                logger.info(f"Token {self.id} already cancelled, calling callback immediately")
+                logger.debug(f"Token {self.id} already cancelled, calling callback immediately")
                 try:
                     await callback(self)
                 except Exception as e:

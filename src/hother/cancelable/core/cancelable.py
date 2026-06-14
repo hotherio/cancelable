@@ -914,30 +914,29 @@ class Cancelable:
     async def shield(self) -> AsyncIterator[Cancelable]:
         """Shield a section from cancelation.
 
-        Creates a child operation that is protected from cancelation but still
-        participates in the operation hierarchy for monitoring and tracking.
+        The protection comes from the ``anyio.CancelScope(shield=True)`` opened below.
+        The yielded ``Cancelable`` is a lightweight *tracking handle* (for progress
+        reporting and context inspection); it is intentionally NOT entered as a full
+        async context, so it has no own cancel scope or monitoring tasks. Because it is
+        created without a parent and keeps its own fresh, unlinked token, it is never
+        cancelled by the parent operation.
 
         Yields:
-            A new Cancelable for the shielded section
+            A tracking Cancelable for the shielded section
         """
-        # Create properly integrated child cancelable
+        # Created without a parent: __init__ already gives it a fresh, unlinked token,
+        # so parent cancelation cannot propagate here. parent_id is set only for hierarchy
+        # reporting (not added to self._children, which would propagate cancelation).
         shielded = Cancelable(name=f"{self.context.name}_shielded", metadata={"shielded": True})
-        # Manually set parent relationship for hierarchy tracking but don't add to _children
-        # to prevent automatic cancelation propagation
         shielded.context.parent_id = self.context.id
+        shielded.context.update_status(OperationStatus.SHIELDED)
 
-        # Override token linking to prevent cancelation propagation
-        # The shielded operation should not be cancelled by parent token
-        shielded._token = LinkedCancelationToken()  # Fresh token, no parent linking
-
-        # Use anyio's CancelScope with shield=True
+        # Use anyio's CancelScope with shield=True for the actual protection
         with anyio.CancelScope(shield=True) as shield_scope:
             self._shields.append(shield_scope)
             try:
-                shielded.context.update_status(OperationStatus.SHIELDED)
                 yield shielded
             finally:
-                # Shield is always in list at this point (added at line 783)
                 self._shields.remove(shield_scope)
 
         # Force a checkpoint after shield to allow cancelation to propagate

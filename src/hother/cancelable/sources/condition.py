@@ -126,10 +126,10 @@ class ConditionSource(CancelationSource):
                     logger.debug(f"Condition check #{check_count} returned: {result}")
 
                     if result:
-                        self.triggered = True
                         logger.debug(f"Condition '{self.condition_name}' met after {check_count} checks")
 
                         # Trigger cancelation through the base class method
+                        # (sets self.triggered = True centrally)
                         await self.trigger_cancelation(f"Condition '{self.condition_name}' met after {check_count} checks")
                         break
 

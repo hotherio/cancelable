@@ -388,6 +388,27 @@ class TestConditionSourceEdgeCases:
     """Test edge cases for ConditionSource."""
 
     @pytest.mark.anyio
+    async def test_monitor_task_group_cancellation_reraises(self):
+        """Cancelling the monitor's own task group makes the monitor re-raise.
+
+        Covers the `except CancelledError` branch in _monitor_condition: the awaiting
+        monitor task is cancelled and re-raises, which surfaces on task-group exit.
+        """
+        source = ConditionSource(lambda: False, check_interval=5.0)
+        await source.start_monitoring(anyio.CancelScope())
+
+        # Let the monitor reach its inter-check await.
+        await anyio.sleep(0.05)
+
+        assert source._task_group is not None
+        source._task_group.cancel_scope.cancel()
+
+        # The task group absorbs its own cancelation on exit, so stop_monitoring
+        # returns cleanly after the monitor task re-raises internally.
+        await source.stop_monitoring()
+        assert source._task_group is None
+
+    @pytest.mark.anyio
     async def test_stop_monitoring_without_task_group(self):
         """Test stop_monitoring when _task_group is None."""
 

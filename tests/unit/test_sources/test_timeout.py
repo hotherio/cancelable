@@ -1,5 +1,7 @@
 """Unit tests for timeout cancelation source."""
 
+from datetime import timedelta
+
 import anyio
 import pytest
 
@@ -8,6 +10,20 @@ from hother.cancelable.sources.timeout import TimeoutSource
 
 class TestTimeoutSource:
     """Test TimeoutSource functionality."""
+
+    @pytest.mark.anyio
+    async def test_timeout_with_timedelta(self):
+        """Timeout accepts a timedelta and converts it to seconds."""
+        source = TimeoutSource(timedelta(milliseconds=100))
+        assert source.timeout == 0.1
+
+    @pytest.mark.anyio
+    async def test_timeout_validation(self):
+        """Non-positive timeouts are rejected."""
+        with pytest.raises(ValueError):
+            TimeoutSource(0)  # Zero timeout
+        with pytest.raises(ValueError):
+            TimeoutSource(-1)  # Negative timeout
 
     @pytest.mark.anyio
     async def test_timeout_basic(self):

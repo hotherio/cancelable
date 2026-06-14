@@ -1,4 +1,5 @@
 site_name: Cancelable
+site_url: https://hotherio.github.io/cancelable/
 repo_url: https://github.com/hotherio/cancelable
 repo_name: hotherio/cancelable
 edit_uri: ""
@@ -39,6 +40,7 @@ nav:
      - Troubleshooting: 'troubleshooting.md'
      - Community & Support: 'community.md'
      - Contributing: 'contributing.md'
+     - Release Process: 'releases.md'
 theme:
   name: material
   language: en

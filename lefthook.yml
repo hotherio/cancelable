@@ -103,7 +103,7 @@ pre-push:
 
     # Documentation check
     doc-check:
-      run: uv run mkdocs build --strict
+      run: uv run --group doc mkdocs build --strict
       glob: "*.md"
 
 commit-msg:

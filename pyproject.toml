@@ -96,9 +96,6 @@ doc = [
     "mkdocs-glightbox>=0.5.2",
 ]
 
-[tool.uv.sources]
-torch = { index = "hother" }
-
 [[tool.uv.index]]
 name = "hother"
 url = "https://hotherio.github.io/pypi-registry/"

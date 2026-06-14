@@ -5,6 +5,7 @@ from collections.abc import Awaitable, Callable
 
 import anyio
 import anyio.abc
+import psutil
 
 from hother.cancelable.core.models import CancelationReason
 from hother.cancelable.sources.base import CancelationSource
@@ -210,12 +211,6 @@ class ResourceConditionSource(ConditionSource):
 
     async def _check_resources(self) -> bool:
         """Check if any resource threshold is exceeded."""
-        try:
-            import psutil
-        except ImportError:
-            logger.warning("psutil not available, resource monitoring disabled")
-            return False
-
         # Check memory
         if self.memory_threshold:
             memory_percent = psutil.virtual_memory().percent

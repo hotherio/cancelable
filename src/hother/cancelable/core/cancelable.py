@@ -109,10 +109,6 @@ class Cancelable:
             "error": [],
         }
 
-        # Register with parent
-        if parent:
-            parent._children.add(self)
-
         logger.info(
             "Cancelable created",
             extra=self.context.log_context(),
@@ -690,8 +686,8 @@ class Cancelable:
         logger.debug(f"Current cancel_reason: {self.context.cancel_reason}")
 
         try:
-            # Handle scope exit
-            _scope_handled = self._handle_scope_exit(exc_type, exc_val, exc_tb)
+            # Handle scope exit (return value intentionally unused; exceptions always propagate)
+            self._handle_scope_exit(exc_type, exc_val, exc_tb)
             # Determine final status based on exception
             await self._determine_final_status(exc_type, exc_val)
         except Exception as e:
@@ -964,11 +960,7 @@ class Cancelable:
 
         # Force a checkpoint after shield to allow cancelation to propagate
         # We need to be in an async context for this to work properly
-        try:
-            await anyio.lowlevel.checkpoint()  # type: ignore[attr-defined]
-        except:
-            # Re-raise any exception including CancelledError
-            raise
+        await anyio.lowlevel.checkpoint()  # type: ignore[attr-defined]
 
     # Cancelation
     async def cancel(

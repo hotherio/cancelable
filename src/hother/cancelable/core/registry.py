@@ -2,7 +2,7 @@
 
 import threading
 from datetime import UTC, datetime, timedelta
-from typing import TYPE_CHECKING, Any, Optional
+from typing import TYPE_CHECKING, Any
 
 import anyio
 
@@ -22,7 +22,7 @@ class OperationRegistry:
     the application.
     """
 
-    _instance: Optional["OperationRegistry"] = None
+    _instance: "OperationRegistry | None" = None
 
     def __new__(cls) -> "OperationRegistry":
         """Ensure singleton instance."""
@@ -103,7 +103,7 @@ class OperationRegistry:
                     },
                 )
 
-    async def get_operation(self, operation_id: str) -> Optional["Cancelable"]:
+    async def get_operation(self, operation_id: str) -> "Cancelable | None":
         """Get operation by ID.
 
         Args:
@@ -359,7 +359,7 @@ class OperationRegistry:
 
     # Thread-safe synchronous methods
 
-    def get_operation_sync(self, operation_id: str) -> Optional["Cancelable"]:
+    def get_operation_sync(self, operation_id: str) -> "Cancelable | None":
         """Get operation by ID (thread-safe, synchronous).
 
         This method can be called from any thread.

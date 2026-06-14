@@ -40,7 +40,7 @@ class LinkState(StrEnum):
     NOT_LINKED = auto()
     LINKING = auto()
     LINKED = auto()
-    CANCELLED = auto()
+    FAILED = auto()
 
 
 class Cancelable:
@@ -441,7 +441,7 @@ class Cancelable:
         Raises:
             anyio.CancelledError: If operation is cancelled
         """
-        await self._token.check_async()  # pragma: no cover
+        await self._token.check_async()
 
     # Context manager
     async def __aenter__(self) -> Cancelable:
@@ -714,8 +714,8 @@ class Cancelable:
     async def _safe_link_tokens(self) -> None:
         """Safely link all required tokens with race condition protection."""
         async with self._link_lock:
-            if self._link_state != LinkState.NOT_LINKED:
-                return  # Already processed
+            if self._link_state not in (LinkState.NOT_LINKED, LinkState.FAILED):
+                return  # Already linked or in progress; retry allowed from FAILED
 
             self._link_state = LinkState.LINKING
 
@@ -734,7 +734,7 @@ class Cancelable:
                             f"Cannot link to combined sources: token {type(self._token).__name__} "
                             "does not support linking (not a LinkedCancelationToken)"
                         )
-                    self._link_state = LinkState.CANCELLED
+                    self._link_state = LinkState.FAILED
                     return
 
                 # Link to parent token if we have a parent
@@ -760,16 +760,19 @@ class Cancelable:
                 self._link_state = LinkState.LINKED
 
             except Exception as e:
-                self._link_state = LinkState.CANCELLED
+                self._link_state = LinkState.FAILED
                 logger.error(f"Token linking failed: {e}")
                 raise
 
     async def _on_source_cancelled(self, reason: CancelationReason, message: str) -> None:
-        """Handle cancelation from a source."""
+        """Handle cancelation from a source.
+
+        Records the cancelation reason/message only. The final CANCELLED status is
+        set once in ``_determine_final_status`` during ``__aexit__`` so that status
+        transitions happen in a single, well-defined place.
+        """
         self.context.cancel_reason = reason
         self.context.cancel_message = message
-        # Also update the status immediately when a source cancels
-        self.context.update_status(OperationStatus.CANCELLED)
 
     # Stream wrapper
     async def stream(

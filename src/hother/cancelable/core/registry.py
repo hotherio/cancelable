@@ -134,7 +134,8 @@ class OperationRegistry:
         """
         async with self._lock:
             with self._data_lock:
-                operations = [op.context for op in self._operations.values()]
+                # Copy contexts so callers can't mutate live operation state
+                operations = [op.context.model_copy() for op in self._operations.values()]
 
             # Apply filters (outside lock - operating on copied list)
             if status:

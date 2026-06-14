@@ -1406,6 +1406,19 @@ class TestCancelableComprehensiveCoverage:
         assert cancel.context.status == OperationStatus.CANCELLED
 
     @pytest.mark.anyio
+    async def test_check_cancelation_public_api(self):
+        """Directly exercise the public check_cancelation() API."""
+        cancel = Cancelable(name="check_api")
+
+        # Live token: returns without raising
+        await cancel.check_cancelation()
+
+        # Cancelled token: raises CancelledError
+        await cancel.token.cancel(CancelationReason.MANUAL, "stop")
+        with pytest.raises(anyio.get_cancelled_exc_class()):
+            await cancel.check_cancelation()
+
+    @pytest.mark.anyio
     async def test_shield_remove_from_list(self):
         """Test shield removal from _shields list."""
         cancel = Cancelable.with_timeout(0.5, name="shield_remove")

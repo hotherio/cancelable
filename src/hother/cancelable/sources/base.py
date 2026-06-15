@@ -63,6 +63,10 @@ class CancelationSource(ABC):
             message: Optional cancelation message
         """
         if self.scope and not self.scope.cancel_called:
+            # Central place to mark a source as having actively triggered cancelation.
+            # Note: TimeoutSource is deadline-based and never routes through here, so it
+            # sets `triggered` itself in stop_monitoring().
+            self.triggered = True
             logger.info(
                 "Cancelation triggered",
                 extra={

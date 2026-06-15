@@ -54,7 +54,9 @@ class TimeoutSource(CancelationSource):
 
     async def stop_monitoring(self) -> None:
         """Stop timeout monitoring."""
-        # Check if timeout occurred by comparing current time with deadline
+        # Timeouts are deadline-based: anyio cancels the scope directly without routing
+        # through trigger_cancelation(), so detect a fired timeout here by comparing the
+        # current time against the deadline.
         if self._deadline_time and anyio.current_time() >= self._deadline_time:
             self.triggered = True
 

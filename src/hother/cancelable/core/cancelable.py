@@ -40,7 +40,7 @@ class LinkState(StrEnum):
     NOT_LINKED = auto()
     LINKING = auto()
     LINKED = auto()
-    CANCELLED = auto()
+    FAILED = auto()
 
 
 class Cancelable:
@@ -108,10 +108,6 @@ class Cancelable:
             "cancel": [],
             "error": [],
         }
-
-        # Register with parent
-        if parent:
-            parent._children.add(self)
 
         logger.info(
             "Cancelable created",
@@ -294,11 +290,6 @@ class Cancelable:
             The combined Cancelable preserves the cancellation reason from
             whichever source triggers first.
         """
-        logger.debug("=== COMBINE CALLED ===")
-        logger.debug(f"Self: {self.context.id} ({self.context.name}) with token {self._token.id}")
-        for i, other in enumerate(others):
-            logger.debug(f"Other {i}: {other.context.id} ({other.context.name}) with token {other._token.id}")
-
         combined = Cancelable(
             name=f"combined_{self.context.name}",
             metadata={
@@ -308,13 +299,8 @@ class Cancelable:
             },
         )
 
-        logger.debug(f"Created combined cancelable: {combined.context.id} with default token {combined._token.id}")
-
         # Store the actual cancelables to link their tokens later
         combined._cancellables_to_link = [self] + list(others)
-        logger.debug(f"Will link to {len(combined._cancellables_to_link)} cancelables:")
-        for i, c in enumerate(combined._cancellables_to_link):
-            logger.debug(f"  {i}: {c.context.id} with token {c._token.id}")
 
         # Combine all sources
         combined._sources.extend(self._sources)
@@ -455,13 +441,11 @@ class Cancelable:
         Raises:
             anyio.CancelledError: If operation is cancelled
         """
-        await self._token.check_async()  # pragma: no cover
+        await self._token.check_async()
 
     # Context manager
     async def __aenter__(self) -> Cancelable:
         """Enter cancelation context."""
-        logger.debug(f"=== ENTERING cancelation context for {self.context.id} ({self.context.name}) ===")
-
         # Set as current operation
         self._context_token = _current_operation.set(self)
 
@@ -484,13 +468,12 @@ class Cancelable:
         # Set up simple token monitoring via callback
         async def on_token_cancel(token: CancelationToken) -> None:
             """Callback when token is cancelled."""
-            logger.error(f"🚨 TOKEN CALLBACK TRIGGERED! Token {token.id} cancelled, cancelling scope for {self.context.id}")
+            logger.debug(f"Token {token.id} cancelled, cancelling scope for {self.context.id}")
             if self._scope and not self._scope.cancel_called:
-                logger.error(f"🚨 CANCELLING SCOPE for {self.context.id}")
                 self._scope.cancel()
             else:
                 scope_info = f"scope={self._scope}, cancel_called={self._scope.cancel_called if self._scope else 'N/A'}"
-                logger.error(f"🚨 SCOPE ALREADY CANCELLED OR NONE for {self.context.id} ({scope_info})")
+                logger.debug(f"Scope already cancelled or None for {self.context.id} ({scope_info})")
 
         logger.debug(f"Registering token callback for token {self._token.id}")
         await self._token.register_callback(on_token_cancel)
@@ -505,7 +488,6 @@ class Cancelable:
         # Enter scope - sync operation
         self._scope_exit = self._scope.__enter__()
 
-        logger.debug(f"=== COMPLETED ENTER for {self.context.id} ===")
         return self
 
     @property
@@ -652,8 +634,6 @@ class Cancelable:
 
     async def _cleanup_context(self) -> None:
         """Cleanup monitoring, shields, registry, and context vars."""
-        logger.debug(f"=== __aexit__ finally block for {self.context.id} ===")
-
         # Stop monitoring
         await self._stop_monitoring()
 
@@ -684,14 +664,9 @@ class Cancelable:
         exc_tb: Any | None,
     ) -> bool:
         """Exit cancelation context."""
-        logger.debug(f"=== ENTERING __aexit__ for {self.context.id} ===")
-        logger.debug(f"exc_type: {exc_type}, exc_val: {exc_val}")
-        logger.debug(f"Current status: {self.context.status}")
-        logger.debug(f"Current cancel_reason: {self.context.cancel_reason}")
-
         try:
-            # Handle scope exit
-            _scope_handled = self._handle_scope_exit(exc_type, exc_val, exc_tb)
+            # Handle scope exit (return value intentionally unused; exceptions always propagate)
+            self._handle_scope_exit(exc_type, exc_val, exc_tb)
             # Determine final status based on exception
             await self._determine_final_status(exc_type, exc_val)
         except Exception as e:
@@ -739,8 +714,8 @@ class Cancelable:
     async def _safe_link_tokens(self) -> None:
         """Safely link all required tokens with race condition protection."""
         async with self._link_lock:
-            if self._link_state != LinkState.NOT_LINKED:
-                return  # Already processed
+            if self._link_state not in (LinkState.NOT_LINKED, LinkState.FAILED):
+                return  # Already linked or in progress; retry allowed from FAILED
 
             self._link_state = LinkState.LINKING
 
@@ -759,7 +734,7 @@ class Cancelable:
                             f"Cannot link to combined sources: token {type(self._token).__name__} "
                             "does not support linking (not a LinkedCancelationToken)"
                         )
-                    self._link_state = LinkState.CANCELLED
+                    self._link_state = LinkState.FAILED
                     return
 
                 # Link to parent token if we have a parent
@@ -785,16 +760,19 @@ class Cancelable:
                 self._link_state = LinkState.LINKED
 
             except Exception as e:
-                self._link_state = LinkState.CANCELLED
+                self._link_state = LinkState.FAILED
                 logger.error(f"Token linking failed: {e}")
                 raise
 
     async def _on_source_cancelled(self, reason: CancelationReason, message: str) -> None:
-        """Handle cancelation from a source."""
+        """Handle cancelation from a source.
+
+        Records the cancelation reason/message only. The final CANCELLED status is
+        set once in ``_determine_final_status`` during ``__aexit__`` so that status
+        transitions happen in a single, well-defined place.
+        """
         self.context.cancel_reason = reason
         self.context.cancel_message = message
-        # Also update the status immediately when a source cancels
-        self.context.update_status(OperationStatus.CANCELLED)
 
     # Stream wrapper
     async def stream(
@@ -936,39 +914,34 @@ class Cancelable:
     async def shield(self) -> AsyncIterator[Cancelable]:
         """Shield a section from cancelation.
 
-        Creates a child operation that is protected from cancelation but still
-        participates in the operation hierarchy for monitoring and tracking.
+        The protection comes from the ``anyio.CancelScope(shield=True)`` opened below.
+        The yielded ``Cancelable`` is a lightweight *tracking handle* (for progress
+        reporting and context inspection); it is intentionally NOT entered as a full
+        async context, so it has no own cancel scope or monitoring tasks. Because it is
+        created without a parent and keeps its own fresh, unlinked token, it is never
+        cancelled by the parent operation.
 
         Yields:
-            A new Cancelable for the shielded section
+            A tracking Cancelable for the shielded section
         """
-        # Create properly integrated child cancelable
+        # Created without a parent: __init__ already gives it a fresh, unlinked token,
+        # so parent cancelation cannot propagate here. parent_id is set only for hierarchy
+        # reporting (not added to self._children, which would propagate cancelation).
         shielded = Cancelable(name=f"{self.context.name}_shielded", metadata={"shielded": True})
-        # Manually set parent relationship for hierarchy tracking but don't add to _children
-        # to prevent automatic cancelation propagation
         shielded.context.parent_id = self.context.id
+        shielded.context.update_status(OperationStatus.SHIELDED)
 
-        # Override token linking to prevent cancelation propagation
-        # The shielded operation should not be cancelled by parent token
-        shielded._token = LinkedCancelationToken()  # Fresh token, no parent linking
-
-        # Use anyio's CancelScope with shield=True
+        # Use anyio's CancelScope with shield=True for the actual protection
         with anyio.CancelScope(shield=True) as shield_scope:
             self._shields.append(shield_scope)
             try:
-                shielded.context.update_status(OperationStatus.SHIELDED)
                 yield shielded
             finally:
-                # Shield is always in list at this point (added at line 783)
                 self._shields.remove(shield_scope)
 
         # Force a checkpoint after shield to allow cancelation to propagate
         # We need to be in an async context for this to work properly
-        try:
-            await anyio.lowlevel.checkpoint()  # type: ignore[attr-defined]
-        except:
-            # Re-raise any exception including CancelledError
-            raise
+        await anyio.lowlevel.checkpoint()  # type: ignore[attr-defined]
 
     # Cancelation
     async def cancel(

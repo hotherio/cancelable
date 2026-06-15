@@ -96,9 +96,6 @@ doc = [
     "mkdocs-glightbox>=0.5.2",
 ]
 
-[tool.uv.sources]
-torch = { index = "hother" }
-
 [[tool.uv.index]]
 name = "hother"
 url = "https://hotherio.github.io/pypi-registry/"
@@ -142,7 +139,8 @@ ignore = [
     "ISC001",   # Conflicts with formatter
 ]
 
-mccabe = { max-complexity = 15 }
+[tool.ruff.lint.mccabe]
+max-complexity = 15
 
 # Configure import sorting (replaces isort)
 [tool.ruff.lint.isort]

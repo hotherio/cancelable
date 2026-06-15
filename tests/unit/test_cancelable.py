@@ -488,6 +488,17 @@ class TestCancelableShielding:
             assert shielded.context.metadata.get("shielded") is True
             assert shielded.context.parent_id == parent.context.id
 
+    @pytest.mark.anyio
+    async def test_shield_handle_has_independent_token(self):
+        """The shielded tracking handle uses its own token, distinct from the parent's.
+
+        The handle is created without a parent and is not entered as a child context, so
+        it keeps a fresh, unlinked token and is never cancelled by the parent operation.
+        """
+        async with Cancelable(name="parent") as parent, parent.shield() as shielded:
+            assert shielded.token is not parent.token
+            assert not shielded.is_cancelled
+
 
 class TestCancelableWrapping:
     """Test function wrapping functionality."""
@@ -1404,6 +1415,19 @@ class TestCancelableComprehensiveCoverage:
             pass
 
         assert cancel.context.status == OperationStatus.CANCELLED
+
+    @pytest.mark.anyio
+    async def test_check_cancelation_public_api(self):
+        """Directly exercise the public check_cancelation() API."""
+        cancel = Cancelable(name="check_api")
+
+        # Live token: returns without raising
+        await cancel.check_cancelation()
+
+        # Cancelled token: raises CancelledError
+        await cancel.token.cancel(CancelationReason.MANUAL, "stop")
+        with pytest.raises(anyio.get_cancelled_exc_class()):
+            await cancel.check_cancelation()
 
     @pytest.mark.anyio
     async def test_shield_remove_from_list(self):

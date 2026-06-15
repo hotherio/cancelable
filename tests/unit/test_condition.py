@@ -139,26 +139,6 @@ class TestResourceConditionSource:
         assert source.check_interval == 1.0
         assert "resource_check" in source.condition_name
 
-    @pytest.mark.anyio
-    async def test_resource_check_no_psutil(self, monkeypatch):
-        """Test resource check when psutil is not available."""
-        # Mock import error
-        import builtins
-
-        original_import = builtins.__import__
-
-        def mock_import(name, *args, **kwargs):
-            if name == "psutil":
-                raise ImportError("No module named 'psutil'")
-            return original_import(name, *args, **kwargs)
-
-        monkeypatch.setattr(builtins, "__import__", mock_import)
-
-        source = ResourceConditionSource(memory_threshold=80.0)
-        result = await source._check_resources()
-
-        assert result is False  # Should return False when psutil unavailable
-
 
 class TestResourceConditionSourceWithPsutil:
     """Test ResourceConditionSource with psutil installed."""
@@ -406,6 +386,27 @@ class TestResourceConditionSourceWithPsutil:
 
 class TestConditionSourceEdgeCases:
     """Test edge cases for ConditionSource."""
+
+    @pytest.mark.anyio
+    async def test_monitor_task_group_cancellation_reraises(self):
+        """Cancelling the monitor's own task group makes the monitor re-raise.
+
+        Covers the `except CancelledError` branch in _monitor_condition: the awaiting
+        monitor task is cancelled and re-raises, which surfaces on task-group exit.
+        """
+        source = ConditionSource(lambda: False, check_interval=5.0)
+        await source.start_monitoring(anyio.CancelScope())
+
+        # Let the monitor reach its inter-check await.
+        await anyio.sleep(0.05)
+
+        assert source._task_group is not None
+        source._task_group.cancel_scope.cancel()
+
+        # The task group absorbs its own cancelation on exit, so stop_monitoring
+        # returns cleanly after the monitor task re-raises internally.
+        await source.stop_monitoring()
+        assert source._task_group is None
 
     @pytest.mark.anyio
     async def test_stop_monitoring_without_task_group(self):

@@ -100,19 +100,17 @@ class CompositeSource(CancelationSource):
         Args:
             source: Source to monitor
         """
-        # Override the source's trigger method to capture which source triggered
-        original_trigger = source.trigger_cancelation
 
-        async def wrapped_trigger(message: str | None = None):
+        # Capture which source triggered via its cancel callback (no monkey-patching)
+        async def on_source_trigger(reason: CancelationReason, message: str) -> None:
             self.triggered_source = source
-            self.reason = source.reason  # Use the source's reason
-            await original_trigger(message)
+            self.reason = reason  # Use the source's reason
 
             # Trigger our own cancelation
             if self.scope and not self.scope.cancel_called:
                 await self.trigger_cancelation(f"Composite source triggered by {source.name}: {message}")
 
-        source.trigger_cancelation = wrapped_trigger
+        source.set_cancel_callback(on_source_trigger)
 
         try:
             # Start the source
@@ -196,10 +194,9 @@ class AllOfSource(CancelationSource):
 
     async def _monitor_source(self, source: CancelationSource) -> None:
         """Monitor a single source and check if all have triggered."""
-        # Override the source's trigger method
-        original_trigger = source.trigger_cancelation
 
-        async def wrapped_trigger(message: str | None = None):
+        # Track triggers via the source's cancel callback (no monkey-patching)
+        async def on_source_trigger(reason: CancelationReason, message: str) -> None:
             async with self._lock:
                 self.triggered_sources.add(source)
 
@@ -208,10 +205,7 @@ class AllOfSource(CancelationSource):
                     # All sources triggered, cancel
                     await self.trigger_cancelation(f"All {len(self.sources)} sources have triggered")
 
-            # Still call original trigger for logging
-            await original_trigger(message)
-
-        source.trigger_cancelation = wrapped_trigger
+        source.set_cancel_callback(on_source_trigger)
 
         try:
             # Start the source with a dummy scope

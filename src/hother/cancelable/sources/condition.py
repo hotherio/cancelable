@@ -5,6 +5,7 @@ from collections.abc import Awaitable, Callable
 
 import anyio
 import anyio.abc
+import psutil
 
 from hother.cancelable.core.models import CancelationReason
 from hother.cancelable.sources.base import CancelationSource
@@ -125,10 +126,10 @@ class ConditionSource(CancelationSource):
                     logger.debug(f"Condition check #{check_count} returned: {result}")
 
                     if result:
-                        self.triggered = True
                         logger.debug(f"Condition '{self.condition_name}' met after {check_count} checks")
 
                         # Trigger cancelation through the base class method
+                        # (sets self.triggered = True centrally)
                         await self.trigger_cancelation(f"Condition '{self.condition_name}' met after {check_count} checks")
                         break
 
@@ -210,12 +211,6 @@ class ResourceConditionSource(ConditionSource):
 
     async def _check_resources(self) -> bool:
         """Check if any resource threshold is exceeded."""
-        try:
-            import psutil
-        except ImportError:
-            logger.warning("psutil not available, resource monitoring disabled")
-            return False
-
         # Check memory
         if self.memory_threshold:
             memory_percent = psutil.virtual_memory().percent

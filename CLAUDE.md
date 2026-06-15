@@ -223,21 +223,9 @@ app.add_middleware(RequestCancellationMiddleware)
 # Automatic per-request cancellation tokens
 ```
 
-**httpx**:
-```python
-from hother.cancelable.integrations.httpx import CancelableTransport
-
-async with httpx.AsyncClient(transport=CancelableTransport(cancel)) as client:
-    response = await client.get(url)
-```
-
-**SQLAlchemy**:
-```python
-from hother.cancelable.integrations.sqlalchemy import cancelable_session
-
-async with cancelable_session(engine, cancel) as session:
-    result = await session.execute(query)
-```
+> Note: Only the FastAPI integration ships today. httpx/SQLAlchemy/tenacity helpers
+> are not implemented — for other libraries, use the `cancel.token`/`cancel.wrap()`
+> primitives directly.
 
 ## Project Structure
 
@@ -247,7 +235,9 @@ cancelable/
 │   ├── core/
 │   │   ├── cancelable.py       # Main Cancelable class
 │   │   ├── token.py            # CancellationToken, LinkedCancellationToken
-│   │   └── registry.py         # OperationRegistry, ThreadSafeRegistry
+│   │   ├── models.py           # OperationContext, OperationStatus, CancelationReason
+│   │   ├── exceptions.py       # Cancelation exceptions
+│   │   └── registry.py         # OperationRegistry
 │   ├── sources/
 │   │   ├── base.py             # CancellationSource ABC
 │   │   ├── timeout.py          # TimeoutSource
@@ -256,16 +246,15 @@ cancelable/
 │   │   ├── token.py            # TokenSource
 │   │   └── composite.py        # CompositeCancellationSource
 │   ├── integrations/
-│   │   ├── fastapi.py          # FastAPI middleware
-│   │   ├── httpx.py            # httpx transport
-│   │   ├── sqlalchemy.py       # SQLAlchemy session
-│   │   └── tenacity.py         # Retry integration
+│   │   └── fastapi.py          # FastAPI middleware
 │   ├── streaming/
-│   │   └── simulator.py        # Stream cancellation simulator
+│   │   ├── blocks/             # Stream block utilities
+│   │   └── simulator/          # Stream cancellation simulator
 │   └── utils/
 │       ├── decorators.py       # @cancelable decorator
 │       ├── anyio_bridge.py     # Anyio context bridge
-│       ├── threading_bridge.py # Thread cancellation bridge
+│       ├── context_bridge.py   # Context var propagation bridge
+│       ├── threading_bridge.py # Thread cancellation bridge + ThreadSafeRegistry
 │       ├── streams.py          # Cancelable stream utilities
 │       ├── logging.py          # Structured logging
 │       └── testing.py          # Test utilities
@@ -310,15 +299,18 @@ cancelable/
 
 ### Key Test Fixtures
 
-**`clean_registry`** (autouse):
+**`clean_registry`** (opt-in fixture — request it by name in tests that need it; it is NOT autouse):
 ```python
-@pytest.fixture(autouse=True)
-def clean_registry():
-    """Ensures a clean OperationRegistry for each test."""
-    registry = OperationRegistry()
-    registry.clear()
+@pytest.fixture
+async def clean_registry():
+    """Provides a clean OperationRegistry and cleans up after test."""
+    from hother.cancelable.core.registry import OperationRegistry
+
+    OperationRegistry._instance = None
+    registry = OperationRegistry.get_instance()
     yield registry
-    registry.clear()
+    await registry.clear_all()
+    OperationRegistry._instance = None
 ```
 
 **Anyio backend** (pytest.ini):
@@ -380,7 +372,7 @@ async def test_token_cancel():
 
 ### `pyproject.toml`
 - **Namespace package**: `packages = [{include = "hother", from = "src"}]`
-- **Optional dependencies**: httpx, sqlalchemy, fastapi, asyncer, examples
+- **Optional dependencies**: fastapi, examples
 - **Dependency groups**: dev (testing/linting), doc (mkdocs)
 - **Tool configs**: ruff, basedpyright, pytest, coverage
 

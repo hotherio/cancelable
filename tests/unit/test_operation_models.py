@@ -58,7 +58,6 @@ class TestOperationContext:
         assert context.partial_result is None
         assert context.metadata == {}
         assert context.parent_id is None
-        assert context.child_ids == set()
 
     def test_custom_values(self):
         """Test creating context with custom values."""
@@ -136,7 +135,6 @@ class TestOperationContext:
             name="test-op",
             parent_id="parent-456",
         )
-        context.child_ids.add("child-789")
 
         log_ctx = context.log_context()
 
@@ -144,7 +142,6 @@ class TestOperationContext:
         assert log_ctx["operation_name"] == "test-op"
         assert log_ctx["status"] == "pending"
         assert log_ctx["parent_id"] == "parent-456"
-        assert log_ctx["child_count"] == 1
         assert log_ctx["has_error"] is False
         assert log_ctx["cancel_reason"] is None
 

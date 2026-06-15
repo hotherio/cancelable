@@ -50,7 +50,6 @@ class OperationContext(BaseModel):
         partial_result: Any partial results before cancelation
         metadata: Additional operation metadata
         parent_id: Parent operation ID (for nested operations)
-        child_ids: Set of child operation IDs
     """
 
     model_config = ConfigDict(arbitrary_types_allowed=True)
@@ -66,7 +65,6 @@ class OperationContext(BaseModel):
     partial_result: Any | None = None
     metadata: dict[str, Any] = Field(default_factory=dict)
     parent_id: str | None = None
-    child_ids: set[str] = Field(default_factory=set)
 
     @property
     def duration(self) -> timedelta | None:
@@ -114,7 +112,6 @@ class OperationContext(BaseModel):
             "status": self.status.value,
             "duration_seconds": self.duration_seconds,
             "parent_id": self.parent_id,
-            "child_count": len(self.child_ids),
             "has_error": bool(self.error),
             "cancel_reason": self.cancel_reason.value if self.cancel_reason else None,
         }

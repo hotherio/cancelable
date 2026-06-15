@@ -1,4 +1,5 @@
 site_name: Cancelable
+site_url: https://hotherio.github.io/cancelable/
 repo_url: https://github.com/hotherio/cancelable
 repo_name: hotherio/cancelable
 edit_uri: ""
@@ -39,6 +40,7 @@ nav:
      - Troubleshooting: 'troubleshooting.md'
      - Community & Support: 'community.md'
      - Contributing: 'contributing.md'
+     - Release Process: 'releases.md'
 theme:
   name: material
   language: en
@@ -61,7 +63,6 @@ theme:
   features:
     - content.code.annotate
     - content.tabs.link
-    - content.code.annotate
     - navigation.instant
     - navigation.tracking
     - navigation.top
@@ -129,7 +130,6 @@ extra_javascript:
   - https://cdnjs.cloudflare.com/ajax/libs/tablesort/5.2.1/tablesort.min.js
   - javascripts/tablesort.js
   - javascripts/mathjax.js
-  - https://polyfill.io/v3/polyfill.min.js?features=es6
   - https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js
   - javascripts/mermaid.js
   - https://unpkg.com/mermaid@10/dist/mermaid.min.js
@@ -177,7 +177,7 @@ plugins:
             filters: ["!^_", "!^__"]
           import:
           - https://docs.python.org/3/objects.inv
-          - http://pandas.pydata.org/pandas-docs/stable/objects.inv
+          - https://pandas.pydata.org/pandas-docs/stable/objects.inv
           - https://docs.pydantic.dev/latest/objects.inv
           - https://anyio.readthedocs.io/en/stable/objects.inv
           - https://fastapi.tiangolo.com/objects.inv

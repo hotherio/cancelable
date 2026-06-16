@@ -216,8 +216,11 @@ branch = true
 concurrency = ["multiprocessing", "thread"]
 # Use subdirectory for coverage data to keep root clean
 data_file = ".coverage/.coverage"
-# Disable include-ignored warnings as --source is enabled automatically
-disable_warnings = ["include-ignored"]
+# Disable include-ignored warnings as --source is enabled automatically.
+# module-not-measured is a spurious finalization warning (the full suite reaches
+# 100% as enforced by fail_under); without this it is escalated to an error by
+# pytest's filterwarnings = "error" and crashes the run in CI.
+disable_warnings = ["include-ignored", "module-not-measured"]
 
 [tool.coverage.paths]
 # Allow CI run assets to be downloaded and replicated locally
